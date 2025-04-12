@@ -1,5 +1,6 @@
-import { Alert, Linking } from 'react-native';
+import {Alert, Linking} from 'react-native';
 import makeApiRequest from './ApiService';
+import {pick,types } from '@react-native-documents/picker'
 
 export const titleImpressionFunction = async (row: any) => {
   try {
@@ -26,4 +27,33 @@ export const callPhoneNumber = (phoneNumber: any) => {
       }
     })
     .catch(err => console.error('An error occurred', err));
+};
+
+// uploadDocument
+export const uploadDocument = async (
+  allowMultiple: boolean,
+  docType: string[],
+) => {
+  try {
+    const result = await pick({
+      mode: 'open',
+      type: docType,
+      allowMultiSelection: allowMultiple,
+    });
+
+    if (!result || result.length === 0) return [];
+
+    const processedDocs = await Promise.all(
+      result.map(async file => {
+        return {
+          ...file
+        };
+      }),
+    );
+
+    return processedDocs;
+  } catch (error) {
+    console.warn('Document selection error:', error);
+    return [];
+  }
 };
