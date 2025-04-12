@@ -1,0 +1,124 @@
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
+import makeApiRequest from '../../../../utils/ApiService';
+import { BASE_URL } from '../../../../utils/api';
+import Container from '../../../../components/Container';
+import CustomText from '../../../../components/Customs/CustomText';
+import commonStyle from '../../../../utils/CommonStyleComponent';
+import { moderateScale, screenHeight } from '../../../../components/Matrix/Matrix';
+import Colors from '../../../../utils/Colors';
+
+const CourseStudent = () => {
+
+  // const trainerId = useSelector((state: any) => state.List.id);
+  const [loading, setLoading] = useState(false);
+  const [student, setStudent] = useState([]);
+  const [message, setMessage] = useState([]);
+  const { user } = useSelector((state: any) => state.user);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      leadLisfun();
+    }, []),
+  );
+
+  const leadLisfun = async () => {
+    setLoading(true);
+    const row = {
+      userId: user?.id,
+    };
+    try {
+      const response: any = await makeApiRequest({
+        baseUrl: BASE_URL,
+        method: "POST",
+        data: row,
+        url: 'course-subscription-student'
+      })
+
+
+      console.log("==== response in the student course ====", response);
+
+      if (response.data.status === 'success') {
+        setStudent(response.followUp);
+        setMessage(response.message);
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log('error it');
+    }
+  };
+
+
+  return (
+    <Container>
+      <ScrollView
+        style={{ flexGrow: 1, paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}>
+        {student.length > 0 ? (
+          student.map((item: any, index) => {
+            console.log('--- item in the students dashboard ---', item);
+
+            return (
+              <View style={styles.row} key={item.id}>
+                <View style={styles.row1}>
+                  {/* <Avatar
+                    size={50}
+                    avatarStyle={{backgroundColor: '#D3D3D3'}}
+                    rounded
+                    source={require('../../../img/one.jpeg')}
+                  /> */}
+                  <View>
+                    <CustomText
+                      size={20}
+                      weight="700"
+                      // family="Roboto-Bold"
+                      text={item?.name || 'No Name'}
+                    />
+                    <CustomText
+                      size={12}
+                      text={item?.course_name}
+                      weight="500"
+                    />
+                  </View>
+                </View>
+                <View></View>
+              </View>
+            );
+          })
+        ) : (
+          <View style={commonStyle.modalView}>
+            <Text style={commonStyle.modalText}>Oops! No Subscription found</Text>
+          </View>
+        )}
+      </ScrollView>
+    </Container>
+  )
+}
+
+export default CourseStudent
+
+const styles = StyleSheet.create({
+  row: {
+    backgroundColor: '#fff',
+    elevation: 5,
+    borderRadius: moderateScale(20),
+    width: '99%',
+    height: screenHeight * .1,
+    padding: 10,
+    alignItems: 'center',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: moderateScale(15),
+    borderWidth: 0.5,
+    borderColor: Colors.lightGray,
+  },
+  row1: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+})
