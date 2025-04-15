@@ -17,7 +17,10 @@ import CustomButton from '../../../../../components/Customs/CustomButton'
 import { globalStyle } from '../../../../../utils/GlobalStyle'
 import { uploadDocument } from '../../../../../utils/UtilityFuncations'
 import DocumentPickerComponent from '../../../../../components/DocumentPicker'
-import { GOOGLE_LOCATION_KEY } from '../../../../../utils/api'
+import { BASE_URL, GOOGLE_LOCATION_KEY } from '../../../../../utils/api'
+import makeApiRequest from '../../../../../utils/ApiService'
+import { useSelector } from 'react-redux'
+import axios from 'axios'
 
 const retreatSchema = yup.object().shape({
     title: yup.string().min(3, '*too short').max(50, '*too long').required('*required'),
@@ -55,16 +58,17 @@ const retreatSchema = yup.object().shape({
 });
 
 const CreateRetreat = () => {
+    const { user } = useSelector((state: any) => state?.user);
     const [isCalendar, setIsCalendar] = useState({
         start: false,
         end: false
     });
 
-    const [documents, setDocuments] = useState([]);
+    const [documents, setDocuments] = useState<any>([]);
 
     const handleDocumentsPicked = (docs: any) => {
-        console.log('Picked documents:', docs);
-        setDocuments(docs);
+        console.log('Picked documents:', docs[0]);
+        setDocuments(docs[0]);
     };
 
     const roomArray = [
@@ -102,12 +106,50 @@ const CreateRetreat = () => {
                         rooms: '0'
                     }}
                     validationSchema={retreatSchema}
-                    onSubmit={(values) => {
-                        console.log('Submitted:', values);
+                    onSubmit={async (values) => {
+                        const formdata = new FormData;
+                        formdata.append('user_id', user?.id);
+                        formdata.append('group_size', values?.groupSize);
+                        formdata.append('status', 1);
+                        formdata.append('No_of_nights', values?.numOfNights);
+                        formdata.append('No_of_days', values?.numOfDays);
+                        formdata.append('retreat_title', values?.title);
+                        formdata.append('retreat_overview', values?.overview);
+                        formdata.append('retreat_location', values?.location);
+                        formdata.append('start_date', values?.startDate);
+                        formdata.append('end_date', values?.endDate);
+                        formdata.append('program_details', values?.details);
+                        formdata.append('accommodation_hotel', values?.hotel);
+                        formdata.append('room', values?.rooms);
+                        formdata.append('price', values?.price);
+                        if (documents) {
+                            formdata.append('upload_image', {
+                                uri: documents?.uri,
+                                type: documents?.type,
+                                name: documents?.name,
+                            });
+                        }
+
+                        try {
+                            // const response = await makeApiRequest({
+                            //     baseUrl: BASE_URL,
+                            //     url: "create-retreat",
+                            //     method: "POST",
+                            //     data: formdata
+                            // });
+
+                            const response: any = await axios.post(`${BASE_URL}user-add-retreat`, formdata)
+
+                            console.log("===== response in the create retreat =====", response);
+                        }
+                        catch (err: any) {
+                            console.error("Error in the create retreat:", err);
+                        }
+
                     }}
 
                 >
-                    {({ handleSubmit, handleChange, setFieldValue, errors, values, touched }) => {
+                    {({ handleSubmit, handleChange, setFieldValue, errors, values, touched }: any) => {
                         useEffect(() => {
                             console.log("=== error ===", errors);
                         }, [errors]);
@@ -131,14 +173,18 @@ const CreateRetreat = () => {
                                         />
                                     )}
 
-                                    <GooglePlacesAutocomplete
+                                    {/* <GooglePlacesAutocomplete
                                         placeholder="Accommodation Hotel"
                                         currentLocationLabel={'Accommodation Hotel'}
                                         onPress={(data: any, details = null) => {
+                                            console.log("=== data in the google autp complete ===",data);
+                                            console.log("=== details in the google autp complete ===",details);
+                                            
                                             // onChange(data.description); // Update the field value
                                         }}
                                         query={{
-                                            key: GOOGLE_LOCATION_KEY,
+                                            // key: GOOGLE_LOCATION_KEY,
+                                            key: 'AIzaSyB5D8cCcugZPm2WiQh106c-K1-2dmSEiv0',
                                             language: 'en',
                                         }}
                                         textInputProps={{
@@ -164,7 +210,20 @@ const CreateRetreat = () => {
                                             },
                                         }}
                                         fetchDetails={true}
-                                    />
+                                    /> */}
+
+                                    <View>
+                                        {/* <GooglePlacesAutocomplete
+                                            placeholder='Search a place'
+                                            query={{
+                                                key: GOOGLE_LOCATION_KEY,
+                                                language: "en"
+                                            }}
+                                            fetchDetails={true}
+                                            onFail={(error) => console.log('Google API Error:', error)}
+                                        /> */}
+                                        <CustomInput text="Accomdation Hotel" handleChangeText={handleChange('hotel')} />
+                                    </View>
 
                                     <View>
                                         <CustomText

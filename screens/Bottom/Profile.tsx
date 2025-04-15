@@ -172,7 +172,11 @@ const Profile = () => {
   const navigation = useNavigation();
   return (
     <Container>
-      <CustomHeader2 title="Profile" isMore={true} iconType="Feather" iconName="settings" />
+      <CustomHeader2 title="Profile" isMore={true} iconType="Feather" iconName="settings" handleMore={
+        () => {
+          navigation.navigate('Settings')
+        }
+      } />
       {/* <View style={[globalStyle.between, { flex: 1 }]} >
         {
           userOptionScreen && userOptionScreen.map((item: any) => {
@@ -323,7 +327,7 @@ const Profile = () => {
         </View>
 
         {
-          user?.isKyc == 1 && <CustomModal
+          <CustomModal
             iscenter={true}
             visible={showModalBarType}
             containerStyle={{ paddingVertical: moderateScale(10) }}
@@ -363,7 +367,7 @@ const Profile = () => {
           </CustomModal>
         }
         {
-          user?.isKyc == 1 && <CustomModal
+          <CustomModal
             iscenter={true}
             visible={showModalBarContent}
             containerStyle={{ paddingVertical: moderateScale(10) }}

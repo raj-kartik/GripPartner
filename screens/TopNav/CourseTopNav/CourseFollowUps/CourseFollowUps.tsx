@@ -20,7 +20,7 @@ const CourseFollowUps = () => {
   const sentFun = (item: any) => {
     navigation.dispatch(
       CommonActions.navigate({
-        name: 'FollowDetail',
+        name: 'CourseFollowDetails',
         params: {
           follow: item,
           lead_id: item.lead_id,

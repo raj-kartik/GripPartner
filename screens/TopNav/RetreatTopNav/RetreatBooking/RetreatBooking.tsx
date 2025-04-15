@@ -56,7 +56,7 @@ const RetreatBooking = () => {
   const ListDetailFun = (item: any) => {
     navigation.dispatch(
       CommonActions.navigate({
-        name: 'RetreatMarkFees',
+        name: 'RetreatBookingDetail',
         params: {
           Booking_id: item.id,
         },

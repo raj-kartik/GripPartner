@@ -1,5 +1,5 @@
-import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useCallback, useState } from 'react'
+import { ActivityIndicator, KeyboardAvoidingView, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import Container from '../../../../components/Container'
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu'
 import { CommonActions, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
@@ -10,12 +10,23 @@ import makeApiRequest from '../../../../utils/ApiService'
 import { BASE_URL } from '../../../../utils/api'
 import CustomButton from '../../../../components/Customs/CustomButton'
 import CustomText from '../../../../components/Customs/CustomText'
-import { moderateScale, screenWidth } from '../../../../components/Matrix/Matrix'
+import { moderateScale, screenHeight, screenWidth } from '../../../../components/Matrix/Matrix'
 import CustomIcon from '../../../../components/Customs/CustomIcon'
 import AccountCourseCard from '../../../../components/Cards/AccountCourseCard'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
 import ChatPhoneCard from '../../../../components/Cards/ChatPhoneCard'
 import UserTrainerPaymentModal from '../../../../components/Modal/UserTrainerPaymentModal'
+import CalendarPicker from 'react-native-calendar-picker';
+import { Formik } from 'formik'
+import { CustomToast } from '../../../../components/Customs/CustomToast'
+import * as Yup from 'yup'
+import CustomModal from '../../../../components/Customs/CustomModal'
+import CustomInput from '../../../../components/Customs/CustomInput'
+
+const followSchema = Yup.object().shape({
+  comment: Yup.string().min(3, '*too Short').max(500, '*too large'),
+  follow_up_date: Yup.date().required('*required'),
+});
 
 const RetreatLeadDetail = () => {
   const route: any = useRoute();
@@ -29,6 +40,8 @@ const RetreatLeadDetail = () => {
   const [data, setData] = useState<any>({});
   const [status1, setStatus1] = useState(null);
   const [transactionModal, settransactionModal] = useState(false);
+  const [followModal, setFollowModal] = useState(false);
+  const [isCalendar, setIsCalendar] = useState(false)
 
   useFocusEffect(
     useCallback(() => {
@@ -50,10 +63,7 @@ const RetreatLeadDetail = () => {
         url: `user-retreat-detail/?id=${retreat_id}`
       });
 
-      console.log("==== response in the retreat details ====", response);
-
-
-      if (response?.data.length > 1) {
+      if (response?.data) {
         setData(response.data[0]);
         setStatus1(response.data[0].status);
       }
@@ -72,9 +82,6 @@ const RetreatLeadDetail = () => {
         baseUrl: BASE_URL,
         url: `retreat-lead-detail?lead_id=${lead_id}`
       })
-
-      console.log("==== response in the lead details ====", response);
-
 
       if (response?.success === true) {
         setLead(response?.lead);
@@ -171,6 +178,10 @@ const RetreatLeadDetail = () => {
 
   ]
 
+
+  // console.log("==== log in the data retreat ====", data);
+
+
   const handleConfirm1 = (date: any) => {
     setDatePickerVisible(false);
     const formattedDate = formatDate(date);
@@ -203,7 +214,7 @@ const RetreatLeadDetail = () => {
     }
   };
 
-  const SentFun = (item: any) => {
+  const handleFollowUps = (item: any) => {
     navigation.dispatch(
       CommonActions.navigate({
         name: 'AddRetreatLeadFollow',
@@ -214,7 +225,7 @@ const RetreatLeadDetail = () => {
     );
   };
 
-  const SentTo = (item: any) => {
+  const handleBooking = (item: any) => {
     navigation.dispatch(
       CommonActions.navigate({
         name: 'AddBookingScreen',
@@ -339,7 +350,7 @@ const RetreatLeadDetail = () => {
                   ]}>
                   {lead.booking !== 'yes' ? (
                     <CustomButton
-                      onPress={() => SentTo(lead.id)}
+                      onPress={() => handleBooking(lead.id)}
                       title="Add Booking"
                       bg={Colors.orange}
                       customStyle={{ width: '45%' }}
@@ -349,7 +360,9 @@ const RetreatLeadDetail = () => {
 
                   <CustomButton
                     radius={30}
-                    onPress={() => SentFun(lead.id)}
+                    onPress={() => {
+                      setFollowModal(true)
+                    }}
                     title="Add Follow Up"
                     customStyle={{ width: '45%' }}
                   />
@@ -359,6 +372,156 @@ const RetreatLeadDetail = () => {
           </>
         )}
       </MenuProvider>
+
+      {
+        followModal && (
+          <CustomModal
+            visible={followModal}
+            onDismiss={() => {
+              setFollowModal(false)
+            }}
+            iscenter={false}
+            containerStyle={{
+              height: screenHeight * .6,
+              width: screenWidth,
+              alignSelf: 'center'
+            }}
+          >
+            <View style={{ width: "30%", height: moderateScale(3), borderRadius: moderateScale(100), marginTop: moderateScale(10), backgroundColor: Colors.gray, alignSelf: 'center', marginBottom: moderateScale(5) }} />
+            <CustomText text='Follow Up' weight='600' size={18} customStyle={{ textAlign: 'center' }} />
+
+            <KeyboardAvoidingView style={{ flex: 1 }} >
+              <Formik
+                initialValues={{
+                  comments: '',
+                  follow_up_date: '',
+                }}
+                validationSchema={followSchema}
+
+                onSubmit={async (values) => {
+                  console.log("--- values in the course lead details ---", values)
+                  try {
+                    // lead_id
+                    const row = {
+                      lead_id: lead_id,
+                      comments: values.comments,
+                      follow_up_date: values.follow_up_date,
+                    }
+
+                    const response: any = await makeApiRequest({
+                      baseUrl: BASE_URL,
+                      url: 'user-retreat-lead-followup-create',
+                      method: "POST",
+                      data: row
+                    });
+
+                    console.log("=== comment in the retreat lead details ====", response);
+
+
+                    if (response?.success === true) {
+                      CustomToast({
+                        type: "success",
+                        text1: "Follow Up Successful",
+                        text2: response?.message
+                      })
+                      navigation.dispatch(
+                        CommonActions.navigate({
+                          name: 'RetreatTopNav',
+                          params: {
+                            courseid: null,
+                            screen: 'RetreatFollow',
+                          },
+                        }),
+                      );
+                      setIsCalendar(false)
+                    }
+                    else {
+                      CustomToast({
+                        type: "error",
+                        text1: "Follow Up Unsuccessful",
+                        text2: response?.message
+                      })
+                      setIsCalendar(false)
+                    }
+                  }
+                  catch (err: any) {
+                    console.log("Error in the Course Lead Details", err);
+
+                  }
+                }}
+              >
+                {({ handleChange, handleSubmit, setFieldValue, values, errors, touched }: any) => {
+                  useEffect(() => {
+                    console.log("errror in the retreat details", errors);
+                  }, [errors]);
+
+                  return (
+                    <View style={{ flex: 1 }} >
+                      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: .9, paddingHorizontal: moderateScale(10) }} >
+                        <CustomInput
+                          text='Comments'
+                          handleChangeText={handleChange('comments')}
+                        />
+                        {
+                          errors.comments && (
+                            <CustomText text={errors?.comments} color='#ff0000' />
+                          )
+                        }
+
+
+                        <CustomText text='Select Follow Up Date ' customStyle={{ marginTop: moderateScale(10) }} weight='500' size={15} />
+                        <Pressable
+                          style={[
+                            styles.inputContainer,
+                            {
+                              borderWidth: touched.type ? 1 : 0,
+                              borderColor: touched.type ? '#000' : '#fff',
+                              marginVertical: moderateScale(10),
+                            },
+                          ]}
+                          onPress={() => {
+                            setIsCalendar(!isCalendar)
+                          }}>
+                          <CustomText
+                            text={values.follow_up_date ? values.follow_up_date : 'To'}
+                            color={values.follow_up_date ? '#000' : '#909090'}
+                            weight="400"
+                            size={15}
+                          />
+                        </Pressable>
+                        {
+                          isCalendar && <CalendarPicker
+                            onDateChange={(date: any) => {
+                              const formattedDate = new Date(
+                                date,
+                              ).toLocaleDateString('en-GB', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                              })
+                                .split('/')
+                                .reverse()
+                                .join('-');
+
+                              setFieldValue('follow_up_date', formattedDate.replaceAll('/', '-'));
+                              setIsCalendar(false);
+                            }}
+                          />
+                        }
+
+                      </ScrollView>
+                      <View style={{ flex: .2 }} >
+                        <CustomButton title='Submit' onPress={handleSubmit} />
+                      </View>
+                    </View>
+                  )
+                }}
+              </Formik>
+            </KeyboardAvoidingView>
+          </CustomModal>
+        )
+      }
+
     </Container>
   )
 }
@@ -370,6 +533,7 @@ const MenuPop = ({ navigation, item, OpenFun, CloseFun }: any) => {
   const colorIcon = item.status === 'Open' ? 'green' : 'gray';
   const colorIcon1 = item.status === 'Close' ? 'red' : 'gray';
   const [closeButtonClicked, setCloseButtonClicked] = useState(false);
+  const [isModal, setIsModal] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -407,58 +571,84 @@ const MenuPop = ({ navigation, item, OpenFun, CloseFun }: any) => {
             shadowOffset: { width: 0, height: 2 }, // Shadow offset for iOS
           },
         }}>
-        <MenuOption>
-          <Pressable onPress={toggleModal}>
-            <Text style={styles.menuText2}>Change Lead Status</Text>
-          </Pressable>
-          <Modal
-            transparent={true}
-            visible={isModalVisible}
-            animationType="slide"
-            onRequestClose={toggleModal}>
-            <View style={styles.modalBackground}>
-              <View style={styles.modalContainer}>
-                <Pressable style={styles.cancelIcon} onPress={toggleModal}>
-                  {/* <Icon type="material" name="close" size={30} color="#000" /> */}
-                  <CustomIcon type='AntDesign' name='close' />
-                </Pressable>
-                <View style={styles.rowIcon}>
-                  <Text style={styles.menuText1}>Change Lead Status</Text>
+        <MenuOption  >
+          <Pressable onPress={toggleModal} >
+            <CustomText size={16} text='Change Lead Status' />
 
-                  <TouchableOpacity
-                    style={styles.rowIcon1}
-                    onPress={() => OpenFun(1)}>
-                    <CustomIcon
-                      type="Feather"
-                      name="check-circle"
-                      color={Colors.activeRadio}
-                      size={30}
-                    />
-                    <Text style={styles.menuText}>Open</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.rowIcon1}
-                    onPress={() => CloseFun(0)}>
-                    <CustomIcon
-                      type="Feather"
-                      name="x-circle"
-                      color={Colors.red}
-                      size={30}
-                    />
-                    <Text style={styles.menuText}>Close</Text>
-                  </TouchableOpacity>
-                </View>
+          </Pressable>
+        </MenuOption>
+        <Modal
+          transparent={true}
+          visible={isModalVisible}
+          animationType="slide"
+          onRequestClose={toggleModal}>
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Pressable style={styles.cancelIcon} onPress={toggleModal}>
+                {/* <Icon type="material" name="close" size={30} color="#000" /> */}
+                <CustomIcon type='AntDesign' name='close' />
+              </Pressable>
+              <View style={styles.rowIcon}>
+                <Text style={styles.menuText1}>Change Lead Status</Text>
+
+                <TouchableOpacity
+                  style={styles.rowIcon1}
+                  onPress={() => OpenFun(1)}>
+                  <CustomIcon
+                    type="Feather"
+                    name="check-circle"
+                    color={Colors.activeRadio}
+                    size={30}
+                  />
+                  <Text style={styles.menuText}>Open</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.rowIcon1}
+                  onPress={() => CloseFun(0)}>
+                  <CustomIcon
+                    type="Feather"
+                    name="x-circle"
+                    color={Colors.red}
+                    size={30}
+                  />
+                  <Text style={styles.menuText}>Close</Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </Modal>
-        </MenuOption>
+          </View>
+        </Modal>
         {item.status !== 'Close' ? (
-          <MenuOption>
-            <Pressable onPress={() => CloseFun(0)}>
-              <Text style={styles.menuText2}> Close Lead</Text>
+          <MenuOption  >
+            <Pressable onPress={() => {
+              setIsModal(true);
+            }} >
+              <CustomText size={16} text='Close Lead' />
             </Pressable>
+
           </MenuOption>
         ) : null}
+
+        <CustomModal
+          visible={isModal}
+          onDismiss={() => {
+            setIsModal(false);
+          }}
+          iscenter={true}
+          containerStyle={{ height: screenHeight * .17 }}
+        >
+          <View style={globalStyle.modalbar} />
+          <View style={[globalStyle.center, { flex: 1 }]} >
+            <CustomText size={16} customStyle={{ textAlign: "center" }} text='Are you sure you want to close?' weight='500' />
+            <View style={[globalStyle.betweenCenter, { marginTop: moderateScale(20), flex: 1, width: "100%" }]} >
+              <CustomButton bg={Colors.orange} customStyle={{ width: "45%" }} title='No' onPress={() => {
+                setIsModal(false)
+              }} />
+              <CustomButton customStyle={{ width: "45%" }} title='Yes' onPress={() => {
+                CloseFun(0)
+              }} />
+            </View>
+          </View>
+        </CustomModal>
       </MenuOptions>
     </Menu>
   );
@@ -519,5 +709,16 @@ const styles = StyleSheet.create({
     color: Colors.black,
     fontFamily: 'Roboto-Medium',
     fontSize: 14,
+  },
+  inputContainer: {
+    width: '100%',
+    alignSelf: 'center',
+    paddingVertical: moderateScale(15),
+    borderRadius: moderateScale(8),
+    borderWidth: 1,
+    paddingHorizontal: moderateScale(10),
+    marginTop: moderateScale(3),
+    elevation: 2,
+    backgroundColor: '#fff',
   },
 })

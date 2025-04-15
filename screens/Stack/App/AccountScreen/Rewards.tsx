@@ -1,5 +1,5 @@
-import { Alert, Platform, StyleSheet,Share, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Alert, Platform, StyleSheet, Share, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import Container from '../../../../components/Container';
 import { useDispatch, useSelector } from 'react-redux'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
@@ -13,17 +13,20 @@ import CustomText from '../../../../components/Customs/CustomText';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
 import CustomButton from '../../../../components/Customs/CustomButton';
 import Images from '../../../../utils/Images';
+import { useFocusEffect } from '@react-navigation/native';
+import makeApiRequest from '../../../../utils/ApiService';
+import { BASE_URL, GET_REFFERAL_CODE } from '../../../../utils/api';
 
 const Rewards = () => {
     const dispatch = useDispatch();
     const { data } = useSelector((state: any) => state?.referral);
     const [isCopyBtn, setIsCopyBtn] = useState<boolean>(false);
-    const {user} = useSelector((state:any)=>state?.user);
+    const { user } = useSelector((state: any) => state?.user);
     const message = `Join Grip using referral code ${"*" + "ABC123" + "*"} and get guaranteed ₹100 cashback.\nDownload app at https://example.com`;
+    const [code, setCode] = useState('');
 
+    // console.log("=== user id ====", user?.id);
 
-    console.log("=== user id ====",user?.id);
-    
     useEffect(() => {
         const fetchReferral = async () => {
             await dispatch(getReferlist(user?.id));
@@ -33,8 +36,8 @@ const Rewards = () => {
     }, []);
 
 
-    console.log("==== data in the refferal code ====",data);
-    
+    // console.log("==== data in the refferal code ====", data);
+
 
     const handleInvite = async () => {
         // const message = 'Join Grip using referral code CN1N3N1 and get guaranteed ₹100 cashback.\nDownload app at';
@@ -58,7 +61,34 @@ const Rewards = () => {
         }
     };
 
-    console.log("==== referral ====", data);
+    useFocusEffect(useCallback(() => {
+        const fetchCode = async () => {
+            try {
+                const response: any = await makeApiRequest({
+                    baseUrl: BASE_URL,
+                    url: GET_REFFERAL_CODE,
+                    method: "POST",
+                    data: {
+                        user_id: user?.id
+                    }
+                });
+
+                if (response?.status === 'success') {
+                    setCode(response?.referral_code);
+                }
+                console.log("==== response in the refferala code ====", response);
+
+            }
+            catch (err) {
+                console.log("==== eroor ====", err);
+
+            }
+        }
+
+        fetchCode();
+    }, []));
+
+    // console.log("==== referral ====", data);
 
     return (
         <Container status="#000" isTopPadding={false} >
@@ -79,7 +109,7 @@ const Rewards = () => {
                     <CustomText text='Referral Code' size={16} weight='600' />
                     <View style={[globalStyle.row, styles.copyContainer]} >
                         <View style={styles.copyInput} >
-                            <CustomText weight='600' size={16} text={"No Available"} />
+                            <CustomText weight='600' size={16} text={code || "No Available"} />
                             {/* <CustomText weight='600' size={16} color={user?.data?.referral_code ? "#000" : "#505050"} text={user?.data?.referral_code || "No Available"} /> */}
                         </View>
                         <TouchableOpacity onPress={copyToClipboard} activeOpacity={.8} style={[globalStyle.center, styles.copyBtn, { backgroundColor: isCopyBtn ? Colors.activeRadio : "#000" }]} >

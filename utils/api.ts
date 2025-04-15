@@ -122,4 +122,17 @@ export const GET_POLICY = 'privacy-policy';
 
 // ---------------------- training api
 export const TRAINER_COURSE_DETAILS = (id: number) => `course-detail?id=${id}`;
-export const TRAINER_RETREAT_DETAILS = (id: number) => `retreat-detail?id=${id}`;
+export const TRAINER_RETREAT_DETAILS = (id: number) =>
+  `retreat-detail?id=${id}`;
+
+export const NOTIFICATION_LIST = (id: number) => {
+  return `notification-list?receiver_id=${id}&receiver_type=trainer`;
+};
+
+export const NOTIFICATION_READ_LIST = (id: number) => {
+  return `notifications-read?id=${id}`;
+};
+
+export const RETREAT_BOOKING_DETAILS =(id:number)=> `user-retreat-booking-detail?id=${id}`
+export const RETREAT_BOOKING_HISTORY =(id:number)=> `retreat-booking-history?booking_id=${id}`
+export const RETREAT_BOOING_END = 'retreat-booking-end'

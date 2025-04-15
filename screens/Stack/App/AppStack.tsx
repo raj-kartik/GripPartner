@@ -41,6 +41,10 @@ import CourseLeadDetails from '../../TopNav/CourseTopNav/CourseLead/CourseLeadDe
 import CourseFollowDetails from '../../TopNav/CourseTopNav/CourseFollowUps/CourseFollowDetails'
 import CourseSubsDetails from '../../TopNav/CourseTopNav/CourseSubs/CourseSubsDetails'
 import CreateRetreat from './AccountScreen/Retreat/CreateRetreat'
+import AddSubscription from '../../TopNav/CourseTopNav/CourseSubs/AddSubscription'
+import LeadFollowUp from '../../TopNav/CourseTopNav/CourseFollowUps/LeadFollowUp'
+import Settings from './Settings/Settings'
+import UpdateProfile from './Settings/UpDateProfile'
 
 // changes noething has made
 
@@ -73,6 +77,12 @@ const AppStack = () => {
                 <Stack.Screen name='CreateCoupons' component={CreateCoupons} />
                 <Stack.Screen name='TrainerNewCourse' component={TrainerNewCourse} />
                 <Stack.Screen name='OrderDetails' component={OrderDetails} />
+                <Stack.Screen name='LeadFollowUp' component={LeadFollowUp} />
+                <Stack.Screen name='Settings' component={Settings} />
+                <Stack.Screen name='UpdateProfile' component={UpdateProfile} />
+
+
+                <Stack.Screen name='AddSubscription' component={AddSubscription} />
 
                 {/* course top navigation */}
                 <Stack.Screen name='CourseTopNav' component={CourseTopNav} />

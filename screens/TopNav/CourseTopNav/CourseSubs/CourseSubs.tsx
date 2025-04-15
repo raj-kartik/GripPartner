@@ -1,7 +1,7 @@
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import makeApiRequest from '../../../../utils/ApiService';
 import { BASE_URL } from '../../../../utils/api';
 import Container from '../../../../components/Container';
@@ -12,6 +12,7 @@ const CourseSubs = () => {
   const [loading, setLoading] = useState(false);
   const [subs, setSubs] = useState([]);
   const { user } = useSelector((state: any) => state.user);
+  const navigation = useNavigation();
 
   useFocusEffect(
     useCallback(() => {
@@ -44,6 +45,17 @@ const CourseSubs = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const sendId = (id:number) => {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'CourseSubsDetails',
+        params: {
+          suscription_id: id,
+        },
+      }),
+    );
   };
 
   return (

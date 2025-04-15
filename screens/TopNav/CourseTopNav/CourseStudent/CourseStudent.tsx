@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,6 +9,8 @@ import CustomText from '../../../../components/Customs/CustomText';
 import commonStyle from '../../../../utils/CommonStyleComponent';
 import { moderateScale, screenHeight } from '../../../../components/Matrix/Matrix';
 import Colors from '../../../../utils/Colors';
+import Images from '../../../../utils/Images';
+import { globalStyle } from '../../../../utils/GlobalStyle';
 
 const CourseStudent = () => {
 
@@ -39,9 +41,9 @@ const CourseStudent = () => {
       })
 
 
-      console.log("==== response in the student course ====", response);
+      // console.log("==== response in the student course ====", response);
 
-      if (response.data.status === 'success') {
+      if (response?.status === 'success') {
         setStudent(response.followUp);
         setMessage(response.message);
       }
@@ -65,12 +67,17 @@ const CourseStudent = () => {
             return (
               <View style={styles.row} key={item.id}>
                 <View style={styles.row1}>
-                  {/* <Avatar
-                    size={50}
-                    avatarStyle={{backgroundColor: '#D3D3D3'}}
-                    rounded
-                    source={require('../../../img/one.jpeg')}
-                  /> */}
+                  {
+                    item?.image ? (
+                      <Image
+                        style={{ width: moderateScale(70), height: moderateScale(70), borderRadius: moderateScale(100) }}
+                        source={{ uri: item?.image }} />
+                    ) : (
+                      <View style={[globalStyle.center, { width: moderateScale(70), height: moderateScale(70), borderRadius: moderateScale(200), backgroundColor: "#f7f7f7" }]} >
+                        <Images.Logo width={moderateScale(60)} height={moderateScale(60)} />
+                      </View>
+                    )
+                  }
                   <View>
                     <CustomText
                       size={20}
@@ -107,8 +114,8 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderRadius: moderateScale(20),
     width: '99%',
-    height: screenHeight * .1,
-    padding: 10,
+    height: screenHeight * .12,
+    padding: moderateScale(10),
     alignItems: 'center',
     alignSelf: 'center',
     flexDirection: 'row',

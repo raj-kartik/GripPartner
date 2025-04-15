@@ -7,14 +7,14 @@ import {
   View,
   Pressable,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
-import {FieldArray, Formik} from 'formik';
+import { FieldArray, Formik } from 'formik';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {MultiSelect} from 'react-native-element-dropdown';
-import {useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import { MultiSelect } from 'react-native-element-dropdown';
+import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import Container from '../../../../../components/Container';
 import CustomHeader2 from '../../../../../components/Customs/Header/CustomHeader2';
 import CustomInput from '../../../../../components/Customs/CustomInput';
@@ -25,12 +25,12 @@ import {
   verticalScale,
 } from '../../../../../components/Matrix/Matrix';
 import CustomText from '../../../../../components/Customs/CustomText';
-import {globalStyle} from '../../../../../utils/GlobalStyle';
+import { globalStyle } from '../../../../../utils/GlobalStyle';
 import CustomIcon from '../../../../../components/Customs/CustomIcon';
 import CustomModal from '../../../../../components/Customs/CustomModal';
 import makeApiRequest from '../../../../../utils/ApiService';
-import {BASE_URL, POST_ADD_COURSE} from '../../../../../utils/api';
-import {CustomToast} from '../../../../../components/Customs/CustomToast';
+import { BASE_URL, POST_ADD_COURSE } from '../../../../../utils/api';
+import { CustomToast } from '../../../../../components/Customs/CustomToast';
 import DocumentPickerComponent from '../../../../../components/DocumentPicker';
 import Colors from '../../../../../utils/Colors';
 
@@ -100,12 +100,11 @@ const CourseSchema = Yup.object().shape({
   meta_description: Yup.string().min(2, 'Too Short').max(500, 'Too Long'),
 
   file: Yup.mixed()
-    // .required('File is required')
     .test(
       'fileSize',
       'File size is too large (max 5MB)',
       (value: any) => !value || (value.size && value.size <= 5 * 1024 * 1024),
-    ),
+    ).notRequired(),
 
   batch: Yup.array()
     .of(
@@ -166,14 +165,14 @@ const TrainerCreateCourse = (props: any) => {
   // const [isUpdateCourse,setIsUpdateCourse] = useState(false);
   console.log('==== existCourse in trainer new course ===', existCourse);
 
-  const {user} = useSelector((state: any) => state.user);
+  const { user } = useSelector((state: any) => state.user);
   const id = user?.id;
   const navigation = useNavigation();
 
   const traininLevel = [
-    {label: 'Basic', value: 'Basic'},
-    {label: 'Practice', value: 'Practice'},
-    {label: 'Intense', value: 'Intense'},
+    { label: 'Basic', value: 'Basic' },
+    { label: 'Practice', value: 'Practice' },
+    { label: 'Intense', value: 'Intense' },
   ];
 
   const [token, setToken] = useState('');
@@ -194,105 +193,103 @@ const TrainerCreateCourse = (props: any) => {
   }, []);
 
   const yogaStyle = [
-    {label: 'Vinyasa', value: 'Vinyasa'},
-    {label: 'Kundalini', value: 'Kundalini'},
-    {label: 'Yin', value: 'Yin'},
-    {label: 'Hatha', value: 'Hatha'},
-    {label: 'Meditation', value: 'Meditation'},
-    {label: 'Power', value: 'Power'},
-    {label: 'Aerial Yoga', value: 'Aerial Yoga'},
-    {label: 'Tai Chi/QiGong', value: 'Tai Chi/QiGong'},
-    {label: 'Restorative', value: 'Restorative'},
-    {label: 'Yoga Fusion', value: 'Yoga Fusion'},
-    {label: 'Acro Yoga', value: 'Acro Yoga'},
-    {label: 'Bhakti', value: 'Bhakti'},
-    {label: 'Chair Yoga', value: 'Chair Yoga'},
+    { label: 'Vinyasa', value: 'Vinyasa' },
+    { label: 'Kundalini', value: 'Kundalini' },
+    { label: 'Yin', value: 'Yin' },
+    { label: 'Hatha', value: 'Hatha' },
+    { label: 'Meditation', value: 'Meditation' },
+    { label: 'Power', value: 'Power' },
+    { label: 'Aerial Yoga', value: 'Aerial Yoga' },
+    { label: 'Tai Chi/QiGong', value: 'Tai Chi/QiGong' },
+    { label: 'Restorative', value: 'Restorative' },
+    { label: 'Yoga Fusion', value: 'Yoga Fusion' },
+    { label: 'Acro Yoga', value: 'Acro Yoga' },
+    { label: 'Bhakti', value: 'Bhakti' },
+    { label: 'Chair Yoga', value: 'Chair Yoga' },
   ];
 
   const bodyFocus = [
-    {label: 'Abs', value: 'Abs'},
-    {label: 'Ankle', value: 'Ankle'},
-    {label: 'Arms', value: 'Arms'},
-    {label: 'Buttock', value: 'Buttock'},
-    {label: 'Calves', value: 'Calves'},
-    {label: 'Chest', value: 'Chest'},
-    {label: 'Elbows', value: 'Elbows'},
-    {label: 'Eyes', value: 'Eyes'},
-    {label: 'Feet', value: 'Feet'},
-    {label: 'Hamstrings', value: 'Hamstrings'},
-    {label: 'Legs', value: 'Legs'},
-    {label: 'Hands', value: 'Hands'},
-    {label: 'Head', value: 'Head'},
-    {label: 'Lower Back', value: 'Lower Back'},
-    {label: 'Hips', value: 'Hips'},
-    {label: 'Core', value: 'Core'},
-    {label: 'Immune System', value: 'Immune System'},
-    {label: 'Stomach', value: 'Stomach'},
-    {label: 'IT Band', value: 'IT Band'},
-    {label: 'Back', value: 'Back'},
-    {label: 'Bone', value: 'Bone'},
-    {label: 'Knee', value: 'Knee'},
-    {label: 'Heart', value: 'Heart'},
-    {label: 'Neck', value: 'Neck'},
-    {label: 'Psoas', value: 'Psoas'},
-    {label: 'Quadriceps', value: 'Quadriceps'},
-    {label: 'Shoulders', value: 'Shoulders'},
-    {label: 'Side Body', value: 'Side Body'},
-    {label: 'Spine', value: 'Spine'},
-    {label: 'Thighs', value: 'Thighs'},
-    {label: 'Upper Back', value: 'Upper Back'},
-    {label: 'Wrists', value: 'Wrists'},
+    { label: 'Abs', value: 'Abs' },
+    { label: 'Ankle', value: 'Ankle' },
+    { label: 'Arms', value: 'Arms' },
+    { label: 'Buttock', value: 'Buttock' },
+    { label: 'Calves', value: 'Calves' },
+    { label: 'Chest', value: 'Chest' },
+    { label: 'Elbows', value: 'Elbows' },
+    { label: 'Eyes', value: 'Eyes' },
+    { label: 'Feet', value: 'Feet' },
+    { label: 'Hamstrings', value: 'Hamstrings' },
+    { label: 'Legs', value: 'Legs' },
+    { label: 'Hands', value: 'Hands' },
+    { label: 'Head', value: 'Head' },
+    { label: 'Lower Back', value: 'Lower Back' },
+    { label: 'Hips', value: 'Hips' },
+    { label: 'Core', value: 'Core' },
+    { label: 'Immune System', value: 'Immune System' },
+    { label: 'Stomach', value: 'Stomach' },
+    { label: 'IT Band', value: 'IT Band' },
+    { label: 'Back', value: 'Back' },
+    { label: 'Bone', value: 'Bone' },
+    { label: 'Knee', value: 'Knee' },
+    { label: 'Heart', value: 'Heart' },
+    { label: 'Neck', value: 'Neck' },
+    { label: 'Psoas', value: 'Psoas' },
+    { label: 'Quadriceps', value: 'Quadriceps' },
+    { label: 'Shoulders', value: 'Shoulders' },
+    { label: 'Side Body', value: 'Side Body' },
+    { label: 'Spine', value: 'Spine' },
+    { label: 'Thighs', value: 'Thighs' },
+    { label: 'Upper Back', value: 'Upper Back' },
+    { label: 'Wrists', value: 'Wrists' },
   ];
 
   const classType = [
-    {label: 'In-Person Class', value: 'In-Person Class'},
-    {label: 'Virtual Class', value: 'Virtual Class'},
+    { label: 'In-Person Class', value: 'In-Person Class' },
+    { label: 'Virtual Class', value: 'Virtual Class' },
   ];
 
   const time = [
-    {label: '01:00 AM', value: '01:00'},
-    {label: '02:00 AM', value: '02:00'},
-    {label: '03:00 AM', value: '03:00'},
-    {label: '04:00 AM', value: '04:00'},
-    {label: '05:00 AM', value: '05:00'},
-    {label: '06:00 AM', value: '06:00'},
-    {label: '07:00 AM', value: '07:00'},
-    {label: '08:00 AM', value: '08:00'},
-    {label: '09:00 AM', value: '09:00'},
-    {label: '10:00 AM', value: '10:00'},
-    {label: '11:00 AM', value: '11:00'},
-    {label: '12:00 PM', value: '12:00'},
-    {label: '01:00 PM', value: '13:00'},
-    {label: '02:00 PM', value: '14:00'},
-    {label: '03:00 PM', value: '15:00'},
-    {label: '04:00 PM', value: '16:00'},
-    {label: '05:00 PM', value: '17:00'},
-    {label: '06:00 PM', value: '18:00'},
-    {label: '07:00 PM', value: '19:00'},
-    {label: '08:00 PM', value: '20:00'},
-    {label: '09:00 PM', value: '21:00'},
-    {label: '10:00 PM', value: '22:00'},
-    {label: '11:00 PM', value: '23:00'},
-    {label: '12:00 AM', value: '00:00'},
+    { label: '01:00 AM', value: '01:00' },
+    { label: '02:00 AM', value: '02:00' },
+    { label: '03:00 AM', value: '03:00' },
+    { label: '04:00 AM', value: '04:00' },
+    { label: '05:00 AM', value: '05:00' },
+    { label: '06:00 AM', value: '06:00' },
+    { label: '07:00 AM', value: '07:00' },
+    { label: '08:00 AM', value: '08:00' },
+    { label: '09:00 AM', value: '09:00' },
+    { label: '10:00 AM', value: '10:00' },
+    { label: '11:00 AM', value: '11:00' },
+    { label: '12:00 PM', value: '12:00' },
+    { label: '01:00 PM', value: '13:00' },
+    { label: '02:00 PM', value: '14:00' },
+    { label: '03:00 PM', value: '15:00' },
+    { label: '04:00 PM', value: '16:00' },
+    { label: '05:00 PM', value: '17:00' },
+    { label: '06:00 PM', value: '18:00' },
+    { label: '07:00 PM', value: '19:00' },
+    { label: '08:00 PM', value: '20:00' },
+    { label: '09:00 PM', value: '21:00' },
+    { label: '10:00 PM', value: '22:00' },
+    { label: '11:00 PM', value: '23:00' },
+    { label: '12:00 AM', value: '00:00' },
   ];
 
   const days = [
-    {label: 'Monday', value: 'Monday'},
-    {label: 'Tuesday', value: 'Tuesday'},
-    {label: 'Wednesday', value: 'Wednesday'},
-    {label: 'Thursday', value: 'Thursday'},
-    {label: 'Friday', value: 'Friday'},
-    {label: 'Saturday', value: 'Saturday'},
-    {label: 'Sunday', value: 'Sunday'},
+    { label: 'Monday', value: 'Monday' },
+    { label: 'Tuesday', value: 'Tuesday' },
+    { label: 'Wednesday', value: 'Wednesday' },
+    { label: 'Thursday', value: 'Thursday' },
+    { label: 'Friday', value: 'Friday' },
+    { label: 'Saturday', value: 'Saturday' },
+    { label: 'Sunday', value: 'Sunday' },
   ];
 
   const handleSubmit = async (values: any) => {
-    const formdata = new FormData();
-
     const formData = new FormData();
 
     // user id
-    formData.append('user_id', id);
+    formData.append('user_id', user?.id);
     // formdata.append('user_id', id);
 
     // course title
@@ -317,32 +314,11 @@ const TrainerCreateCourse = (props: any) => {
 
     // body style
     formData.append('body_focus', values.body_focus.join(','));
-    // formdata.append('body_focus', JSON.stringify(values.body_focus));
-
-    // yoga style
     formData.append('yoga_style', values.yoga_style.join(','));
-    // formdata.append('yoga_style', JSON.stringify(values.yoga_style));
-
-    // meta title
     formData.append('meta_title', values.meta_title || '');
-    // formdata.append('meta_title', values.meta_title || '');
-
-    // meta keywords
     formData.append('meta_keywords', values.meta_keywords || '');
-    // formdata.append('meta_keywords', values.meta_keywords || '');
 
-    // meta description
     formData.append('meta_description', values.meta_description || '');
-    // formdata.append('meta_description', values.meta_description || '');
-
-    // Handling the file (image) correctly
-    // formData.append("select_image", {
-    //     uri: values.file.uri,
-    //     type: values.file.type,
-    //     name: values.file.name
-    // });
-
-    // Loop through batch slots
     values.batch.forEach((slot: any, index: any) => {
       formData.append(`slot[${index}][start_time]`, slot.startTime);
       formData.append(`slot[${index}][end_time]`, slot.endTime);
@@ -358,34 +334,29 @@ const TrainerCreateCourse = (props: any) => {
     // Handle File (Check file uri, type, and name properly)
     if (values.file) {
       formData.append('select_image', {
-        uri: values.file.uri.startsWith('file://')
-          ? values.file.uri
-          : `file://${values.file.uri}`,
+        // uri: values.file.uri.startsWith('file://')
+        //   ? values.file.uri
+        //   : `${values.file.uri}`,
+        uri: values?.file?.uri,
         type: values.file.type || 'application/octet-stream',
         name: values.file.name || 'file',
       });
     }
-
-    // Handle slot array properly
-    // values.batch.forEach((slot: any, index: number) => {
-    //     formdata.append(`slot[${index}][start_time]`, slot.startTime);
-    //     formdata.append(`slot[${index}][end_time]`, slot.endTime);
-    //     formdata.append(`slot[${index}][batch_strength]`, slot.batch_strength.toString());
-    //     formdata.append(`slot[${index}][availability]`, slot.current_availability.toString());
-    //     formdata.append(`slot[${index}][slot_days]`, JSON.stringify(slot.days)); // Serialize array
-    // });
-
     console.log('===== form data result =====', formData);
     // return;
 
     try {
-      const response = await axios.post(BASE_URL + POST_ADD_COURSE, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
 
-      if (response?.data?.success) {
+      const response = await axios.post(`https://fitwithgrip.com/trainer/${POST_ADD_COURSE}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      console.log("==== response in the create course ====", response);
+
+
+      if (response?.status === 200) {
         CustomToast({
           text1: 'Course added successfully!',
           type: 'success',
@@ -393,8 +364,6 @@ const TrainerCreateCourse = (props: any) => {
         });
         navigation.goBack();
       }
-
-      console.log('Response:', response.data);
     } catch (error: any) {
       if (error.response) {
         console.error('Server Error Response:', error.response.data);
@@ -424,26 +393,26 @@ const TrainerCreateCourse = (props: any) => {
           training_level: Array.isArray(existCourse?.training_level)
             ? existCourse.training_level
             : existCourse?.training_level
-            ? existCourse.training_level.split(',')
-            : [],
+              ? existCourse.training_level.split(',')
+              : [],
 
           class_type: Array.isArray(existCourse?.class_type)
             ? existCourse.class_type
             : existCourse?.class_type
-            ? existCourse.class_type.split(',')
-            : [],
+              ? existCourse.class_type.split(',')
+              : [],
 
           body_focus: Array.isArray(existCourse?.body_focus)
             ? existCourse.body_focus
             : existCourse?.body_focus
-            ? existCourse.body_focus.split(',')
-            : [],
+              ? existCourse.body_focus.split(',')
+              : [],
 
           yoga_style: Array.isArray(existCourse?.yoga_style)
             ? existCourse.yoga_style
             : existCourse?.yoga_style
-            ? existCourse.yoga_style.split(',')
-            : [],
+              ? existCourse.yoga_style.split(',')
+              : [],
 
           meta_title: existCourse ? existCourse?.meta_title : '',
           meta_keywords: existCourse ? existCourse?.meta_keywords : '',
@@ -460,6 +429,7 @@ const TrainerCreateCourse = (props: any) => {
           ],
         }}
         onSubmit={(values: any) => {
+
           handleSubmit(values);
         }}
         validationSchema={CourseSchema}>
@@ -488,18 +458,18 @@ const TrainerCreateCourse = (props: any) => {
           // let {training_level} = values;
 
           return (
-            <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
-              <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
+            <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+              <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
                 {/* title */}
                 <CustomInput
                   text="Title"
                   value={values.title}
                   handleChangeText={handleChange('title')}
                   placeholder="Enter Title"
-                  customStyle={{width: '98%', alignSelf: 'center'}}
+                  customStyle={{ width: '98%', alignSelf: 'center' }}
                 />
                 {errors.title && touched.title && (
-                  <Text style={{color: 'red'}}>{errors.title}</Text>
+                  <Text style={{ color: 'red' }}>{errors.title}</Text>
                 )}
 
                 {/* description */}
@@ -508,12 +478,12 @@ const TrainerCreateCourse = (props: any) => {
                   value={values.description}
                   handleChangeText={handleChange('description')}
                   placeholder="Enter Description"
-                  customStyle={{width: '98%', alignSelf: 'center'}}
+                  customStyle={{ width: '98%', alignSelf: 'center' }}
                   multiline={true}
                   numberOfLines={6}
                 />
                 {errors.description && touched.description && (
-                  <Text style={{color: 'red'}}>{errors.description}</Text>
+                  <Text style={{ color: 'red' }}>{errors.description}</Text>
                 )}
 
                 <FieldArray
@@ -523,7 +493,7 @@ const TrainerCreateCourse = (props: any) => {
                       <View
                         style={[
                           globalStyle.betweenCenter,
-                          {marginTop: moderateScale(15)},
+                          { marginTop: moderateScale(15) },
                         ]}>
                         <CustomText text="Batches" weight="500" />
 
@@ -577,7 +547,7 @@ const TrainerCreateCourse = (props: any) => {
                             <View
                               style={[
                                 globalStyle.betweenCenter,
-                                {marginTop: moderateScale(10)},
+                                { marginTop: moderateScale(10) },
                               ]}>
                               <View
                                 style={{
@@ -593,16 +563,16 @@ const TrainerCreateCourse = (props: any) => {
                                   onPress={() => {
                                     handleTimeType('start', index);
                                   }}
-                                  customStyle={{alignSelf: 'center'}}
+                                  customStyle={{ alignSelf: 'center' }}
                                 />
                                 {errors?.batch && touched?.batch && (
-                                  <Text style={{color: 'red'}}>
+                                  <Text style={{ color: 'red' }}>
                                     {errors?.batch[index]?.startTime}
                                   </Text>
                                 )}
                               </View>
                               <View
-                                style={{flex: 1, marginLeft: moderateScale(5)}}>
+                                style={{ flex: 1, marginLeft: moderateScale(5) }}>
                                 <CustomButton
                                   title={
                                     values?.batch[index]?.endTime?.length > 0
@@ -613,13 +583,13 @@ const TrainerCreateCourse = (props: any) => {
                                   onPress={() => {
                                     handleTimeType('end', index);
                                   }}
-                                  customStyle={{alignSelf: 'center'}}
+                                  customStyle={{ alignSelf: 'center' }}
                                 />
                                 {errors?.batch &&
                                   errors?.batch[index]?.endTime &&
                                   touched?.batch &&
                                   touched?.batch[index]?.endTime && (
-                                    <Text style={{color: 'red', fontSize: 12}}>
+                                    <Text style={{ color: 'red', fontSize: 12 }}>
                                       {errors?.batch[index]?.endTime}
                                     </Text>
                                   )}
@@ -634,7 +604,7 @@ const TrainerCreateCourse = (props: any) => {
                               keyboardType="numeric"
                             />
                             {errors?.batch && touched?.batch && (
-                              <Text style={{color: 'red'}}>
+                              <Text style={{ color: 'red' }}>
                                 {errors?.batch[index]?.batch_strength}
                               </Text>
                             )}
@@ -647,7 +617,7 @@ const TrainerCreateCourse = (props: any) => {
                               keyboardType="numeric"
                             />
                             {errors?.batch && touched?.batch && (
-                              <Text style={{color: 'red'}}>
+                              <Text style={{ color: 'red' }}>
                                 {errors?.batch[index]?.current_availability}
                               </Text>
                             )}
@@ -655,11 +625,11 @@ const TrainerCreateCourse = (props: any) => {
                             <CustomText
                               text="Number of Days"
                               weight="500"
-                              customStyle={{marginTop: moderateScale(10)}}
+                              customStyle={{ marginTop: moderateScale(10) }}
                             />
                             <MultiSelect
                               style={styles.dropdown}
-                              containerStyle={{backgroundColor: '#fff'}}
+                              containerStyle={{ backgroundColor: '#fff' }}
                               placeholderStyle={styles.placeholderStyle}
                               selectedTextStyle={styles.selectedTextStyle}
                               inputSearchStyle={styles.inputSearchStyle}
@@ -706,7 +676,7 @@ const TrainerCreateCourse = (props: any) => {
                                   text="Select Time"
                                   size={18}
                                   weight="700"
-                                  customStyle={{textAlign: 'center'}}
+                                  customStyle={{ textAlign: 'center' }}
                                 />
 
                                 <View
@@ -781,7 +751,7 @@ const TrainerCreateCourse = (props: any) => {
                   )}
                 />
                 {errors.batch && touched.batch && (
-                  <Text style={{color: 'red'}}>*required</Text>
+                  <Text style={{ color: 'red' }}>*required</Text>
                 )}
 
                 {/* fees */}
@@ -791,17 +761,17 @@ const TrainerCreateCourse = (props: any) => {
                   handleChangeText={handleChange('fees')}
                   placeholder="Enter Fees"
                   keyboardType="numeric"
-                  customStyle={{width: '98%', alignSelf: 'center'}}
+                  customStyle={{ width: '98%', alignSelf: 'center' }}
                 />
                 {errors.fees && touched.fees && (
-                  <Text style={{color: 'red'}}>{errors.fees}</Text>
+                  <Text style={{ color: 'red' }}>{errors.fees}</Text>
                 )}
 
                 {/* training_level */}
                 <CustomText
                   text="Training Level"
                   weight="500"
-                  customStyle={{marginTop: moderateScale(10)}}
+                  customStyle={{ marginTop: moderateScale(10) }}
                 />
                 <MultiSelect
                   style={styles.dropdown}
@@ -833,7 +803,7 @@ const TrainerCreateCourse = (props: any) => {
                 <CustomText
                   text="Class Type"
                   weight="500"
-                  customStyle={{marginTop: moderateScale(10)}}
+                  customStyle={{ marginTop: moderateScale(10) }}
                 />
                 <MultiSelect
                   selectedStyle={styles.selectedStyle}
@@ -864,7 +834,7 @@ const TrainerCreateCourse = (props: any) => {
                 <CustomText
                   text="Body Focus"
                   weight="500"
-                  customStyle={{marginTop: moderateScale(10)}}
+                  customStyle={{ marginTop: moderateScale(10) }}
                 />
                 <MultiSelect
                   style={styles.dropdown}
@@ -895,7 +865,7 @@ const TrainerCreateCourse = (props: any) => {
                 <CustomText
                   text="Yoga Style"
                   weight="500"
-                  customStyle={{marginTop: moderateScale(10)}}
+                  customStyle={{ marginTop: moderateScale(10) }}
                 />
                 <MultiSelect
                   selectedStyle={styles.selectedStyle}
@@ -924,13 +894,13 @@ const TrainerCreateCourse = (props: any) => {
                 />
 
                 {/* choose_file */}
-                <View style={{marginTop: moderateScale(10)}}>
+                <View style={{ marginTop: moderateScale(10) }}>
                   <CustomText text="Choose File" weight="500" size={14} />
                   <DocumentPickerComponent
-                    customStyle={{marginTop: moderateScale(5)}}
+                    customStyle={{ marginTop: moderateScale(5) }}
                     onPickDocument={documents => {
-                      console.log('documents: ', documents);
-                      setFieldValue('file', documents);
+                      console.log('documents: ', documents[0]);
+                      setFieldValue('file', documents[0]);
                     }}
                   />
                   <CustomText
@@ -940,7 +910,7 @@ const TrainerCreateCourse = (props: any) => {
                     text={values?.file?.name ? 'Uploaded' : ''}
                   />
                   {errors.file && touched.file && (
-                    <Text style={{color: 'red'}}>{errors.file}</Text>
+                    <Text style={{ color: 'red' }}>{errors.file}</Text>
                   )}
                 </View>
 
@@ -950,10 +920,10 @@ const TrainerCreateCourse = (props: any) => {
                   value={values.meta_title}
                   handleChangeText={handleChange('meta_title')}
                   placeholder="Enter Meta Title"
-                  customStyle={{width: '98%', alignSelf: 'center'}}
+                  customStyle={{ width: '98%', alignSelf: 'center' }}
                 />
                 {errors.meta_title && touched.meta_title && (
-                  <Text style={{color: 'red'}}>{errors.meta_title}</Text>
+                  <Text style={{ color: 'red' }}>{errors.meta_title}</Text>
                 )}
 
                 {/* meta_keywords */}
@@ -962,10 +932,10 @@ const TrainerCreateCourse = (props: any) => {
                   value={values.meta_keywords}
                   handleChangeText={handleChange('meta_keywords')}
                   placeholder="Enter Meta Keywords"
-                  customStyle={{width: '98%', alignSelf: 'center'}}
+                  customStyle={{ width: '98%', alignSelf: 'center' }}
                 />
                 {errors.meta_keywords && touched.meta_keywords && (
-                  <Text style={{color: 'red'}}>{errors.meta_keywords}</Text>
+                  <Text style={{ color: 'red' }}>{errors.meta_keywords}</Text>
                 )}
 
                 {/* meta_description */}
@@ -974,17 +944,17 @@ const TrainerCreateCourse = (props: any) => {
                   value={values.meta_description}
                   handleChangeText={handleChange('meta_description')}
                   placeholder="Enter Meta Description"
-                  customStyle={{width: '98%', alignSelf: 'center'}}
+                  customStyle={{ width: '98%', alignSelf: 'center' }}
                   multiline={true}
                   numberOfLines={10}
                 />
                 {errors.meta_description && touched.meta_description && (
-                  <Text style={{color: 'red'}}>{errors.meta_description}</Text>
+                  <Text style={{ color: 'red' }}>{errors.meta_description}</Text>
                 )}
 
                 {/* submit */}
                 <CustomButton
-                  customStyle={{marginVertical: moderateScale(10)}}
+                  customStyle={{ marginVertical: moderateScale(10) }}
                   title={existCourse?.id ? 'Update' : 'Submit'}
                   onPress={handleSubmit}
                 />

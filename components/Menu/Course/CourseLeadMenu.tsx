@@ -27,8 +27,6 @@ import Colors from '../../../utils/Colors';
 const CourseLeadMenu = ({ courseId, CloseFun, OpenFun, item }: any) => {
     const navigation = useNavigation();
     const [isModalVisible, setModalVisible] = useState(false);
-    const colorIcon = item.status === 'Open' ? 'green' : 'gray';
-    const colorIcon1 = item.status === 'Close' ? 'red' : 'gray';
     const courseMenuOptions = [
         {
             id: 1,
@@ -62,9 +60,9 @@ const CourseLeadMenu = ({ courseId, CloseFun, OpenFun, item }: any) => {
     return (
         <View style={[globalStyle.between, styles.container]}>
             <View style={[globalStyle.flex]}>
-                <Pressable onPress={() => navigation.goBack()}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                     <CustomIcon type="AntDesign" name="arrowleft" size={25} />
-                </Pressable>
+                </TouchableOpacity>
                 <CustomText
                     customStyle={{ marginLeft: moderateScale(5) }}
                     text="Lead Details"
@@ -96,15 +94,7 @@ const CourseLeadMenu = ({ courseId, CloseFun, OpenFun, item }: any) => {
                             <MenuOption
                                 key={item.id}
                                 onSelect={() => {
-                                    navigation.dispatch(
-                                        CommonActions.navigate({
-                                            name: 'CourseTopNav',
-                                            params: {
-                                                courseid: courseId,
-                                                screen: item?.route,
-                                            },
-                                        }),
-                                    );
+                                    item?.handleFunction();
                                 }}
                                 customStyles={{
                                     optionWrapper: styles.optionWrapper,
@@ -120,27 +110,25 @@ const CourseLeadMenu = ({ courseId, CloseFun, OpenFun, item }: any) => {
                             onDismiss={() => {
                                 setModalVisible(false);
                             }}>
-                            <View style={styles.modalContainer}>
-                                <View style={styles.rowIcon}>
-                                    <Text style={styles.menuText1}>Change Lead Status</Text>
-                                    <Pressable style={styles.rowIcon1} onPress={() => OpenFun()}>
-                                        <CustomIcon
-                                            type="AntDesign"
-                                            color={colorIcon}
-                                            name="checkcicleo"
-                                        />
-                                        <Text style={styles.menuText}>Open</Text>
-                                    </Pressable>
+                            <View style={{ width: "30%", height: moderateScale(3), borderRadius: moderateScale(30), marginVertical: moderateScale(5), backgroundColor: Colors.gray, alignSelf: 'center' }} />
 
-                                    <Pressable style={styles.rowIcon1} onPress={() => CloseFun()}>
-                                        <CustomIcon
-                                            color={colorIcon1}
-                                            type="AntDesign"
-                                            name="close"
-                                        />
-                                        <Text style={styles.menuText}>Close</Text>
-                                    </Pressable>
-                                </View>
+                            <CustomText text='Change Lead Status' weight='600' size={16} customStyle={{ textAlign: "center" }} />
+                            <View style={{ marginTop: moderateScale(15) }}>
+                                <TouchableOpacity style={styles.rowIcon1} onPress={() => {
+                                    setModalVisible(false);
+                                    OpenFun()
+                                }}>
+                                    <CustomIcon type='Feather' name='check' color={Colors.activeRadio} />
+                                    <CustomText text='Open' />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={styles.rowIcon1} onPress={() => {
+                                    setModalVisible(false);
+                                    CloseFun()
+                                }}>
+                                    <CustomIcon type='Feather' name='x' color={Colors.red} />
+                                    <CustomText text='Close' />
+                                </TouchableOpacity>
                             </View>
                         </CustomModal>
                     </MenuOptions>

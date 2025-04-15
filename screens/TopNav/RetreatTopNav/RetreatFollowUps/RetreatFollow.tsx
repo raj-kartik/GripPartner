@@ -55,7 +55,7 @@ const RetreatFollow: FC<Props> = ({ navigation, route }: any): JSX.Element => {
     console.log(item);
     navigation.dispatch(
       CommonActions.navigate({
-        name: 'ReatreatFollowDetail',
+        name: 'RetreatFollowUpsDetail',
         params: {
           followid: item.lead_id,
         },
