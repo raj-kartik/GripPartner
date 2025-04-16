@@ -43,7 +43,10 @@ const ShopDrawer = () => {
     },
   ]
   return (
-    <Navigator initialRouteName='ECom' screenOptions={{
+    <Navigator 
+      initialRouteName='ECom' 
+      drawerContent={props => <DynamicShopProduct {...props} />}
+      screenOptions={{
       headerShown: false,
       gestureEnabled: true,
       swipeEdgeWidth: moderateScale(50),

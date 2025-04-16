@@ -21,6 +21,8 @@ import { BASE_URL, GOOGLE_LOCATION_KEY } from '../../../../../utils/api'
 import makeApiRequest from '../../../../../utils/ApiService'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
+import { CustomToast } from '../../../../../components/Customs/CustomToast'
+import { useNavigation } from '@react-navigation/native'
 
 const retreatSchema = yup.object().shape({
     title: yup.string().min(3, '*too short').max(50, '*too long').required('*required'),
@@ -59,12 +61,16 @@ const retreatSchema = yup.object().shape({
 
 const CreateRetreat = () => {
     const { user } = useSelector((state: any) => state?.user);
+    const [loading, setLoading] = useState(false)
+    const navigation = useNavigation();
     const [isCalendar, setIsCalendar] = useState({
         start: false,
         end: false
     });
 
     const [documents, setDocuments] = useState<any>([]);
+    // console.log("=== document ===",documents);
+
 
     const handleDocumentsPicked = (docs: any) => {
         console.log('Picked documents:', docs[0]);
@@ -107,10 +113,11 @@ const CreateRetreat = () => {
                     }}
                     validationSchema={retreatSchema}
                     onSubmit={async (values) => {
+                        setLoading(true)
                         const formdata = new FormData;
-                        formdata.append('user_id', user?.id);
+                        formdata.append('user_id', user?.id.toString());
                         formdata.append('group_size', values?.groupSize);
-                        formdata.append('status', 1);
+                        formdata.append('status', '1');
                         formdata.append('No_of_nights', values?.numOfNights);
                         formdata.append('No_of_days', values?.numOfDays);
                         formdata.append('retreat_title', values?.title);
@@ -130,20 +137,37 @@ const CreateRetreat = () => {
                             });
                         }
 
+                        console.log("==== formdata ====", formdata);
+
                         try {
-                            // const response = await makeApiRequest({
-                            //     baseUrl: BASE_URL,
-                            //     url: "create-retreat",
-                            //     method: "POST",
-                            //     data: formdata
-                            // });
+                            const response: any = await axios.post('https://fitwithgrip.com/trainer/user-add-retreat', formdata, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data',
+                                },
+                            })
 
-                            const response: any = await axios.post(`${BASE_URL}user-add-retreat`, formdata)
-
+                            if (response?.data?.status === 'success') {
+                                CustomToast({
+                                    type: "success",
+                                    text1: "Retreat Created Successfully",
+                                    text2: "You have check your stats on the dashboard"
+                                })
+                                navigation.goBack();
+                            }
+                            else {
+                                CustomToast({
+                                    type: "error",
+                                    text1: response?.data?.errors[0],
+                                    text2: "Failed to Create Retreat"
+                                })
+                            }
                             console.log("===== response in the create retreat =====", response);
                         }
                         catch (err: any) {
                             console.error("Error in the create retreat:", err);
+                        }
+                        finally {
+                            setLoading(false)
                         }
 
                     }}
@@ -222,7 +246,28 @@ const CreateRetreat = () => {
                                             fetchDetails={true}
                                             onFail={(error) => console.log('Google API Error:', error)}
                                         /> */}
-                                        <CustomInput text="Accomdation Hotel" handleChangeText={handleChange('hotel')} />
+                                        <CustomInput text="Accommodation Hotel" handleChangeText={handleChange('hotel')} />
+                                        {errors?.hotel && touched?.hotel && (
+                                            <CustomText
+                                                customStyle={styles.error}
+                                                size={12}
+                                                text={errors?.hotel}
+                                                color="red"
+                                            />
+                                        )}
+
+                                    </View>
+
+                                    <View>
+                                        <CustomInput text='Location' values={values?.location} handleChangeText={handleChange('location')} />
+                                        {errors?.location && touched?.location && (
+                                            <CustomText
+                                                customStyle={styles.error}
+                                                size={12}
+                                                text={errors?.location}
+                                                color="red"
+                                            />
+                                        )}
                                     </View>
 
                                     <View>
@@ -484,10 +529,15 @@ const CreateRetreat = () => {
                                             customStyle={{ marginVertical: 20 }}
                                             instruction="Accepted formats: JPEG, PNG, PDF. Max size 2MB"
                                         />
+                                        {
+                                            documents && <View>
+                                                <CustomText text={`${documents?.name} uploaded`} weight='500' />
+                                            </View>
+                                        }
                                     </View>
                                 </ScrollView>
-                                <View style={{ marginBottom: moderateScale(10) }} >
-                                    <CustomButton title='Save' onPress={handleSubmit} />
+                                <View style={{ marginBottom: moderateScale(10), paddingTop: moderateScale(5) }} >
+                                    <CustomButton title='Save' disabled={loading} onPress={handleSubmit} />
                                 </View>
                             </View>
                         )

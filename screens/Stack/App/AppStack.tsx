@@ -45,6 +45,7 @@ import AddSubscription from '../../TopNav/CourseTopNav/CourseSubs/AddSubscriptio
 import LeadFollowUp from '../../TopNav/CourseTopNav/CourseFollowUps/LeadFollowUp'
 import Settings from './Settings/Settings'
 import UpdateProfile from './Settings/UpDateProfile'
+import { ProductList } from '../../Drawer/ShopDrawer/ProductList'
 
 // changes noething has made
 
@@ -83,6 +84,7 @@ const AppStack = () => {
 
 
                 <Stack.Screen name='AddSubscription' component={AddSubscription} />
+                <Stack.Screen name='ProductList' component={ProductList} />
 
                 {/* course top navigation */}
                 <Stack.Screen name='CourseTopNav' component={CourseTopNav} />
