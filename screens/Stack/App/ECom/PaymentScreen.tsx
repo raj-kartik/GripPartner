@@ -14,6 +14,7 @@ import {
     View,
     TouchableOpacity,
     ActivityIndicator,
+    Pressable,
 } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import RazorpayCheckout from 'react-native-razorpay';
@@ -34,6 +35,7 @@ import CustomText from '../../../../components/Customs/CustomText';
 import { globalStyle } from '../../../../utils/GlobalStyle';
 import Images from '../../../../utils/Images';
 import Colors from '../../../../utils/Colors';
+import CustomIcon from '../../../../components/Customs/CustomIcon';
 interface Props {
     route: any;
 }
@@ -46,6 +48,9 @@ const PaymentScreen: FC<Props> = ({ route }) => {
     const profile = user;
     const [loading, setLoading] = useState<boolean>(false);
 
+    const { data }: any = useSelector((state: any) => state?.wallet);
+    const [isWallet, setIsWallet] = useState(false);
+
     // console.log('=== user ===', amount);
 
     const generateOrderid = async () => {
@@ -55,7 +60,7 @@ const PaymentScreen: FC<Props> = ({ route }) => {
                 method: 'POST',
                 baseUrl: DEFAULT_URL,
                 data: {
-                    amount,
+                    amount: isWallet && amount - data?.wallet_balance > 0 ? amount - data?.wallet_balance : amount - data?.wallet_balance <= 0 ? 0 : amount,
                 },
             });
 
@@ -135,6 +140,7 @@ const PaymentScreen: FC<Props> = ({ route }) => {
                     key: RAZORPAY_SECRET_KEY,
                     order_id: orderGenerateId,
                     name: 'GRIP',
+                    amount: isWallet && amount - data?.wallet_balance > 0 ? amount - data?.wallet_balance : amount - data?.wallet_balance <= 0 ? 0 : amount,
                     prefill: {
                         email: profile?.email,
                         contact: profile?.phone_number,
@@ -187,7 +193,7 @@ const PaymentScreen: FC<Props> = ({ route }) => {
                             size={16}
                             weight="600"
                         />
-                        <CustomText text={`₹${amount}`} size={20} weight="600" />
+                        <CustomText text={`₹${isWallet && amount - data?.wallet_balance > 0 ? amount - data?.wallet_balance : amount - data?.wallet_balance <= 0 ? 0 : amount}`} size={20} weight="600" />
                     </View>
 
                     <View style={{ flex: 0.9 }}>
@@ -246,7 +252,61 @@ const PaymentScreen: FC<Props> = ({ route }) => {
                         ))}
                     </View>
 
-                    <View style={{ flex: 0.1 }}>
+                    <View style={{ flex: 0.2 }}>
+                        <Pressable
+                            onPress={() => {
+                                // walletRedeem();
+                                if (data?.wallet_balance) {
+                                    setIsWallet(!isWallet);
+                                }
+                                else {
+                                    CustomToast({
+                                        type: 'error',
+                                        text1: 'Insufficient Wallet Balance',
+                                        text2: 'Please add money to your wallet to proceed with this order.',
+                                    })
+                                }
+                            }}
+                            style={[
+                                globalStyle.betweenCenter,
+                                {
+                                    marginBottom: moderateScale(10),
+                                    borderWidth: 1,
+                                    borderColor: '#909090',
+                                    padding: moderateScale(5),
+                                    borderRadius: moderateScale(5),
+                                    paddingVertical: moderateScale(8),
+                                    backgroundColor: '#f7f7f7',
+                                },
+                            ]}>
+                            <View style={[globalStyle.row]}>
+                                <CustomIcon
+                                    type="Entypo"
+                                    name="wallet"
+                                    color={Colors.orange}
+                                    size={26}
+                                />
+                                <CustomText
+                                    text={`Wallet ₹${data?.wallet_balance || 0}`}
+                                    customStyle={{ marginLeft: moderateScale(5) }}
+                                    size={19}
+                                    weight="600"
+                                />
+                            </View>
+                            <View
+                                style={[
+                                    globalStyle.center,
+                                    {
+                                        paddingHorizontal: moderateScale(3),
+                                        borderWidth: 2,
+                                        borderColor: Colors.orange,
+                                        width: moderateScale(25),
+                                        height: moderateScale(25),
+                                    },
+                                ]}>
+                                {isWallet && <CustomIcon type="Octicons" name="check" size={20} />}
+                            </View>
+                        </Pressable>
                         <CustomButton
                             title="Place Order"
                             onPress={() => {
@@ -272,7 +332,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     text: {
-        width: screenWidth*.9,
+        width: screenWidth * .9,
         color: 'black',
         fontSize: 18,
         fontWeight: 'bold',
@@ -280,22 +340,22 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     locationText: {
-        width: screenWidth*.9,
+        width: screenWidth * .9,
         fontFamily: 'Roboto-Bold',
         fontSize: 14,
         textAlign: 'justify',
         alignSelf: 'center',
     },
     location: {
-        width: screenWidth*.6,
+        width: screenWidth * .6,
 
         fontFamily: 'Roboto-Medium',
         fontSize: 14,
     },
     changeBtn: {
         backgroundColor: 'white',
-        width: screenWidth*.25,
-        height: screenHeight*.05,
+        width: screenWidth * .25,
+        height: screenHeight * .05,
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'justify',
@@ -306,15 +366,15 @@ const styles = StyleSheet.create({
         opacity: 55,
     },
     changeBtnText: {
-        width: screenWidth*.7,
+        width: screenWidth * .7,
 
         fontFamily: 'Roboto-Regular',
         fontSize: 14,
     },
 
     cart: {
-        width: screenWidth*.9,
-        height: screenHeight*.08,
+        width: screenWidth * .9,
+        height: screenHeight * .08,
         backgroundColor: 'white',
         borderRadius: 10,
         justifyContent: 'space-between',
@@ -326,8 +386,8 @@ const styles = StyleSheet.create({
     },
 
     btn: {
-        width: screenWidth*.9,
-        height: screenHeight*.6,
+        width: screenWidth * .9,
+        height: screenHeight * .6,
         backgroundColor: 'black',
         alignItems: 'center',
         justifyContent: 'center',

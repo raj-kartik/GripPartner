@@ -1,22 +1,18 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-
+import { StyleSheet, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import LoginContainer from './LoginContainer'
-import OtpVerification from './OtpVerification'
 import axios from 'axios'
-import Container from '../../../../components/Container'
 import { BASE_URL, LOGIN_VIDEO, POST_LOGIN_OTP_REQUEST } from '../../../../utils/api'
 import { CustomToast } from '../../../../components/Customs/CustomToast'
-import CustomButton from '../../../../components/Customs/CustomButton'
-import CustomInput from '../../../../components/Customs/CustomInput'
-import CustomText from '../../../../components/Customs/CustomText'
-import { globalStyle } from '../../../../utils/GlobalStyle'
-import { moderateScale, screenHeight, screenWidth } from '../../../../components/Matrix/Matrix'
+import { screenHeight, screenWidth } from '../../../../components/Matrix/Matrix'
 import makeApiRequest from '../../../../utils/ApiService'
-import Images from '../../../../utils/Images'
-import VideoPlayer, { type VideoPlayerRef } from 'react-native-video-player';
 import Video from 'react-native-video';
+import {
+  getHash,
+  startOtpListener,
+  useOtpVerify,
+} from 'react-native-otp-verify';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -24,8 +20,13 @@ const Login = () => {
   const [isSent, setIsSent] = useState(false);
   const [mobile, setMobile] = useState<string>('');
   const [isEdit, setIsEdit] = useState(false);
+  const [hash, setHash] = useState<string>('');
 
   const [videoUrl, setVideoUrl] = useState<string>('');
+
+  console.log("--- video url ----", videoUrl);
+
+
 
 
   useEffect(() => {
@@ -36,18 +37,22 @@ const Login = () => {
           url: LOGIN_VIDEO,
           baseUrl: BASE_URL
         });
-
         if (response?.status === "success") {
-          console.log("response in the video of login:", response);
           setVideoUrl(response?.video_url);
         }
       }
       catch (er) {
         console.error("Error in the login video :", er);
-
       }
     }
 
+    const fetchGetHash = async () => {
+      getHash().then((hash: any) => {
+        setHash(hash[0]);
+      }).catch(console.log);
+    }
+
+    fetchGetHash();
     fetchVideo();
   }, []);
 
@@ -61,12 +66,13 @@ const Login = () => {
       return;
     }
 
-    // console.log("== mobile number ==", mobile);
-
     try {
       const response = await axios.post(`${BASE_URL}${POST_LOGIN_OTP_REQUEST}`, {
         phone_no: mobile,
+        hash: hash
       });
+
+      console.log("==== response in the login =====", response);
 
       if (response.status === 200 && response.data.success) {
         CustomToast({
@@ -96,19 +102,19 @@ const Login = () => {
   };
 
   return (
-    <View style={{flex:1}} >
-        {
-          videoUrl && <Video
-            source={{ uri: videoUrl }} // or require('./assets/video.mp4')
-            style={styles.video}
-            resizeMode="cover"
-            repeat
-            muted
-            playWhenInactive
-            playInBackground
-            ignoreSilentSwitch="obey"
-          />
-        }
+    <View style={{ flex: 1 }} >
+      {
+        videoUrl && <Video
+          source={{ uri: videoUrl }} // or require('./assets/video.mp4')
+          style={styles.video}
+          resizeMode="cover"
+          repeat
+          muted
+          playWhenInactive
+          playInBackground
+          ignoreSilentSwitch="obey"
+        />
+      }
       <LoginContainer handleLogin={handleLogin} mobile={mobile} setMobile={setMobile} setIsSent={setIsSent} isSent={isSent} />
     </View>
   )
@@ -117,11 +123,12 @@ const Login = () => {
 export default Login
 
 const styles = StyleSheet.create({
-  video:{
-    position:"absolute",
-    top:0,
-    bottom:0,
-    height:screenHeight,
-    width:screenWidth,
+  video: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    height: screenHeight,
+    width: screenWidth,
+    zIndex: 0
   }
 })

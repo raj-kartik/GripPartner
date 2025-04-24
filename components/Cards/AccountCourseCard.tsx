@@ -16,6 +16,10 @@ const AccountCourseCard = ({
     onPress,
     isHome = false,
 }: any) => {
+
+
+    // console.log("---- item in the retreat follow details -----",item);
+
     const navigation = useNavigation();
     const ListDetailFun = (item: any) => {
         navigation.dispatch(
@@ -73,7 +77,7 @@ const AccountCourseCard = ({
                     />
                 </View>
             </View>
-            <View style={{ flex: 0.35 }}>
+            <View style={{ flex: 0.5 }}>
                 {item?.status && (
                     <View style={[globalStyle.row, { marginBottom: moderateScale(5) }]}>
                         <CustomIcon
@@ -83,7 +87,13 @@ const AccountCourseCard = ({
                         />
                         <CustomText
                             customStyle={{ marginLeft: moderateScale(3) }}
-                            text={item?.status}
+                            text={
+                                item?.status === "No comments available"
+                                    ? "No Comment"
+                                    : item?.status.length > 10
+                                        ? item?.status.slice(0, 10) + "..."
+                                        : item?.status
+                            }
                             color={item?.status === 'Subscribed' ? Colors.success : '#000'}
                             weight="500"
                         />

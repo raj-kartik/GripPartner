@@ -23,6 +23,12 @@ import {
   ContributionGraph,
   StackedBarChart,
 } from 'react-native-chart-kit';
+import Images from '../../utils/Images';
+import { globalStyle } from '../../utils/GlobalStyle';
+import CustomText from '../../components/Customs/CustomText';
+import Colors from '../../utils/Colors';
+import IsKycCard from '../../components/Cards/IsKycCard';
+import { getWalletBalance } from '../../redux/Slice/WalletSlice';
 
 const getCurrentYearMonth = () => {
   const date = new Date();
@@ -48,7 +54,9 @@ const Home = ({ navigation }: any) => {
   const [barTypeContent, setbarTypeContent] = useState('Clicks');
   const { user } = useSelector((state: any) => state?.user);
 
-  // console.log("==== user in the home screen ===",user);
+
+  // console.log("---- user ----",user);
+
 
   useEffect(() => {
     CourseGraph();
@@ -60,6 +68,7 @@ const Home = ({ navigation }: any) => {
         await dispatch(getCourse(user?.id));
         await dispatch(getRetreat(user?.id));
         await dispatch(fetchLocation({}));
+        await dispatch(getWalletBalance(user?.id));
         await BannerList();
       }
 
@@ -168,7 +177,7 @@ const Home = ({ navigation }: any) => {
   };
 
 
-  // console.log("==== retreat in the home screen ====", retreat);
+  // console.log("==== user id ====", user?.id);
 
   if (loading)
     return <ActivityIndicator size="large" style={{ flex: 1, backgroundColor: "#fff" }} color="#000" />
@@ -243,138 +252,143 @@ const Home = ({ navigation }: any) => {
   return (
     <Container>
       <HomeHeader1 handlePress={() => navigation.openDrawer()} />
-      <ScrollView
-        style={{ marginTop: moderateScale(20), paddingBottom: moderateScale(100) }}
-        showsVerticalScrollIndicator={false}
-      >
+      {
+        user?.is_registred ? <ScrollView
+          style={{ marginTop: moderateScale(20), paddingBottom: moderateScale(100) }}
+          showsVerticalScrollIndicator={false}
+        >
 
-        <LineChart
-          data={{
-            labels: dates && dates.length > 0 ? dates : [getCurrentYearMonth()], // Default label if dates is empty
-            datasets: [
-              {
-                data: graphData && graphData.length > 0 ? graphData : [0], // Default data if graphData is empty
+          <LineChart
+            data={{
+              labels: dates && dates.length > 0 ? dates : [getCurrentYearMonth()], // Default label if dates is empty
+              datasets: [
+                {
+                  data: graphData && graphData.length > 0 ? graphData : [0], // Default data if graphData is empty
+                },
+              ],
+            }}
+            width={screenWidth * 0.95}
+            height={moderateScale(200)}
+            yAxisInterval={1}
+            chartConfig={{
+              backgroundColor: '#e26a00',
+              backgroundGradientTo: '#ffa726',
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              style: {
+                borderRadius: 16,
               },
-            ],
-          }}
-          width={screenWidth * 0.95}
-          height={moderateScale(200)}
-          yAxisInterval={1}
-          chartConfig={{
-            backgroundColor: '#e26a00',
-            backgroundGradientTo: '#ffa726',
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            style: {
+              propsForDots: {
+                r: '6',
+                strokeWidth: '2',
+                stroke: '#ffa726',
+              },
+            }}
+            style={{
+              marginVertical: 8,
               borderRadius: 16,
-            },
-            propsForDots: {
-              r: '6',
-              strokeWidth: '2',
-              stroke: '#ffa726',
-            },
-          }}
-          style={{
-            marginVertical: 8,
-            borderRadius: 16,
-          }}
-        />
+            }}
+          />
 
-        {/* {
-          banner && <View style={{ marginBottom: moderateScale(20) }}>
-            <FlatList
-              ref={flatListRef}
-              horizontal
-              pagingEnabled
-              style={{ marginBottom: moderateScale(15) }}
-              data={banner}
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item: any) => item?.id}
-              renderItem={renderBanner}
-              onMomentumScrollEnd={event => {
-                // Update current index on manual scroll
-                const index = Math.round(
-                  event.nativeEvent.contentOffset.x / (screenWidth * 0.9),
-                );
-                setCurrentIndex(index);
-              }}
-            />
-            {renderDots()}
-          </View>
-        } */}
+          {/* {
+            banner && <View style={{ marginBottom: moderateScale(20) }}>
+              <FlatList
+                ref={flatListRef}
+                horizontal
+                pagingEnabled
+                style={{ marginBottom: moderateScale(15) }}
+                data={banner}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item: any) => item?.id}
+                renderItem={renderBanner}
+                onMomentumScrollEnd={event => {
+                  // Update current index on manual scroll
+                  const index = Math.round(
+                    event.nativeEvent.contentOffset.x / (screenWidth * 0.9),
+                  );
+                  setCurrentIndex(index);
+                }}
+              />
+              {renderDots()}
+            </View>
+          } */}
 
 
-        {course && course.length > 0 && (
-          <View style={{ marginBottom: moderateScale(20), marginTop:moderateScale(10) }}>
-            <SubHeader
-              title="My Courses"
-              handlePress={() => {
-                // console.log('--click in the courses ---');
-                navigation.navigate('OwnCourse');
-              }}
-              isMore={true}
-            />
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={course.slice(0, 3)}
-              keyExtractor={(item: any) => item?.id}
-              renderItem={({ item }) => {
-                return <CourseCard1 item={item} navigation={navigation} />;
-              }}
-            />
-          </View>
-        )}
+          {course && course.length > 0 && (
+            <View style={{ marginBottom: moderateScale(20), marginTop: moderateScale(10) }}>
+              <SubHeader
+                title="My Courses"
+                handlePress={() => {
+                  // console.log('--click in the courses ---');
+                  navigation.navigate('OwnCourse');
+                }}
+                isMore={true}
+              />
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={course.slice(0, 3)}
+                keyExtractor={(item: any) => item?.id}
+                renderItem={({ item }) => {
+                  return <CourseCard1 item={item} navigation={navigation} />;
+                }}
+              />
+            </View>
+          )}
 
-        {retreat && retreat.length > 0 && (
-          <View style={{ marginBottom: moderateScale(20) }}>
-            <SubHeader
-              title="Own Retreats"
-              handlePress={() => {
-                // console.log('--click in the courses ---');
-                navigation.navigate('OwnRetreat');
-              }}
-              isMore={true}
-            />
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={retreat.slice(0, 3)}
-              keyExtractor={(item: any) => item?.id}
-              renderItem={({ item }) => {
-                // console.log("==== item in the retreat ====", item);
+          {retreat && retreat.length > 0 && (
+            <View style={{ marginBottom: moderateScale(20) }}>
+              <SubHeader
+                title="Own Retreats"
+                handlePress={() => {
+                  // console.log('--click in the courses ---');
+                  navigation.navigate('OwnRetreat');
+                }}
+                isMore={true}
+              />
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={retreat.slice(0, 3)}
+                keyExtractor={(item: any) => item?.id}
+                renderItem={({ item }) => {
+                  // console.log("==== item in the retreat ====", item);
 
-                return <RetreatCard1 item={item} navigation={navigation} />;
-              }}
-            />
-          </View>
-        )}
+                  return <RetreatCard1 item={item} navigation={navigation} />;
+                }}
+              />
+            </View>
+          )}
 
-        {shop && shop.length > 0 && (
-          <View style={{ marginBottom: moderateScale(20) }}>
-            <SubHeader
-              title="Shop Now"
-              handlePress={() => {
-                console.log('--- click in teh retreat');
-                navigation.navigate('ECom');
-              }}
-              isMore={true}
-            />
+          {shop && shop.length > 0 && (
+            <View style={{ marginBottom: moderateScale(20) }}>
+              <SubHeader
+                title="Shop Now"
+                handlePress={() => {
+                  console.log('--- click in teh retreat');
+                  navigation.navigate('ECom');
+                }}
+                isMore={true}
+              />
 
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={shop.slice(0, 3)}
-              keyExtractor={(item: any) => item?.id}
-              renderItem={({ item }) => <ShopCard1 item={item} />}
-            />
-          </View>
-        )}
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={shop.slice(0, 3)}
+                keyExtractor={(item: any) => item?.id}
+                renderItem={({ item }) => <ShopCard1 item={item} />}
+              />
+            </View>
+          )}
 
 
-        <View style={{ marginBottom: moderateScale(70) }} />
-      </ScrollView>
+          <View style={{ marginBottom: moderateScale(70) }} />
+        </ScrollView> : (
+          <IsKycCard />
+        )
+      }
+
     </Container>
   )
 }

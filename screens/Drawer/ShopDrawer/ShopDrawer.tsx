@@ -1,11 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet} from 'react-native'
 import React, { useEffect } from 'react'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Products from '../../Bottom/Products';
-import CustomDrawer from '../CustomDrawer';
 import { moderateScale } from '../../../components/Matrix/Matrix';
 import DynamicShopProduct from './DynamicShopProduct';
-import makeApiRequest from '../../../utils/ApiService';
 import axios from 'axios';
 
 const ShopDrawer = () => {

@@ -12,12 +12,16 @@ const initialState: any = {
 export const getCourse = createAsyncThunk(
   'course/getCourse',
   async (id, ThunkAPI) => {
+
+    console.log("--- id in the course list ----",id);
+    
     const response: any = await makeApiRequest({
       method: 'POST',
       url: `user-course-list?id=${id}`,
+      baseUrl:BASE_URL
     });
 
-    // console.log("--- response in home course ---",response);
+    console.log("--- response in home course ---",response);
     
     if (response?.courses) {
       return response?.courses;

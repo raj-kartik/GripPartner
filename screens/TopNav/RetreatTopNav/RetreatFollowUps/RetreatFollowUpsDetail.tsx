@@ -13,6 +13,7 @@ import Images from '../../../../utils/Images'
 import CustomButton from '../../../../components/Customs/CustomButton'
 import AccountCourseCard from '../../../../components/Cards/AccountCourseCard'
 import Colors from '../../../../utils/Colors'
+import { leadChangeStatus } from '../../../../utils/UtilityFuncations'
 
 const RetreatFollowUpsDetail = () => {
   const navigation = useNavigation();
@@ -39,9 +40,6 @@ const RetreatFollowUpsDetail = () => {
         method: "GET"
       });
 
-      console.log("=== response in the follow up details ==", response);
-
-
       if (response?.success === true) {
         setData(response['Lead Detail']);
         setUpdate(response['Follow Up History']);
@@ -58,6 +56,11 @@ const RetreatFollowUpsDetail = () => {
   }
 
   const confirmAction = async () => {
+    const update = await leadChangeStatus('Retreat', data?.id, 2);
+    console.log("---- update in retreat follow up details ----", update);
+
+    if(update)
+      followHistory();
   };
 
   const text =

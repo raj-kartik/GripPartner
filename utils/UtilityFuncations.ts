@@ -1,6 +1,12 @@
 import {Alert, Linking} from 'react-native';
 import makeApiRequest from './ApiService';
-import {pick,types } from '@react-native-documents/picker'
+import {pick, types} from '@react-native-documents/picker';
+import {
+  BASE_URL,
+  POST_COURSE_LEAD_CHANGE,
+  POST_RETREAT_LEAD_CHANGE,
+} from './api';
+import {CustomToast} from '../components/Customs/CustomToast';
 
 export const titleImpressionFunction = async (row: any) => {
   try {
@@ -46,7 +52,7 @@ export const uploadDocument = async (
     const processedDocs = await Promise.all(
       result.map(async file => {
         return {
-          ...file
+          ...file,
         };
       }),
     );
@@ -55,5 +61,46 @@ export const uploadDocument = async (
   } catch (error) {
     console.warn('Document selection error:', error);
     return [];
+  }
+};
+
+export const leadChangeStatus = async (
+  typeOf: string,
+  id: number,
+  status: number,
+) => {
+  try {
+    const response: any = await makeApiRequest({
+      baseUrl: BASE_URL,
+      url:
+        typeOf === 'Course'
+          ? POST_COURSE_LEAD_CHANGE
+          : typeOf === 'Retreat'
+          ? POST_RETREAT_LEAD_CHANGE
+          : '',
+      method: 'POST',
+      data: {
+        status: status,
+        lead_id: id,
+      },
+    });
+
+    if (response?.success) {
+      CustomToast({
+        type: 'success',
+        text1: `${typeOf} lead has changed successful`,
+        text2: response?.message || 'lead has been updated',
+      });
+      return true;
+    } else {
+      CustomToast({
+        type: 'success',
+        text1: `${typeOf} lead has changed successful`,
+        text2: response?.message || 'lead has been updated',
+      });
+      return true;
+    }
+  } catch (err: any) {
+    console.log('Error in the change status', err);
   }
 };

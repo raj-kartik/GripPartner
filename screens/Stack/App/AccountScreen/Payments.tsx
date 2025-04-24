@@ -209,18 +209,20 @@ const Payments = () => {
                     weight="700"
                     textColor={isKyc == 1 ? "#000" : "#fff"}
                     bg={isKyc != 0 ? Colors.orange : "#000"}
-                    customStyle={{ width: isKyc == 1 ? '45%' : "100%" }}
+                    customStyle={{ width:"100%" }}
                     onPress={() => {
                         setAmountModal(true);
                     }}
                 />
-                {
-                    isKyc == 1 && <CustomButton
-                        title="Withdraw Amount"
-                        customStyle={{ width: '45%', marginTop: moderateScale(5) }}
-                        onPress={() => { setWithdrawModalModal(true) }}
-                    />
-                }
+                {/* 
+                    {
+                        isKyc == 1 && <CustomButton
+                            title="Withdraw Amount"
+                            customStyle={{ width: '45%', marginTop: moderateScale(5) }}
+                            onPress={() => { setWithdrawModalModal(true) }}
+                        />
+                    }
+                */}
 
             </View>
             {

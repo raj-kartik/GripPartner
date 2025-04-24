@@ -40,7 +40,7 @@ const TrainerCourseDetails = (props: any) => {
                 url: TRAINER_COURSE_DETAILS(course_id)
             });
 
-            console.log("==== reponse in the course details ====",response);
+            console.log("==== reponse in the course details ====", response);
 
             if (response) {
                 setData(response);
@@ -52,7 +52,7 @@ const TrainerCourseDetails = (props: any) => {
         }
     };
 
-    console.log("===== data in the course details ====", data);
+    // console.log("===== data in the course details ====", data);
 
 
 
@@ -290,7 +290,7 @@ const TrainerCourseDetails = (props: any) => {
                 <ScrollView
                     showsVerticalScrollIndicator={false} // Hide vertical scrollbar
                     showsHorizontalScrollIndicator={false}>
-                    <CourseDetailMenu isEnable={true} />
+                    <CourseDetailMenu isEnable={true} courseid={course_id} courseItem={data} />
                     <RenderItem />
                     <TrainingDetails
                         item={data}
@@ -304,7 +304,7 @@ const TrainerCourseDetails = (props: any) => {
                             keyExtractor={(item) => item?.id}
                             showsVerticalScrollIndicator={false}
                             renderItem={({ item }) => {
-                                console.log("==== item in the slot ====", item);
+                                // console.log("==== item in the slot ====", item);
                                 return (
                                     <View style={[styles.slotContainer, globalStyle.flex]} >
                                         <View

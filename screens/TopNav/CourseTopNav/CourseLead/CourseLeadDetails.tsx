@@ -20,6 +20,7 @@ import { Formik } from 'formik'
 import CustomInput from '../../../../components/Customs/CustomInput'
 import { CustomToast } from '../../../../components/Customs/CustomToast'
 import * as Yup from 'yup'
+import { leadChangeStatus } from '../../../../utils/UtilityFuncations'
 
 const followSchema = Yup.object().shape({
     comment: Yup.string().min(3, '*too Short').max(500, '*too large'),
@@ -31,8 +32,9 @@ const CourseLeadDetails = () => {
     const { lead_id, subscription_id, courseId } = route.params;
     const [loading, setLoading] = useState(false);
     const [lead, setLead] = useState<any>({});
-    const confirmAction = (num: number) => {
-    };
+
+
+    // ----------------------- MODAL ---------------------- //
     const [followModal, setFollowModal] = useState(false);
     const [isCalendar, setIsCalendar] = useState(false);
 
@@ -40,6 +42,10 @@ const CourseLeadDetails = () => {
     const [data, setData] = useState<any>(null)
     const [update, setUpdate] = useState([]);
     const [subscriptionModalVisible, setSubscriptionModalVisible] = useState(false);
+
+    console.log("----- course lead details ----", data);
+
+
 
     useFocusEffect(
         useCallback(() => {
@@ -126,7 +132,7 @@ const CourseLeadDetails = () => {
         {
             id: 2,
             title: 'Course Description',
-            value: data?.description,
+            value: data?.description || "No Description",
             iconType: 'AntDesign',
             iconName: 'database',
             iconColor: '#ff0000',
@@ -135,7 +141,7 @@ const CourseLeadDetails = () => {
         {
             id: 3,
             title: 'Course Price',
-            value: data?.price,
+            value: data?.price || "Not mentioned",
             iconType: 'MaterialIcons',
             iconName: 'currency-rupee',
             iconColor: '#ff0000',
@@ -173,6 +179,16 @@ const CourseLeadDetails = () => {
                 },
             }),
         );
+    };
+
+    // open close course details
+    const confirmAction = async (num: number) => {
+        const update = await leadChangeStatus('Course', lead_id, num);
+
+        if (update) {
+            leadLisfun();
+            CourseListDetail();
+        }
     };
 
     return (

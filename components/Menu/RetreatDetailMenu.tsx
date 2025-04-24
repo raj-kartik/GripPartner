@@ -13,7 +13,7 @@ import CustomIcon from '../Customs/CustomIcon';
 import { moderateScale, screenWidth, verticalScale } from '../Matrix/Matrix';
 import { globalStyle } from '../../utils/GlobalStyle';
 
-const RetreatDetailMenu = ({ isEnable = true, retreatid, handleEnable }: any) => {
+const RetreatDetailMenu = ({ isEnable = true, retreatid, handleEnable, retreatMenu }: any) => {
     const navigation = useNavigation();
 
 
@@ -93,6 +93,9 @@ const RetreatDetailMenu = ({ isEnable = true, retreatid, handleEnable }: any) =>
                                     if (item?.route === 'isEnable') {
                                         const isAble = isEnable ? 1 : 0
                                         handleEnable(isAble);
+                                    }
+                                    else if(item?.label==="Edit"){
+                                        navigation.navigate('CreateRetreat',{retreat:retreatMenu})
                                     }
                                     else {
                                         navigation.dispatch(

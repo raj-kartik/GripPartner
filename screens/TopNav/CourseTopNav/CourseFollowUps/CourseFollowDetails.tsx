@@ -16,6 +16,7 @@ import { moderateScale, screenHeight, screenWidth } from '../../../../components
 import Colors from '../../../../utils/Colors'
 import CustomModal from '../../../../components/Customs/CustomModal'
 import CustomButton from '../../../../components/Customs/CustomButton'
+import { leadChangeStatus } from '../../../../utils/UtilityFuncations'
 
 interface Props {
   route: any;
@@ -87,38 +88,13 @@ const CourseFollowDetails: FC<Props> = ({ route, navigation }) => {
   };
 
 
-  const updatestatusFun = async (id: number) => {
-    // setButtonLoading(true); // Set button loading state
-    setLoading(true);
-    try {
-      const row = {
-        status: id,
-      };
+  const confirmAction = async (num: number) => {
+    const update = await leadChangeStatus('Course', lead_id, num);
 
-      const response: any = await makeApiRequest({
-        method: "POST",
-        baseUrl: BASE_URL,
-        url: `update-lead-status?id=${lead_id}`,
-        data: {
-          status: id,
-        }
-      });
-
-      console.log("=== resposne in the update status ===", response);
-
-
-      if (response) {
-        setData(response?.data);
-      }
-    } catch (error) {
-      console.error('Failed to update lead status:', error);
-    } finally {
-      setLoading(false);
+    if (update) {
+      handleNextFollowUpHistory();
+      handleFollowHistory();
     }
-  };
-
-  const confirmAction = (status: number) => {
-    // setConfirmVisible(true);
   };
 
   return (
@@ -307,9 +283,9 @@ const MenuPop = ({ navigation, lead_id, CloseFun, follow }: any) => {
           </MenuOption>
         )}
 
-        <MenuOption>
+        {/* <MenuOption>
           <CustomText text='Change Lead Status' />
-        </MenuOption>
+        </MenuOption> */}
 
         <MenuOption onSelect={() => {
           setIsModal(true);

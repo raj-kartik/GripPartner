@@ -13,7 +13,7 @@ const LoginContainer = ({ mobile, setMobile, handleLogin }: any) => {
     const navigation: any = useNavigation();
     return (
         <LinearGradient
-            colors={['transparent','transparent', '#333333', '#000000']}
+            colors={['transparent', 'transparent', '#333333', '#000000']}
             style={styles.container}>
             <CustomText
                 color="#fff"
@@ -34,8 +34,8 @@ const LoginContainer = ({ mobile, setMobile, handleLogin }: any) => {
             />
             <CustomButton
                 disabled={mobile.length !== 10}
-                bg={mobile.length !== 10 ? Colors.gray_font : '#bbbbbb'}
-                textColor={mobile.length !== 10 ? '#fff' : '#000000'}
+                bg={mobile.length !== 10 ? Colors.gray_font : '#666666'}
+                textColor={mobile.length !== 10 ? '#fff' : '#ffffff'}
                 radius={10}
                 customStyle={{ marginTop: moderateScale(10) }}
                 onPress={handleLogin}
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         paddingTop: moderateScale(25),
         justifyContent: "flex-end",
         paddingBottom: moderateScale(30),
-        flex:1
+        flex: 1
     },
     temrs: {
         width: screenWidth,

@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         // height: screenHeight * .2,
         padding: moderateScale(10),
         backgroundColor: "#f7f7f7",
-        width: screenWidth * .92,
+        width: "100%",
         marginRight: moderateScale(5),
         // alignSelf: 'center'
     },

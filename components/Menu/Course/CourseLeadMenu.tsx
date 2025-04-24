@@ -100,7 +100,11 @@ const CourseLeadMenu = ({ courseId, CloseFun, OpenFun, item }: any) => {
                                     optionWrapper: styles.optionWrapper,
                                     optionText: styles.optionText,
                                 }}>
-                                <Text>{item.label}</Text>
+                                <TouchableOpacity onPress={() => {
+                                    item?.handleFunction();
+                                }} >
+                                    <Text>{item.label}</Text>
+                                </TouchableOpacity>
                             </MenuOption>
                         ))}
 

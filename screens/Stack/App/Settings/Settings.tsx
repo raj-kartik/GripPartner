@@ -30,6 +30,11 @@ const Settings = () => {
             route: "UpdateProfile"
         },
         {
+            id: 4,
+            label: 'Studio Profile',
+            route: "UpdateStudioProfile"
+        },
+        {
             id: 2,
             label: 'Privacy Policy',
             route: "Policy"
@@ -49,7 +54,7 @@ const Settings = () => {
                     <View style={[globalStyle.center, { width: moderateScale(170), height: moderateScale(170), backgroundColor: "#f7f7f7", borderRadius: moderateScale(200) }]} >
                         <Images.Logo width={moderateScale(150)} height={moderateScale(150)} />
                     </View>
-                    <CustomText text={user?.first_name.trim()} weight='600' size={20} customStyle={{ textAlign: "center", marginTop: moderateScale(10) }} />
+                    <CustomText text={user?.first_name ? user?.first_name.trim() : "No Name"} weight='600' size={20} customStyle={{ textAlign: "center", marginTop: moderateScale(10) }} />
                 </View>
 
                 <View style={styles.content} >

@@ -27,17 +27,21 @@ const Notifications = () => {
     (state: any) => state?.notification,
   );
 
+  // console.log("==== notification ====", notification);
+  // console.log("==== user ====", user);
+
+
   const notificatonType: any = [
     {
       id: 1,
       label: 'All',
       value: 'all',
     },
-    {
-      id: 2,
-      label: 'Updates',
-      value: 'updates',
-    },
+    // {
+    //   id: 2,
+    //   label: 'Updates',
+    //   value: 'updates',
+    // },
     {
       id: 4,
       label: 'Read',
@@ -58,8 +62,7 @@ const Notifications = () => {
   useFocusEffect(
     useCallback(() => {
       const timeout = setTimeout(() => {
-        console.log("--- use focus effect ----");
-
+        // console.log("--- use focus effect ----");
         if (user?.id) {
           getFunction(user.id);
         }
@@ -113,7 +116,15 @@ const Notifications = () => {
           <CustomText text="No Notification" weight="500" />
         </View>
       ) : (
-        <View></View>
+        notification.map((item: any) => {
+          // console.log("==== itme in the notification ====", item);
+          return (
+            <View key={item?.id} style={styles.notificationContainer} >
+              <CustomText text={item?.title} weight='600' size={18} />
+              <CustomText text={item?.message} />
+            </View>
+          )
+        })
       )}
     </Container>
   );
@@ -121,4 +132,15 @@ const Notifications = () => {
 
 export default Notifications;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  notificationContainer: {
+    width: "100%",
+    height: moderateScale(60),
+    backgroundColor: "#f7f7f7",
+    borderRadius: moderateScale(10),
+    marginTop: moderateScale(10),
+    marginBottom: moderateScale(5),
+    justifyContent: "center",
+    padding: moderateScale(10)
+  }
+});

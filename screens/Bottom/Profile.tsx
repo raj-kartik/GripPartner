@@ -112,10 +112,11 @@ const Profile = () => {
   const [graphData, setGraphData] = useState<[]>([]);
   const [showModalBarContent, setShowModalBarContent] = useState(false);
   const [showModalBarType, setShowModalBarType] = useState(false);
+  const [rawContent, setRawContent] = useState<any>(null);
+  const [totalClicks, setTotalClicks] = useState<number>(0)
 
   useFocusEffect(
     useCallback(() => {
-      // console.log('calling graph')
       CourseGraph();
     }, [barTypeContent, barContent]),
   );
@@ -125,25 +126,15 @@ const Profile = () => {
       const row = {
         user_id: user?.id,
       };
-      // const response: any = await postMethod(
-      //   `${barContent.toLowerCase()}-click-and-impression`,
-      //   row,
-      // );
-
       const response: any = await makeApiRequest({
         baseUrl: BASE_URL,
         url: `${barContent.toLowerCase()}-click-and-impression`,
         method: "POST",
         data: row
       });
-
-
-      // console.log("==== response in the click barcontent ====", response);
-
-
       if (response.monthlyClickCounter) {
         const apiData = response;
-
+        setRawContent(response);
         const data: any =
           barTypeContent === 'Clicks'
             ? apiData?.monthlyClickCounter
@@ -151,7 +142,6 @@ const Profile = () => {
               ? apiData.monthlyImpressionCounter
               : null;
 
-        // console.log('===== api data in the response data ===', data);
         const dates: string[] = Object.keys(data);
         const graphDatas: number[] = Object.values(data);
         setDates(dates);
@@ -161,6 +151,9 @@ const Profile = () => {
       console.error(error);
     }
   };
+
+  // console.log("==== rawContent data ====", rawContent);
+
 
   const getCurrentYearMonth = () => {
     const date = new Date();
@@ -177,48 +170,10 @@ const Profile = () => {
           navigation.navigate('Settings')
         }
       } />
-      {/* <View style={[globalStyle.between, { flex: 1 }]} >
-        {
-          userOptionScreen && userOptionScreen.map((item: any) => {
-            const Svg = item.svg;
-
-            // console.log("==== item ====", item);
-            return (
-              <Pressable
-                key={item?.id}
-                style={styles.row_container}
-                onPress={() => { navigation.navigate(item?.route) }}>
-                <View style={styles.icon}>
-                  {
-                    Svg && <Svg width={moderateScale(35)} height={moderateScale(35)} />
-                  }
-                  {
-                    item?.iconType && <CustomIcon type={item?.iconType} size={30} name={item?.iconName} />
-                  }
-                </View>
-                <CustomText text={item?.label} />
-              </Pressable>
-            )
-          })
-        }
-      </View> */}
 
       <View style={{ marginTop: moderateScale(15) }} >
         <View style={[globalStyle.betweenCenter]}>
-          <TouchableOpacity
-            style={{
-              flex: 0.1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <CustomIcon
-              color={Colors.orange}
-              type="Ionicons"
-              name="calendar-number"
-            />
-          </TouchableOpacity>
-
-          <View style={[globalStyle.row, { flex: 0.9 }]}>
+          <View style={[globalStyle.betweenCenter, { flex: 1, width: "100%" }]}>
             <CustomButton
               title={barTypeContent}
               customStyle={{ width: '48%' }}
@@ -303,9 +258,11 @@ const Profile = () => {
             <CustomText
               size={13}
               customStyle={{ marginLeft: moderateScale(5) }}
-              text="30 Clicks"
+              text={`${Object.values(rawContent?.monthlyClickCounter || {}).reduce((acc, item) => acc + item, 0)
+                } Clicks`}
               weight="500"
             />
+
           </View>
 
           <View style={[globalStyle.row]}>
@@ -320,7 +277,8 @@ const Profile = () => {
             <CustomText
               size={13}
               customStyle={{ marginLeft: moderateScale(5) }}
-              text="30 Impressions"
+              text={`${Object.values(rawContent?.monthlyImpressionCounter || {}).reduce((acc: any, item: any) => acc + item, 0)
+                } Impressions`}
               weight="500"
             />
           </View>

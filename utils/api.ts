@@ -69,6 +69,9 @@ export const GET_COURSE_LIST = (lat: number, long: number, list: string) => {
   return `${list}?latitude=${lat}&longitude=${long}`;
 };
 
+export const POST_COURSE_LEAD_CHANGE = 'update-lead-status';
+
+// SECRET KEYS
 export const ONE_SIGNAL_SECRET_KEY = '0467873e-af8b-43b5-927f-add391e15d83';
 export const RAZORPAY_SECRET_KEY = 'rzp_live_5VC3pVIlFuAnB3';
 export const GENERATE_RAZORPAY_ORDER_ID = 'shop/create-razorpay-order';
@@ -89,7 +92,6 @@ export const GET_TRANSAXTION = 'transaction-history';
 export const POST_WITHDRAW_REQUEST = 'request-settlement';
 export const POST_WALLET_IN_STORE = 'store-api/redeem-reward';
 export const POST_ADD_WALLET = 'add-online-payment';
-
 export const AGORA_APP_KEY = '518be2a3c5ee4c0da1bbd3f99b15809c';
 
 // course
@@ -97,6 +99,7 @@ export const POST_PAY_COURSE_FEE = 'pay-for-course';
 
 // retreat
 export const POST_PAY_RETREAT_FEE = 'pay-for-retreat';
+export const POST_RETREAT_LEAD_CHANGE = 'user-retreat-lead-update-status';
 
 // coupon
 export const POST_ADD_COUPON = 'add-coupon';
@@ -133,6 +136,8 @@ export const NOTIFICATION_READ_LIST = (id: number) => {
   return `notifications-read?id=${id}`;
 };
 
-export const RETREAT_BOOKING_DETAILS =(id:number)=> `user-retreat-booking-detail?id=${id}`
-export const RETREAT_BOOKING_HISTORY =(id:number)=> `retreat-booking-history?booking_id=${id}`
-export const RETREAT_BOOING_END = 'retreat-booking-end'
+export const RETREAT_BOOKING_DETAILS = (id: number) =>
+  `user-retreat-booking-detail?id=${id}`;
+export const RETREAT_BOOKING_HISTORY = (id: number) =>
+  `retreat-booking-history?booking_id=${id}`;
+export const RETREAT_BOOING_END = 'retreat-booking-end';

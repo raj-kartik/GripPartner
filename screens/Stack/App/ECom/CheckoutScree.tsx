@@ -44,60 +44,60 @@ interface OrderItem {
 const shippingSchema = yup.object().shape({
     firstName: yup
         .string()
-        .required('Required')
+        .required('*required')
         .min(2, 'Too short')
         .max(30, 'Too long'),
     lastName: yup
         .string()
-        .required('Required')
+        .required('*required')
         .min(2, 'Too short')
         .max(30, 'Too long'),
-    email: yup.string().required('Required').email('Invalid email'),
+    email: yup.string().required('*required').email('Invalid email'),
     mobile: yup
         .string()
-        .required('Required')
+        .required('*required')
         .matches(/^[0-9]{10}$/, 'Invalid number'),
-    street: yup.string().required('Required').min(2, 'Too short'),
-    city: yup.string().required('Required').min(2, 'Too short'),
-    state: yup.object().required('State is required'),
+    street: yup.string().required('*required').min(2, 'Too short'),
+    city: yup.string().required('*required').min(2, 'Too short'),
+    state: yup.object().required('*required'),
     pincode: yup
         .string()
-        .required('Required')
+        .required('*required')
         .matches(/^[0-9]{6}$/, 'Invalid pincode'),
-    isBillSame: yup.boolean().required('Required'),
+    isBillSame: yup.boolean().required('*required'),
 
     // Conditional validation for billing fields
     billfirstName: yup.string().when('isBillSame', {
         is: false,
         then: schema =>
-            schema.required('Required').min(2, 'Too short').max(30, 'Too long'),
+            schema.required('*required').min(2, 'Too short').max(30, 'Too long'),
         otherwise: schema => schema.notRequired(),
     }),
     billlastName: yup.string().when('isBillSame', {
         is: false,
         then: schema =>
-            schema.required('Required').min(2, 'Too short').max(30, 'Too long'),
+            schema.required('*required').min(2, 'Too short').max(30, 'Too long'),
         otherwise: schema => schema.notRequired(),
     }),
     billemail: yup.string().when('isBillSame', {
         is: false,
-        then: schema => schema.required('Required').email('Invalid email'),
+        then: schema => schema.required('*required').email('Invalid email'),
         otherwise: schema => schema.notRequired(),
     }),
     billmobile: yup.string().when('isBillSame', {
         is: false,
         then: schema =>
-            schema.required('Required').matches(/^[0-9]{10}$/, 'Invalid number'),
+            schema.required('*required').matches(/^[0-9]{10}$/, 'Invalid number'),
         otherwise: schema => schema.notRequired(),
     }),
     billstreet: yup.string().when('isBillSame', {
         is: false,
-        then: schema => schema.required('Required').min(2, 'Too short'),
+        then: schema => schema.required('*required').min(2, 'Too short'),
         otherwise: schema => schema.notRequired(),
     }),
     billcity: yup.string().when('isBillSame', {
         is: false,
-        then: schema => schema.required('Required').min(2, 'Too short'),
+        then: schema => schema.required('*required').min(2, 'Too short'),
         otherwise: schema => schema.notRequired(),
     }),
     billstate: yup.object().when('isBillSame', {
@@ -108,7 +108,7 @@ const shippingSchema = yup.object().shape({
     billpincode: yup.string().when('isBillSame', {
         is: false,
         then: schema =>
-            schema.required('Required').matches(/^[0-9]{6}$/, 'Invalid pincode'),
+            schema.required('*required').matches(/^[0-9]{6}$/, 'Invalid pincode'),
         otherwise: schema => schema.notRequired(),
     }),
 });
@@ -534,7 +534,7 @@ const CheckoutScreen = () => {
                                 mobile: userData?.phone_number,
                                 street: fullAddress || '',
                                 city: city || '',
-                                state: state || {},
+                                state: null,
                                 pincode: pincode || '',
                                 isBillSame: true,
                                 billfirstName: userData?.first_name || '',
@@ -543,7 +543,7 @@ const CheckoutScreen = () => {
                                 billmobile: userData?.phone_number,
                                 billstreet: '',
                                 billcity: '',
-                                billstate: {},
+                                billstate: null,
                                 billpincode: '',
                             }}
                             onSubmit={values => {

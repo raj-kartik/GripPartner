@@ -27,7 +27,7 @@ const Coupons = () => {
   const [isActiveModal, setIsActiveModal] = useState<boolean>(false);
   const [selectedCoupon, setSelectedCoupon] = useState<any>(null);
 
-  console.log("=== coupon in trainer coupon ===", selectedCoupon);
+  // console.log("=== coupon in trainer coupon ===", selectedCoupon);
 
 
 
@@ -39,7 +39,7 @@ const Coupons = () => {
     fetchCouponse();
   }, []));
 
-  console.log("=== selected coupon ===", selectedCoupon);
+  // console.log("=== selected coupon ===", selectedCoupon);
 
   const handleStatus = async () => {
     try {

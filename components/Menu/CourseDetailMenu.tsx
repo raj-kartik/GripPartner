@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import {
   Menu,
@@ -7,15 +7,17 @@ import {
   MenuOption,
   MenuTrigger,
 } from 'react-native-popup-menu';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import CustomText from '../Customs/CustomText';
 import CustomIcon from '../Customs/CustomIcon';
-import {moderateScale, screenWidth, verticalScale} from '../Matrix/Matrix';
-import {globalStyle} from '../../utils/GlobalStyle';
+import { moderateScale, screenWidth, verticalScale } from '../Matrix/Matrix';
+import { globalStyle } from '../../utils/GlobalStyle';
 
-const CourseDetailMenu = ({isEnable = true, courseid}:any) => {
+const CourseDetailMenu = ({ isEnable = true, courseid, courseItem }: any) => {
   const navigation = useNavigation();
 
+  // console.log("==== course item ====",courseItem);
+  
   const courseMenuOptions = [
     {
       id: 1,
@@ -51,7 +53,7 @@ const CourseDetailMenu = ({isEnable = true, courseid}:any) => {
           <CustomIcon type="AntDesign" name="arrowleft" size={25} />
         </Pressable>
         <CustomText
-          customStyle={{marginLeft: moderateScale(5)}}
+          customStyle={{ marginLeft: moderateScale(5) }}
           text="Course Details"
           size={22}
           weight="700"
@@ -70,15 +72,23 @@ const CourseDetailMenu = ({isEnable = true, courseid}:any) => {
             <MenuOption
               key={item.id}
               onSelect={() => {
-                navigation.dispatch(
-                  CommonActions.navigate({
-                    name: 'CourseTopNav',
-                    params: {
-                      courseid: courseid,
-                      screen: item?.route,
-                    },
-                  }),
-                );
+
+                if (item?.label === "Edit") {
+                  navigation.navigate('TrainerNewCourse', {
+                    course: courseItem
+                  })
+                }
+                else {
+                  navigation.dispatch(
+                    CommonActions.navigate({
+                      name: 'CourseTopNav',
+                      params: {
+                        courseid: courseid,
+                        screen: item?.route,
+                      },
+                    }),
+                  );
+                }
               }}
               customStyles={{
                 optionWrapper: styles.optionWrapper,

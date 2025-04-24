@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import makeApiRequest from '../../../utils/ApiService';
-import {GET_USER_DETAILS, POST_SIGNUP} from '../../../utils/api';
+import {BASE_URL, GET_USER_DETAILS, POST_SIGNUP} from '../../../utils/api';
 import axios from 'axios';
 
 const initialState = {
@@ -26,6 +26,7 @@ export const userDetail = createAsyncThunk(
       const response:any = await makeApiRequest({
         url: GET_USER_DETAILS,
         data: {user_id: userId},
+        baseUrl:BASE_URL,
         method: 'POST',
       });
 

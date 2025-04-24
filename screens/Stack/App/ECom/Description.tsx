@@ -111,7 +111,7 @@ const Description = ({navigation, route}: any) => {
               },
             },
           );
-          // console.log('--- response being add to cart ---', response?.data);
+          console.log('--- response being add to cart ---', response?.data);
           // return;
     
           if (response.data?.error) {

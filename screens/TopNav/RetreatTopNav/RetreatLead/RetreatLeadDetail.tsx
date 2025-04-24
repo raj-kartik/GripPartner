@@ -560,10 +560,10 @@ const MenuPop = ({ navigation, item, OpenFun, CloseFun }: any) => {
             paddingHorizontal: 15, // Adjust horizontal padding
           },
           optionsContainer: {
-            marginVertical: 25,
-            paddingVertical: 10,
+            marginVertical: moderateScale(25),
+            paddingVertical: moderateScale(10),
             backgroundColor: '#fff', // Set background color
-            borderRadius: 15, // Rounded corners
+            borderRadius: moderateScale(15), // Rounded corners
             elevation: 5, // Add shadow for Android
             shadowColor: '#000', // Shadow color for iOS
             shadowOpacity: 0.2, // Shadow opacity for iOS

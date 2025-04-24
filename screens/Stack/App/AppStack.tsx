@@ -46,6 +46,8 @@ import LeadFollowUp from '../../TopNav/CourseTopNav/CourseFollowUps/LeadFollowUp
 import Settings from './Settings/Settings'
 import UpdateProfile from './Settings/UpDateProfile'
 import { ProductList } from '../../Drawer/ShopDrawer/ProductList'
+import RegisterUser from '../RegisterUser'
+import UpdateStudioProfile from './Settings/UpdateStudioProfile'
 
 // changes noething has made
 
@@ -81,6 +83,8 @@ const AppStack = () => {
                 <Stack.Screen name='LeadFollowUp' component={LeadFollowUp} />
                 <Stack.Screen name='Settings' component={Settings} />
                 <Stack.Screen name='UpdateProfile' component={UpdateProfile} />
+                <Stack.Screen name='UpdateStudioProfile' component={UpdateStudioProfile} />
+                <Stack.Screen name='RegisterUser' component={RegisterUser} />
 
 
                 <Stack.Screen name='AddSubscription' component={AddSubscription} />

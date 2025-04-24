@@ -45,6 +45,9 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
 
       const response: any = await axios.get(`https://fitwithgrip.com/api/${TRAINER_RETREAT_DETAILS(retreatid)}`);
 
+
+      console.log("----- response in the retreat details -----", response?.data);
+
       if (response?.status === 200) {
         setData(response?.data?.data);
         setStatus1(response?.data?.data.apply_status);
@@ -117,7 +120,7 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
           size={20}
         />
         <CustomText
-          text={`${data.trainer}`}
+          text={`${data.trainer || "No Trainer"}`}
           weight="600"
           color={Colors.gray_font}
           size={16}
@@ -269,6 +272,42 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
             type="MaterialIcons"
             color="#ff0000"
             // size={22}
+            name="calendar-today"
+          />
+        </View>
+        <View style={{ marginLeft: moderateScale(5) }}>
+          <CustomText text="Nights" weight="500" color={Colors.gray_font} />
+          <CustomText text={data?.no_of_nights} weight="600" />
+        </View>
+      </View>
+
+      <View
+        style={[
+          globalStyle.flex,
+          {
+            marginBottom: moderateScale(10),
+            backgroundColor: '#f7f7f7',
+            paddingVertical: moderateScale(10),
+            paddingHorizontal: moderateScale(5),
+            borderRadius: moderateScale(8),
+            elevation: 3,
+            marginHorizontal: moderateScale(5),
+          },
+        ]}>
+        <View
+          style={[
+            globalStyle.center,
+            {
+              width: moderateScale(50),
+              height: moderateScale(50),
+              borderRadius: moderateScale(100),
+              backgroundColor: 'rgba(255,0,0,0.1)',
+            },
+          ]}>
+          <CustomIcon
+            type="MaterialIcons"
+            color="#ff0000"
+            // size={22}
             name="currency-rupee"
           />
         </View>
@@ -295,7 +334,7 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
             marginBottom: 0,
           },
         ]}>
-        {data["Program Details"]}
+        {data?.overview}
       </Text>
 
       <CustomText
@@ -337,23 +376,23 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
             marginBottom: 0,
           },
         ]}>
-        {data['Program Details'] != null && data['Program Details'].length > 250
+        {data['Program Detail'] != null && data['Program Detail'].length > 250
           ? status
-            ? data['Program Details']
-            : data['Program Details'].substring(0, 250)
-          : data['Program Details']}
+            ? data['Program Detail']
+            : data['Program Detail'].substring(0, 250)
+          : data['Program Detail']}
       </Text>
 
-      {data['Program Details'] ? (
+      {data['Program Detail'] ? (
         <Pressable
           style={{ flexDirection: 'row' }}
           onPress={() => setStatus(!status)}>
           <Text style={[styles.text1, { color: 'green' }]}>
-            {data['Program Details'] != null &&
-              data['Program Details'].length > 250
+            {data['Program Detail'] != null &&
+              data['Program Detail'].length > 250
               ? status
-                ? ' Show More Details'
-                : 'Hide More Details'
+                ? ' Show More Detail'
+                : 'Hide More Detail'
               : ' '}
           </Text>
         </Pressable>
@@ -366,7 +405,7 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
     <Container>
       <MenuProvider>
         <View style={{ flex: .07 }} >
-          <RetreatDetailMenu isEnable={data?.status} handleEnable={(isEnable: any) => distableFun(isEnable)} />
+          <RetreatDetailMenu retreatMenu={data} isEnable={data?.status} handleEnable={(isEnable: any) => distableFun(isEnable)} />
         </View>
         <ScrollView
           style={{ flex: .9 }}

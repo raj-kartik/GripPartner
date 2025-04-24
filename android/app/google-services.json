@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "913634175596",
-    "project_id": "grip-341d3",
-    "storage_bucket": "grip-341d3.appspot.com"
+    "project_number": "97982021938",
+    "project_id": "gripuser-b9961",
+    "storage_bucket": "gripuser-b9961.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:913634175596:android:b0f2435cafe895fc514649",
+        "mobilesdk_app_id": "1:97982021938:android:031c6f00f7a604de58172b",
         "android_client_info": {
-          "package_name": "com.awesomeproject"
+          "package_name": "com.gripuser"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB1D9PPBdrXoLhh6zDIB7z3vT41uvnkxU4"
+          "current_key": "AIzaSyBkhn9XZqcmcoThD7Ll8BGSWnFYlQ6gd4o"
         }
       ],
       "services": {

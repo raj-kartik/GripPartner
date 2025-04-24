@@ -31,7 +31,7 @@ export const getNotificaiton = createAsyncThunk(
       // console.log('=== endpoint ===', endpoint);
       // console.log('=== response ===', response);
 
-      if (response?.success === 'true') {
+      if (response?.success === true) {
         return {response: response?.data, type: notiType};
       }
     } catch (err: any) {
@@ -53,7 +53,7 @@ const notificationSlice = createSlice({
       .addCase(getNotificaiton.fulfilled, (state: any, action: any) => {
         state.loading = false;
         const {response, type} = action.payload;
-        console.log("==== action payload ====",action?.payload);
+        // console.log("==== action payload ====",action?.payload);
         
         if (type === 'read') {
           state.read = response;

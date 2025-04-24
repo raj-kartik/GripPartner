@@ -182,46 +182,54 @@ const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
                     ) : null}
                   </View>
 
-                  <View style={[globalStyle.row, { justifyContent: "space-around" }]}>
-                    <View style={globalStyle.row}>
-                      <CustomIcon type="MaterialIcons" name="group" />
-                      <CustomText
-                        text={`${item?.Lead < 1 ? 'No' : item?.Lead} ${item?.Lead <= 1 ? 'Lead' : 'Leads'
-                          }`}
-                        weight="500"
-                        color={item?.Lead < 1 ? Colors.gray_font : '#000'}
-                        size={12}
-                      />
+
+                  {/*---------------------------------------           stats      --------------------------------------------- */}
+                  <View style={[globalStyle.row, { justifyContent: "space-between" }]}>
+                    <View>
+                      <View style={globalStyle.row}>
+                        <CustomIcon type="MaterialIcons" name="group" />
+                        <CustomText
+                          text={`${item?.Lead < 1 ? 'No' : item?.Lead} ${item?.Lead <= 1 ? 'Lead' : 'Leads'
+                            }`}
+                          weight="500"
+                          color={item?.Lead < 1 ? Colors.gray_font : '#000'}
+                          size={12}
+                        />
+                      </View>
+                      <View style={globalStyle.row}>
+                        <CustomIcon type="MaterialIcons" name="person-add" />
+                        <CustomText
+                          text={`${item?.Suscription < 1 ? 'No' : item?.Suscription} ${item?.Suscription <= 1 ? 'Suscription' : 'Suscriptions'
+                            }`}
+                          weight="500"
+                          color={item?.Suscription < 1 ? Colors.gray_font : '#000'}
+                          size={12}
+                        />
+                      </View>
                     </View>
-                    <View style={globalStyle.row}>
-                      <CustomIcon type="MaterialIcons" name="person-add" />
-                      <CustomText
-                        text={`${item?.Suscription < 1 ? 'No' : item?.Suscription} ${item?.Suscription <= 1 ? 'Suscription' : 'Suscriptions'
-                          }`}
-                        weight="500"
-                        color={item?.Suscription < 1 ? Colors.gray_font : '#000'}
-                        size={12}
-                      />
-                    </View>
-                    <View style={globalStyle.row}>
-                      {/* <Icon name="eye" type="font-awesome" size={25} color="#000" /> */}
-                      <CustomText
-                        text={`${item?.impresssion < 1 ? 'No' : item?.impresssion} ${item?.impresssion <= 1 ? 'Impression' : 'Impressions'
-                          }`}
-                        weight="500"
-                        color={item?.impresssion < 1 ? Colors.gray_font : '#000'}
-                        size={12}
-                      />
-                    </View>
-                    <View style={globalStyle.row}>
-                      <CustomIcon type="MaterialIcons" name="touch-app" />
-                      <CustomText
-                        text={`${item?.click < 1 ? 'No' : item?.click} ${item?.click <= 1 ? 'Click' : 'Clicks'
-                          }`}
-                        weight="500"
-                        color={item?.click < 1 ? Colors.gray_font : '#000'}
-                        size={12}
-                      />
+
+                    <View>
+
+                      <View style={globalStyle.row}>
+                        {/* <Icon name="eye" type="font-awesome" size={25} color="#000" /> */}
+                        <CustomText
+                          text={`${item?.impresssion < 1 ? 'No' : item?.impresssion} ${item?.impresssion <= 1 ? 'Impression' : 'Impressions'
+                            }`}
+                          weight="500"
+                          color={item?.impresssion < 1 ? Colors.gray_font : '#000'}
+                          size={12}
+                        />
+                      </View>
+                      <View style={globalStyle.row}>
+                        <CustomIcon type="MaterialIcons" name="touch-app" />
+                        <CustomText
+                          text={`${item?.click < 1 ? 'No' : item?.click} ${item?.click <= 1 ? 'Click' : 'Clicks'
+                            }`}
+                          weight="500"
+                          color={item?.click < 1 ? Colors.gray_font : '#000'}
+                          size={12}
+                        />
+                      </View>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -261,7 +269,6 @@ const styles = StyleSheet.create({
   },
   course: {
     width: "45%",
-
     fontFamily: 'Roboto-Regular',
     fontSize: 17,
     letterSpacing: 1,
@@ -310,7 +317,7 @@ const styles = StyleSheet.create({
   },
   cartContainer: {
     width: screenWidth * .92,
-    height: screenHeight * .45,
+    height: screenHeight * .5,
     backgroundColor: "#fff",
     borderRadius: moderateScale(10),
     elevation: 3,

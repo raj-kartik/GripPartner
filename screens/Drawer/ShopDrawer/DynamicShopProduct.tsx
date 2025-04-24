@@ -39,7 +39,7 @@ const DynamicShopProduct = (props:any) => {
 
       const response:any = await axios.get('https://gripkart.com/rest/V1/categories');
 
-      console.log("--- response in the fetchCategories ----", response);
+      // console.log("--- response in the fetchCategories ----", response);
 
       if (response?.status === 200) {
         setCategory(response?.data?.children_data);

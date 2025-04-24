@@ -9,12 +9,16 @@ import ProfileCourseCard from '../../../../components/Cards/Course/ProfileCourse
 import { moderateScale } from '../../../../components/Matrix/Matrix';
 import Images from '../../../../utils/Images';
 import CustomText from '../../../../components/Customs/CustomText';
+import { globalStyle } from '../../../../utils/GlobalStyle';
 
 const OwnCourse = () => {
   const dispatch = useDispatch();
   const { user }: any = useSelector((state: any) => state?.user);
   const { course } = useSelector((state: any) => state?.course);
   const navigation = useNavigation();
+
+  // console.log("----- user id -----",user?.id);
+  
   useFocusEffect(
     useCallback(() => {
       const fetchCourses = async () => {
@@ -40,9 +44,9 @@ const OwnCourse = () => {
           data={course}
           renderItem={({ item }) => { return <ProfileCourseCard item={item} /> }}
           showsVerticalScrollIndicator={false}
-        /> : <View>
-          <Images.Logo />
-          <CustomText text='No Course Found' />
+        /> : <View style={[globalStyle.center, { flex: 1 }]} >
+          <Images.Logo width={moderateScale(100)} height={moderateScale(100)} />
+          <CustomText text='No Course Found' weight='500' size={18} />
         </View>}
       </View>
     </Container>

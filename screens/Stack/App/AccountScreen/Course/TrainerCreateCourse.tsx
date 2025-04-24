@@ -160,8 +160,11 @@ const CourseSchema = Yup.object().shape({
 });
 
 const TrainerCreateCourse = (props: any) => {
-  const existCourse = props.route?.params?.course || {};
 
+  console.log("==== props ====", props?.route?.params);
+
+  const existCourse = props.route?.params?.course || {};
+  const [loading, setLoading] = useState(false);
   // const [isUpdateCourse,setIsUpdateCourse] = useState(false);
   console.log('==== existCourse in trainer new course ===', existCourse);
 
@@ -331,12 +334,8 @@ const TrainerCreateCourse = (props: any) => {
       formData.append(`slot[${index}][slot_days]`, slot.days.join(',')); // Comma-separated slot days
     });
 
-    // Handle File (Check file uri, type, and name properly)
     if (values.file) {
       formData.append('select_image', {
-        // uri: values.file.uri.startsWith('file://')
-        //   ? values.file.uri
-        //   : `${values.file.uri}`,
         uri: values?.file?.uri,
         type: values.file.type || 'application/octet-stream',
         name: values.file.name || 'file',
@@ -384,7 +383,7 @@ const TrainerCreateCourse = (props: any) => {
 
   return (
     <Container>
-      <CustomHeader2 title="Create New Course" />
+      <CustomHeader2 title={!existCourse?.id ? "Create Course" : "Update Course"} />
       <Formik
         initialValues={{
           title: existCourse ? existCourse?.name : '',
@@ -456,6 +455,16 @@ const TrainerCreateCourse = (props: any) => {
           };
 
           // let {training_level} = values;
+
+          useEffect(() => {
+            if (values && !user?.is_registred) {
+              CustomToast({
+                type: "info",
+                text1: "Your KYC is pending!",
+                text2: "You can create after verification"
+              })
+            }
+          }, [!user?.is_registred, values])
 
           return (
             <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -560,6 +569,8 @@ const TrainerCreateCourse = (props: any) => {
                                       ? values?.batch[index]?.startTime
                                       : 'Start Time'
                                   }
+                                  bg={Colors.gray}
+                                  textColor='#fff'
                                   onPress={() => {
                                     handleTimeType('start', index);
                                   }}
@@ -574,6 +585,8 @@ const TrainerCreateCourse = (props: any) => {
                               <View
                                 style={{ flex: 1, marginLeft: moderateScale(5) }}>
                                 <CustomButton
+                                  bg={Colors.gray}
+                                  textColor='#fff'
                                   title={
                                     values?.batch[index]?.endTime?.length > 0
                                       ? values?.batch[index]?.endTime
@@ -956,7 +969,19 @@ const TrainerCreateCourse = (props: any) => {
                 <CustomButton
                   customStyle={{ marginVertical: moderateScale(10) }}
                   title={existCourse?.id ? 'Update' : 'Submit'}
-                  onPress={handleSubmit}
+                  // disabled={!user?.is_registred || loading}
+                  onPress={() => {
+                    if (!user?.is_registred) {
+                      CustomToast({
+                        type: "info",
+                        text1: "Your KYC is pending!",
+                        text2: "You can create after verification"
+                      })
+                    }
+                    else {
+                      handleSubmit()
+                    }
+                  }}
                 />
               </ScrollView>
             </KeyboardAvoidingView>

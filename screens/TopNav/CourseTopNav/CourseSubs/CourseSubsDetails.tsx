@@ -106,12 +106,13 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
 
   const handleDue = async () => {
 
-    if (dueAmount !== '') {
+    if (!dueAmount || !dueDate) {
       CustomToast({
         type: "info",
         text1: "Please fill Amount and Date",
         text2: ""
-      })
+      });
+      return;
     }
 
     try {
@@ -135,7 +136,9 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
           type: "success",
           text1: response?.message,
           text2: ""
-        })
+        });
+        suscriptionLisfun();
+        suscriptionHistory();
       }
       else {
         setDatePickerVisible({
@@ -159,14 +162,20 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
     }
   }
 
+
+  console.log("---- paidAmount ----", paidAmount);
+  console.log("---- paidDate ----", paidDate);
+
+
   const handlePaid = async () => {
 
-    if (paidAmount !== '' || paidDate !== '') {
+    if (!paidAmount || !paidDate) {
       CustomToast({
         type: "info",
         text1: "Please fill Amount and Date",
         text2: ""
-      })
+      });
+      return;
     }
 
     try {
@@ -198,7 +207,13 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
           type: "success",
           text1: response?.message,
           text2: ""
-        })
+        });
+        suscriptionLisfun();
+        suscriptionHistory();
+        setModalType({
+          due: false,
+          paid: false
+        });
       }
       else {
 

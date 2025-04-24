@@ -59,7 +59,9 @@ const retreatSchema = yup.object().shape({
         ),
 });
 
-const CreateRetreat = () => {
+const CreateRetreat = (props: any) => {
+
+    const exist: any = props?.route?.params?.retreat || {};
     const { user } = useSelector((state: any) => state?.user);
     const [loading, setLoading] = useState(false)
     const navigation = useNavigation();
@@ -67,6 +69,7 @@ const CreateRetreat = () => {
         start: false,
         end: false
     });
+    // console.log("==== exist ===", exist);
 
     const [documents, setDocuments] = useState<any>([]);
     // console.log("=== document ===",documents);
@@ -92,24 +95,24 @@ const CreateRetreat = () => {
 
     return (
         <Container>
-            <CustomHeader2 title="Create Retreat" />
+            <CustomHeader2 title={!exist?.title ? "Create Retreat" : "Update Retreat"} />
 
             <KeyboardAvoidingView style={{ flex: 1 }} >
                 <Formik
                     initialValues={{
-                        title: '',
-                        hotel: '',
-                        location: '',
-                        overview: '',
-                        details: '',
-                        groupSize: '',
-                        numOfDays: '',
-                        numOfNights: '',
-                        price: '',
+                        title: exist?.title || '',
+                        hotel: exist["Accommodation Hotel"] ? exist["Accommodation Hotel"] : '',
+                        location: exist?.location || '',
+                        overview: exist?.overview || '',
+                        details: exist["Program Detail"] || '',
+                        groupSize: exist?.group_size || '',
+                        numOfDays: exist?.no_of_days || '',
+                        numOfNights: exist?.no_of_nights || '',
+                        price: exist?.price || '',
                         img: null,
-                        startDate: '',
-                        endDate: '',
-                        rooms: '0'
+                        startDate: exist["start Date"] || '',
+                        endDate: exist["end Date"] || '',
+                        rooms: ''
                     }}
                     validationSchema={retreatSchema}
                     onSubmit={async (values) => {
@@ -137,10 +140,10 @@ const CreateRetreat = () => {
                             });
                         }
 
-                        console.log("==== formdata ====", formdata);
-
                         try {
-                            const response: any = await axios.post('https://fitwithgrip.com/trainer/user-add-retreat', formdata, {
+
+                            const endpoint = exist?.id ? `https://fitwithgrip.com/api/user-update-retreat?id=${exist?.id}` : 'https://fitwithgrip.com/trainer/user-add-retreat'
+                            const response: any = await axios.post(endpoint, formdata, {
                                 headers: {
                                     'Content-Type': 'multipart/form-data',
                                 },
@@ -175,8 +178,16 @@ const CreateRetreat = () => {
                 >
                     {({ handleSubmit, handleChange, setFieldValue, errors, values, touched }: any) => {
                         useEffect(() => {
-                            console.log("=== error ===", errors);
-                        }, [errors]);
+                            if (values && !user?.is_registred) {
+                                CustomToast({
+                                    type: "info",
+                                    text1: "Your KYC is pending!",
+                                    text2: "You can create after verification"
+                                })
+                            }
+                        }, [!user?.is_registred, values])
+
+
                         return (
                             <View style={{ flex: 1 }} >
                                 <ScrollView
@@ -530,14 +541,27 @@ const CreateRetreat = () => {
                                             instruction="Accepted formats: JPEG, PNG, PDF. Max size 2MB"
                                         />
                                         {
-                                            documents && <View>
+                                            documents.length > 0 && <View>
                                                 <CustomText text={`${documents?.name} uploaded`} weight='500' />
                                             </View>
                                         }
                                     </View>
                                 </ScrollView>
                                 <View style={{ marginBottom: moderateScale(10), paddingTop: moderateScale(5) }} >
-                                    <CustomButton title='Save' disabled={loading} onPress={handleSubmit} />
+                                    <CustomButton title='Save' disabled={loading}
+                                        onPress={() => {
+                                            if (!user?.is_registred) {
+                                                CustomToast({
+                                                    type: "info",
+                                                    text1: "Your KYC is pending!",
+                                                    text2: "You can create after verification"
+                                                })
+                                            }
+                                            else {
+                                                handleSubmit()
+                                            }
+                                        }}
+                                    />
                                 </View>
                             </View>
                         )
