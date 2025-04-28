@@ -17,6 +17,11 @@ import CustomButton from '../../../../components/Customs/CustomButton'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
 import Colors from '../../../../utils/Colors'
 import CustomIcon from '../../../../components/Customs/CustomIcon'
+import {
+    getHash,
+    startOtpListener,
+    useOtpVerify,
+} from 'react-native-otp-verify';
 
 
 const OtpVerification = (props: any) => {
@@ -31,6 +36,25 @@ const OtpVerification = (props: any) => {
     const [otp, setOtp] = useState('');
     const [isResendDisabled, setIsResendDisabled] = useState(false);
     const [countdown, setCountdown] = useState(60); // Countdown timer set to 60 seconds
+
+    const { stopListener } = useOtpVerify({ numberOfDigits: 6 });
+    useEffect(() => {
+        startOtpListener((message) => {
+            try {
+                const otpSent = /(\d{6})/g.exec(message)?.[1]; // updated to match 4 digits
+                if (otpSent) {
+                    setOtp(otpSent);
+                    stopListener(); // stop listener after OTP is read
+                }
+            } catch (err) {
+                console.error('Failed to extract OTP:', err);
+            }
+        });
+
+        return () => {
+            stopListener(); // cleanup on unmount
+        };
+    }, []);
 
     const { mobile } = props?.route?.params;
     const handleVerification = async () => {

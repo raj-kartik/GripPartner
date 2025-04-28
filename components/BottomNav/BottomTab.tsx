@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { Keyboard, Platform } from "react-native";
 import { moderateScale } from "../Matrix/Matrix";
 import CustomBottomTabBar from "./CustomBottom";
@@ -11,12 +11,26 @@ import Scanner from "../../screens/Bottom/Scanner";
 import Colors from "../../utils/Colors";
 import Home from "../../screens/Drawer/Home";
 import ShopDrawer from "../../screens/Drawer/ShopDrawer/ShopDrawer";
+import { useDispatch, useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
+import { addToCart } from "../../redux/Slice/AddToCartSlice";
 
 
 const Tab = createBottomTabNavigator();
 
+
 const { Navigator, Screen } = createBottomTabNavigator();
 export function BottomTabs(route: any) {
+    const dispatch = useDispatch();
+    
+    const { data } = useSelector((state: any) => state?.cart);
+    useFocusEffect(useCallback(() => {
+        const fetchCart = async () => {
+            await dispatch(addToCart());
+        }
+        fetchCart();
+    }, []));
+
     const TabArr = [
         {
             id: 0,
@@ -27,6 +41,7 @@ export function BottomTabs(route: any) {
             // inActive: Images.Home,
             // active: Images.Home,
             component: Home,
+            data:0
         },
         {
             id: 1,
@@ -37,6 +52,7 @@ export function BottomTabs(route: any) {
             // inActive: Images.Home,
             // active: Images.Home,
             component: ShopDrawer,
+            data:data?.cart_items.length
         },
         {
             id: 2,
@@ -47,6 +63,7 @@ export function BottomTabs(route: any) {
             // inActive: Images.Scanner,
             // active: Images.Scanner,
             component: Scanner,
+            data:0
         },
         {
             id: 3,
@@ -55,6 +72,7 @@ export function BottomTabs(route: any) {
             type: "Feather",
             icon: "bell",
             component: Notifications,
+            data:0
         },
         {
             id: 4,
@@ -63,6 +81,7 @@ export function BottomTabs(route: any) {
             type: 'Feather',
             icon: 'user',
             component: Profile,
+            data:0
         }
     ];
 
@@ -94,7 +113,7 @@ export function BottomTabs(route: any) {
             tabBar={props =>
                 tabBarVisible && <CustomBottomTabBar {...props} colors={Colors} />
             }
-            >
+        >
             {TabArr.map(item => {
                 return (
                     <Screen
@@ -107,7 +126,8 @@ export function BottomTabs(route: any) {
                             headerShown: false,
                             InActive: item.inActive,
                             type: item?.type,
-                            icon: item?.icon
+                            icon: item?.icon,
+                            data:item?.data
                         }}
                     />
                 );

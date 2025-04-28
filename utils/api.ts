@@ -72,7 +72,7 @@ export const GET_COURSE_LIST = (lat: number, long: number, list: string) => {
 export const POST_COURSE_LEAD_CHANGE = 'update-lead-status';
 
 // SECRET KEYS
-export const ONE_SIGNAL_SECRET_KEY = '0467873e-af8b-43b5-927f-add391e15d83';
+export const ONE_SIGNAL_SECRET_KEY = 'a950326e-0037-4cb7-8583-ce8392a8ab43';
 export const RAZORPAY_SECRET_KEY = 'rzp_live_5VC3pVIlFuAnB3';
 export const GENERATE_RAZORPAY_ORDER_ID = 'shop/create-razorpay-order';
 
@@ -96,6 +96,7 @@ export const AGORA_APP_KEY = '518be2a3c5ee4c0da1bbd3f99b15809c';
 
 // course
 export const POST_PAY_COURSE_FEE = 'pay-for-course';
+export const POST_UNSUBSCRIBE_COURSE = "subscription-end"
 
 // retreat
 export const POST_PAY_RETREAT_FEE = 'pay-for-retreat';

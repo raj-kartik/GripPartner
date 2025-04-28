@@ -1,26 +1,44 @@
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useState } from 'react'
-import Container from '../../../../components/Container'
-import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
-import { CommonActions, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
-import { MenuProvider } from 'react-native-popup-menu'
-import CourseLeadMenu from '../../../../components/Menu/Course/CourseLeadMenu'
-import makeApiRequest from '../../../../utils/ApiService'
-import { BASE_URL } from '../../../../utils/api'
-import CustomButton from '../../../../components/Customs/CustomButton'
-import { globalStyle } from '../../../../utils/GlobalStyle'
-import Colors from '../../../../utils/Colors'
-import CustomText from '../../../../components/Customs/CustomText'
+import {
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import Container from '../../../../components/Container';
+import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
+import {
+    CommonActions,
+    useFocusEffect,
+    useNavigation,
+    useRoute,
+} from '@react-navigation/native';
+import { MenuProvider } from 'react-native-popup-menu';
+import CourseLeadMenu from '../../../../components/Menu/Course/CourseLeadMenu';
+import makeApiRequest from '../../../../utils/ApiService';
+import { BASE_URL, POST_UNSUBSCRIBE_COURSE } from '../../../../utils/api';
+import CustomButton from '../../../../components/Customs/CustomButton';
+import { globalStyle } from '../../../../utils/GlobalStyle';
+import Colors from '../../../../utils/Colors';
+import CustomText from '../../../../components/Customs/CustomText';
 import CalendarPicker from 'react-native-calendar-picker';
-import { moderateScale, screenHeight, screenWidth } from '../../../../components/Matrix/Matrix'
-import CustomIcon from '../../../../components/Customs/CustomIcon'
-import SubscriptionCard from '../../../../components/Cards/SubscriptionCard'
-import CustomModal from '../../../../components/Customs/CustomModal'
-import { Formik } from 'formik'
-import CustomInput from '../../../../components/Customs/CustomInput'
-import { CustomToast } from '../../../../components/Customs/CustomToast'
-import * as Yup from 'yup'
-import { leadChangeStatus } from '../../../../utils/UtilityFuncations'
+import {
+    moderateScale,
+    screenHeight,
+    screenWidth,
+} from '../../../../components/Matrix/Matrix';
+import CustomIcon from '../../../../components/Customs/CustomIcon';
+import SubscriptionCard from '../../../../components/Cards/SubscriptionCard';
+import CustomModal from '../../../../components/Customs/CustomModal';
+import { Formik } from 'formik';
+import CustomInput from '../../../../components/Customs/CustomInput';
+import { CustomToast } from '../../../../components/Customs/CustomToast';
+import * as Yup from 'yup';
+import { leadChangeStatus } from '../../../../utils/UtilityFuncations';
 
 const followSchema = Yup.object().shape({
     comment: Yup.string().min(3, '*too Short').max(500, '*too large'),
@@ -33,19 +51,20 @@ const CourseLeadDetails = () => {
     const [loading, setLoading] = useState(false);
     const [lead, setLead] = useState<any>({});
 
-
     // ----------------------- MODAL ---------------------- //
     const [followModal, setFollowModal] = useState(false);
     const [isCalendar, setIsCalendar] = useState(false);
 
     const navigation = useNavigation();
-    const [data, setData] = useState<any>(null)
+    const [data, setData] = useState<any>(null);
     const [update, setUpdate] = useState([]);
-    const [subscriptionModalVisible, setSubscriptionModalVisible] = useState(false);
+    const [subscriptionModalVisible, setSubscriptionModalVisible] =
+        useState(false);
+    const [unsubModal, setUnsubModal] = useState(false);
 
-    console.log("----- course lead details ----", data);
+    const date = new Date;
 
-
+    // console.log('----- course lead details ----', lead_id);
 
     useFocusEffect(
         useCallback(() => {
@@ -53,6 +72,7 @@ const CourseLeadDetails = () => {
             CourseListDetail();
         }, []),
     );
+    const today = new Date().toISOString().slice(0, 10);
 
     const leadLisfun = async () => {
         setLoading(true);
@@ -62,10 +82,10 @@ const CourseLeadDetails = () => {
             const response: any = await makeApiRequest({
                 baseUrl: BASE_URL,
                 url: `lead-detail?lead_id=${lead_id}`,
-                method: "GET",
-            })
+                method: 'GET',
+            });
 
-            console.log("==== response in the lead details ====", response);
+            // console.log('==== response in the lead details ====', response);
 
             if (response?.success === true) {
                 setLead(response?.lead);
@@ -87,10 +107,10 @@ const CourseLeadDetails = () => {
             const response: any = await makeApiRequest({
                 baseUrl: BASE_URL,
                 url: `course-detail/?id=${courseId}`,
-                method: "GET"
+                method: 'GET',
             });
 
-            console.log("=== response in the course details ====", response);
+            // console.log('=== response in the course details ====', response);
 
             if (response) {
                 setData(response);
@@ -103,20 +123,35 @@ const CourseLeadDetails = () => {
         }
     };
 
-    const handleUnSubscribe = () => {
-        Alert.alert('Confirmation', 'Are you sure you want to unsubscribe?', [
-            {
-                text: 'Cancel',
-                style: 'cancel',
-            },
-            {
-                text: 'Yes',
-                onPress: () => {
-                    confirmAction(2);
-                    setSubscriptionModalVisible(true);
+    const handleUnSubscribe = async () => {
+        try {
+            const response: any = await makeApiRequest({
+                baseUrl: BASE_URL,
+                url: POST_UNSUBSCRIBE_COURSE,
+                data: {
+                    subscription_id: lead_id,
+                    end_date: today,
                 },
-            },
-        ]);
+                method: 'POST',
+            });
+
+
+            if(response?.success){
+                CustomToast({
+                    type:"success",
+                    text1:"You have succesfully unsubscribe the student",
+                    text2:"This user is no longer your student"
+                });
+                leadLisfun();
+                CourseListDetail();
+                setUnsubModal(false);
+            }
+
+            console.log("---- response in the unsubscribe the trainer ---", response);
+
+        } catch (err: any) {
+            console.error('Error in the unsubscribe the course', err);
+        }
     };
 
     const courseDetails = [
@@ -132,7 +167,7 @@ const CourseLeadDetails = () => {
         {
             id: 2,
             title: 'Course Description',
-            value: data?.description || "No Description",
+            value: data?.description || 'No Description',
             iconType: 'AntDesign',
             iconName: 'database',
             iconColor: '#ff0000',
@@ -141,7 +176,7 @@ const CourseLeadDetails = () => {
         {
             id: 3,
             title: 'Course Price',
-            value: data?.price || "Not mentioned",
+            value: data?.price || 'Not mentioned',
             iconType: 'MaterialIcons',
             iconName: 'currency-rupee',
             iconColor: '#ff0000',
@@ -170,7 +205,7 @@ const CourseLeadDetails = () => {
     };
 
     const SentFun1 = (item: any) => {
-        confirmAction(1);
+        // confirmAction(1);
         navigation.dispatch(
             CommonActions.navigate({
                 name: 'AddSubscription',
@@ -198,7 +233,8 @@ const CourseLeadDetails = () => {
                     item={lead}
                     OpenFun={() => confirmAction(1)}
                     CloseFun={() => confirmAction(0)}
-                    courseId={courseId} />
+                    courseId={courseId}
+                />
 
                 {loading ? (
                     <ActivityIndicator size={20} color={'black'} />
@@ -219,7 +255,7 @@ const CourseLeadDetails = () => {
                                             borderRadius: moderateScale(8),
                                             width: '100%',
                                             alignSelf: 'center',
-                                            elevation: 3
+                                            elevation: 3,
                                         },
                                     ]}>
                                     <View
@@ -257,8 +293,7 @@ const CourseLeadDetails = () => {
                                     <CustomButton
                                         title="Unsubscribe"
                                         onPress={() => {
-                                            console.log('==== pressing =====');
-                                            handleUnSubscribe();
+                                            setUnsubModal(true);
                                         }}
                                         radius={30}
                                         customStyle={{ width: '48%' }}
@@ -279,163 +314,224 @@ const CourseLeadDetails = () => {
                                     onPress={() => {
                                         setFollowModal(true);
                                         // SentFun(lead_id)
-                                    }
-                                    }
+                                    }}
                                     customStyle={{ width: '48%' }}
                                     radius={30}
                                 />
                             </View>
                         )}
+
+                        <CustomModal
+                            visible={unsubModal}
+                            iscenter={true}
+                            onDismiss={() => {
+                                setUnsubModal(false);
+                            }}
+                            containerStyle={{
+                                height: screenHeight * 0.2,
+                                justifyContent: 'center',
+                            }}>
+                            <CustomText
+                                customStyle={{ textAlign: 'center' }}
+                                text="Do You really want to Unsubscribe the student?"
+                                weight="500"
+                            />
+                            <View
+                                style={[
+                                    globalStyle.betweenCenter,
+                                    { marginTop: moderateScale(10) },
+                                ]}>
+                                <CustomButton
+                                    title="No"
+                                    bg={Colors.orange}
+                                    customStyle={{ width: '45%' }}
+                                    onPress={() => {
+                                        setUnsubModal(false);
+                                    }}
+                                />
+                                <CustomButton
+                                    title="Yes"
+                                    customStyle={{ width: '45%' }}
+                                    onPress={() => {
+                                        handleUnSubscribe();
+                                    }}
+                                />
+                            </View>
+                        </CustomModal>
                     </View>
                 )}
             </MenuProvider>
 
-            {
-                followModal && (
-                    <CustomModal
-                        visible={followModal}
-                        onDismiss={() => {
-                            setFollowModal(false)
+            {followModal && (
+                <CustomModal
+                    visible={followModal}
+                    onDismiss={() => {
+                        setFollowModal(false);
+                    }}
+                    iscenter={false}
+                    containerStyle={{
+                        height: screenHeight * 0.6,
+                        width: screenWidth,
+                        alignSelf: 'center',
+                    }}>
+                    <View
+                        style={{
+                            width: '30%',
+                            height: moderateScale(3),
+                            borderRadius: moderateScale(100),
+                            marginTop: moderateScale(10),
+                            backgroundColor: Colors.gray,
+                            alignSelf: 'center',
+                            marginBottom: moderateScale(5),
                         }}
-                        iscenter={false}
-                        containerStyle={{
-                            height: screenHeight * .6,
-                            width: screenWidth,
-                            alignSelf: 'center'
-                        }}
-                    >
-                        <View style={{ width: "30%", height: moderateScale(3), borderRadius: moderateScale(100), marginTop: moderateScale(10), backgroundColor: Colors.gray, alignSelf: 'center', marginBottom: moderateScale(5) }} />
-                        <CustomText text='Follow Up' weight='600' size={18} customStyle={{ textAlign: 'center' }} />
+                    />
+                    <CustomText
+                        text="Follow Up"
+                        weight="600"
+                        size={18}
+                        customStyle={{ textAlign: 'center' }}
+                    />
 
-                        <KeyboardAvoidingView style={{ flex: 1 }} >
-                            <Formik
-                                initialValues={{
-                                    comments: '',
-                                    follow_up_date: '',
-                                }}
-                                validationSchema={followSchema}
+                    <KeyboardAvoidingView style={{ flex: 1 }}>
+                        <Formik
+                            initialValues={{
+                                comments: '',
+                                follow_up_date: '',
+                            }}
+                            validationSchema={followSchema}
+                            onSubmit={async values => {
+                                console.log(
+                                    '--- values in the course lead details ---',
+                                    values,
+                                );
+                                try {
+                                    // lead_id
+                                    const row = {
+                                        lead_id: lead_id,
+                                        comments: values.comments,
+                                        follow_up_date: values.follow_up_date,
+                                    };
 
-                                onSubmit={async (values) => {
-                                    console.log("--- values in the course lead details ---", values)
-                                    try {
-                                        // lead_id
-                                        const row = {
-                                            lead_id: lead_id,
-                                            comments: values.comments,
-                                            follow_up_date: values.follow_up_date,
-                                        }
+                                    const response: any = await makeApiRequest({
+                                        baseUrl: BASE_URL,
+                                        url: 'lead-followup',
+                                        method: 'POST',
+                                        data: row,
+                                    });
 
-                                        const response: any = await makeApiRequest({
-                                            baseUrl: BASE_URL,
-                                            url: 'lead-followup',
-                                            method: "POST",
-                                            data: row
+                                    if (response?.success === true) {
+                                        CustomToast({
+                                            type: 'success',
+                                            text1: 'Follow Up Successful',
+                                            text2: response?.message,
                                         });
+                                        navigation.dispatch(
+                                            CommonActions.navigate({
+                                                name: 'CourseTopNav',
+                                                params: {
+                                                    courseid: null,
+                                                    screen: 'CourseFollowUps',
+                                                },
+                                            }),
+                                        );
+                                        setIsCalendar(false);
+                                    } else {
+                                        CustomToast({
+                                            type: 'error',
+                                            text1: 'Follow Up Unsuccessful',
+                                            text2: response?.message,
+                                        });
+                                        setIsCalendar(false);
+                                    }
+                                } catch (err: any) {
+                                    console.log('Error in the Course Lead Details', err);
+                                }
+                            }}>
+                            {({
+                                handleChange,
+                                handleSubmit,
+                                setFieldValue,
+                                values,
+                                errors,
+                                touched,
+                            }) => {
+                                return (
+                                    <View style={{ flex: 1 }}>
+                                        <ScrollView
+                                            showsVerticalScrollIndicator={false}
+                                            style={{ flex: 0.9, paddingHorizontal: moderateScale(10) }}>
+                                            <CustomInput
+                                                text="Comments"
+                                                handleChangeText={handleChange('comments')}
+                                            />
+                                            {errors.comments && (
+                                                <CustomText text={errors?.comments} color="#ff0000" />
+                                            )}
 
-                                        if (response?.success === true) {
-                                            CustomToast({
-                                                type: "success",
-                                                text1: "Follow Up Successful",
-                                                text2: response?.message
-                                            })
-                                            navigation.dispatch(
-                                                CommonActions.navigate({
-                                                    name: 'CourseTopNav',
-                                                    params: {
-                                                        courseid: null,
-                                                        screen: 'CourseFollowUps',
+                                            <CustomText
+                                                text="Select Follow Up Date "
+                                                customStyle={{ marginTop: moderateScale(10) }}
+                                                weight="500"
+                                                size={15}
+                                            />
+                                            <Pressable
+                                                style={[
+                                                    styles.inputContainer,
+                                                    {
+                                                        borderWidth: touched.type ? 1 : 0,
+                                                        borderColor: touched.type ? '#000' : '#fff',
+                                                        marginVertical: moderateScale(10),
                                                     },
-                                                }),
-                                            );
-                                            setIsCalendar(false)
-                                        }
-                                        else {
-                                            CustomToast({
-                                                type: "error",
-                                                text1: "Follow Up Unsuccessful",
-                                                text2: response?.message
-                                            })
-                                            setIsCalendar(false)
-                                        }
-                                    }
-                                    catch (err: any) {
-                                        console.log("Error in the Course Lead Details", err);
-
-                                    }
-                                }}
-                            >
-                                {({ handleChange, handleSubmit, setFieldValue, values, errors, touched }) => {
-                                    return (
-                                        <View style={{ flex: 1 }} >
-                                            <ScrollView showsVerticalScrollIndicator={false} style={{ flex: .9, paddingHorizontal: moderateScale(10) }} >
-                                                <CustomInput
-                                                    text='Comments'
-                                                    handleChangeText={handleChange('comments')}
+                                                ]}
+                                                onPress={() => {
+                                                    setIsCalendar(!isCalendar);
+                                                }}>
+                                                <CustomText
+                                                    text={
+                                                        values.follow_up_date ? values.follow_up_date : 'To'
+                                                    }
+                                                    color={values.follow_up_date ? '#000' : '#909090'}
+                                                    weight="400"
+                                                    size={15}
                                                 />
-                                                {
-                                                    errors.comments && (
-                                                        <CustomText text={errors?.comments} color='#ff0000' />
-                                                    )
-                                                }
-
-
-                                                <CustomText text='Select Follow Up Date ' customStyle={{ marginTop: moderateScale(10) }} weight='500' size={15} />
-                                                <Pressable
-                                                    style={[
-                                                        styles.inputContainer,
-                                                        {
-                                                            borderWidth: touched.type ? 1 : 0,
-                                                            borderColor: touched.type ? '#000' : '#fff',
-                                                            marginVertical: moderateScale(10),
-                                                        },
-                                                    ]}
-                                                    onPress={() => {
-                                                        setIsCalendar(!isCalendar)
-                                                    }}>
-                                                    <CustomText
-                                                        text={values.follow_up_date ? values.follow_up_date : 'To'}
-                                                        color={values.follow_up_date ? '#000' : '#909090'}
-                                                        weight="400"
-                                                        size={15}
-                                                    />
-                                                </Pressable>
-                                                {
-                                                    isCalendar && <CalendarPicker
-                                                        onDateChange={(date: any) => {
-                                                            const formattedDate = new Date(
-                                                                date,
-                                                            ).toLocaleDateString('en-GB', {
+                                            </Pressable>
+                                            {isCalendar && (
+                                                <CalendarPicker
+                                                    onDateChange={(date: any) => {
+                                                        const formattedDate = new Date(date)
+                                                            .toLocaleDateString('en-GB', {
                                                                 day: '2-digit',
                                                                 month: '2-digit',
                                                                 year: 'numeric',
                                                             })
-                                                                .split('/')
-                                                                .reverse()
-                                                                .join('-');
+                                                            .split('/')
+                                                            .reverse()
+                                                            .join('-');
 
-                                                            setFieldValue('follow_up_date', formattedDate.replaceAll('/', '-'));
-                                                            setIsCalendar(false);
-                                                        }}
-                                                    />
-                                                }
-
-                                            </ScrollView>
-                                            <View style={{ flex: .2 }} >
-                                                <CustomButton title='Submit' onPress={handleSubmit} />
-                                            </View>
+                                                        setFieldValue(
+                                                            'follow_up_date',
+                                                            formattedDate.replaceAll('/', '-'),
+                                                        );
+                                                        setIsCalendar(false);
+                                                    }}
+                                                />
+                                            )}
+                                        </ScrollView>
+                                        <View style={{ flex: 0.2 }}>
+                                            <CustomButton title="Submit" onPress={handleSubmit} />
                                         </View>
-                                    )
-                                }}
-                            </Formik>
-                        </KeyboardAvoidingView>
-                    </CustomModal>
-                )
-            }
+                                    </View>
+                                );
+                            }}
+                        </Formik>
+                    </KeyboardAvoidingView>
+                </CustomModal>
+            )}
         </Container>
-    )
-}
+    );
+};
 
-export default CourseLeadDetails
+export default CourseLeadDetails;
 
 const styles = StyleSheet.create({
     inputContainer: {
@@ -449,4 +545,4 @@ const styles = StyleSheet.create({
         elevation: 2,
         backgroundColor: '#fff',
     },
-})
+});

@@ -47,7 +47,7 @@ const MyCart = () => {
     }, []),
   );
 
-  console.log("==== itemBill in the mycart.tsx ====", itemBill);
+  // console.log("==== itemBill in the mycart.tsx ====", itemBill);
 
 
   const fetchCartData = async () => {
@@ -151,6 +151,7 @@ const MyCart = () => {
           text2: 'You may add new product to shop',
         });
         setIsRemove(true);
+        fetchCartData();
       }
 
       // console.log('==== reponse in the delete cart ====', response?.data);
@@ -161,15 +162,15 @@ const MyCart = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <ActivityIndicator
-        size="large"
-        style={{ flex: 1, backgroundColor: '#fff' }}
-        color="black"
-      />
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <ActivityIndicator
+  //       size="large"
+  //       style={{ flex: 1, backgroundColor: '#fff' }}
+  //       color="black"
+  //     />
+  //   );
+  // }
 
   return (
     <Container>
@@ -192,7 +193,12 @@ const MyCart = () => {
                 width: screenWidth * 0.5,
                 marginTop: moderateScale(10),
               }}
-              onPress={() => navigation.navigate('DrawerNav')}
+              onPress={() => {
+                // navigation.navigate('BottomTabs')
+                navigation.navigate('BottomTabs', {
+                  screen: 'ShopDrawer',
+                });
+              }}
             />
           </View>
         ) : (
@@ -286,7 +292,7 @@ const MyCart = () => {
       {
         allItem && <ApplyCoupon itemBill={allItem} navigation={navigation} />
       }
-      
+
     </Container>
   );
 };

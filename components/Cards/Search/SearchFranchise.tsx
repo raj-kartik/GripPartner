@@ -12,7 +12,7 @@ import Images from '../../../utils/Images';
 const SearchFranchise = ({item, type}: any) => {
   const navigation = useNavigation();
   const {user} = useSelector((state: any) => state.user);
-  const userId = user?.data?.id;
+  const userId = user?.id;
 
   return (
     <Pressable

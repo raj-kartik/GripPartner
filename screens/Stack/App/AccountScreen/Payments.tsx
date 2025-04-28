@@ -68,8 +68,6 @@ const addAccountSchema = yup.object().shape({
 const Payments = () => {
     const dispatch = useDispatch();
     const { user }: any = useSelector((state: any) => state.user);
-    //   const { data } = useSelector((state: any) => state?.wallet);
-    //   const { bank } = useSelector((state: any) => state?.bank);
     const [IsAccountModal, setIsAccountModal] = useState(false);
     const [amountModal, setAmountModal] = useState(false);
     const [withdrawModal, setWithdrawModalModal] = useState(false);
@@ -77,15 +75,15 @@ const Payments = () => {
 
     const isKyc = user?.kyc || user?.kyc;
     useEffect(() => {
-        const fetData = async () => {
-            await dispatch(getWalletBalance(user?.id));
-            await dispatch(fetchTrainerBank(user?.id));
-            // await dispatch(userDetail());
-        };
-
         fetData();
     }, []);
 
+    const fetData = async () => {
+        await dispatch(getWalletBalance(user?.id));
+        await dispatch(fetchTrainerBank(user?.id));
+        // await dispatch(userDetail());
+    };
+    
     const handleSaveAccount = async (value: any) => {
         setLoading(true);
         try {
@@ -149,20 +147,26 @@ const Payments = () => {
                             url: POST_ADD_WALLET,
                             data: {
                                 user_id: user?.id,
-                                amount: successData?.amount,
+                                amount: amount,
                                 transaction_id: successData?.razorpay_payment_id,
-                                payment_status: successData?.status,
+                                payment_status: "success",
                             },
                             method: 'POST',
-                        })
+                        });
+
+                        console.log("------ response in the add amount wallet ----", response);
+
 
                         if (response.status === 'success') {
                             await dispatch(getWalletBalance(user?.id))
+                            setAmountModal(false);
                             CustomToast({
                                 type: "success",
                                 text1: "Payment successful",
                                 text2: "Your payment has been completed successfully.",
                             })
+
+                            fetData();
                         }
                     }
                     catch (err) {
@@ -209,7 +213,7 @@ const Payments = () => {
                     weight="700"
                     textColor={isKyc == 1 ? "#000" : "#fff"}
                     bg={isKyc != 0 ? Colors.orange : "#000"}
-                    customStyle={{ width:"100%" }}
+                    customStyle={{ width: "100%" }}
                     onPress={() => {
                         setAmountModal(true);
                     }}
@@ -225,7 +229,7 @@ const Payments = () => {
                 */}
 
             </View>
-            {
+            {/* {
                 isKyc == 1 && <TouchableOpacity
                     onPress={() => {
                         setIsAccountModal(true);
@@ -233,7 +237,7 @@ const Payments = () => {
                     style={{ alignItems: 'flex-end', marginBottom: moderateScale(5) }}>
                     <CustomText text="+ Add Account" weight="500" color="#707070" />
                 </TouchableOpacity>
-            }
+            } */}
 
 
             {IsAccountModal && (
@@ -396,7 +400,7 @@ const Payments = () => {
                 isKyc != 0 && withdrawModal && <AddAmountCard title="Withdraw Amount" isAddAmount={false} visiable={withdrawModal} onDismiss={() => setWithdrawModalModal(false)} />
             }
 
-            <View>
+            <View style={{flex:1}} >
                 <CustomText text="Transactions" weight="700" size={18} />
                 <WalletTransaction />
             </View>

@@ -39,7 +39,7 @@ const RetreatBooking = () => {
         url: endpoint
       })
 
-      console.log("===== response in the retreat booking ====", response);
+      // console.log("===== response in the retreat booking ====", response);
 
 
       if (response?.success == true) {

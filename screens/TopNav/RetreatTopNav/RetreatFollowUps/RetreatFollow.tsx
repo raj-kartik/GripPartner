@@ -16,7 +16,7 @@ const RetreatFollow: FC<Props> = ({ navigation, route }: any): JSX.Element => {
   const [message, setMessage] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useSelector((state: any) => state.user);
-  const login_id = user?.data?.id;
+  const login_id = user?.id;
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -63,7 +63,7 @@ const RetreatFollow: FC<Props> = ({ navigation, route }: any): JSX.Element => {
     );
   };
 
-  console.log('==== RetreatFollow =====', RetreatFollow);
+  // console.log('==== RetreatFollow =====', RetreatFollow);
 
   return (
     <Container>

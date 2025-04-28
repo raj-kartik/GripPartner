@@ -58,7 +58,7 @@ const AddAmountCard = ({ visiable, onDismiss, isAddAmount = true, title = "Add A
                 method: "POST",
                 url: POST_WITHDRAW_REQUEST,
                 data: {
-                    user_id: user?.data?.id,
+                    user_id: user?.id,
                     amount: number,
                     user_account: selectedAccount?.id || 1
                 }

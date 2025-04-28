@@ -7,7 +7,7 @@ import Colors from "../../utils/Colors";
 import CustomIcon from "../Customs/CustomIcon";
 
 export const FranchiseTrainerCard = ({booking}: any) => {
-    console.log('==== booking in retreat user card ===', booking);
+    // console.log('==== booking in retreat user card ===', booking);
   
     return (
       <View

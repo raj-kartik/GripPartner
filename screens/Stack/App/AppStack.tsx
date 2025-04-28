@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { BottomTabs } from '../../../components/BottomNav/BottomTab'
 import DrawerNav from '../../Bottom/DrawerNav'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -48,12 +48,26 @@ import UpdateProfile from './Settings/UpDateProfile'
 import { ProductList } from '../../Drawer/ShopDrawer/ProductList'
 import RegisterUser from '../RegisterUser'
 import UpdateStudioProfile from './Settings/UpdateStudioProfile'
+import PaymentScan from './PaymentScan'
+import { useDispatch, useSelector } from 'react-redux'
+import { useFocusEffect } from '@react-navigation/native'
+import { addToCart } from '../../../redux/Slice/AddToCartSlice'
+import AddBookingScreen from '../../TopNav/RetreatTopNav/RetreatFollowUps/AddBookingScreen'
 
 // changes noething has made
 
 const AppStack = () => {
 
+    const dispatch = useDispatch();
     const Stack = createNativeStackNavigator();
+    const { data } = useSelector((state: any) => state?.cart);
+    useFocusEffect(useCallback(() => {
+        const fetchCart = async () => {
+            await dispatch(addToCart());
+        }
+        fetchCart();
+    }, []));
+
     return (
         <View style={{ flex: 1 }} >
             {/* jdvjkfnjkv */}
@@ -85,6 +99,8 @@ const AppStack = () => {
                 <Stack.Screen name='UpdateProfile' component={UpdateProfile} />
                 <Stack.Screen name='UpdateStudioProfile' component={UpdateStudioProfile} />
                 <Stack.Screen name='RegisterUser' component={RegisterUser} />
+                <Stack.Screen name='PaymentScan' component={PaymentScan} />
+                <Stack.Screen name='AddBookingScreen' component={AddBookingScreen} />
 
 
                 <Stack.Screen name='AddSubscription' component={AddSubscription} />

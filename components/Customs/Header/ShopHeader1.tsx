@@ -10,11 +10,11 @@ interface Props {
     navigation: any
 }
 const ShopHeader1: FC<Props> = () => {
-
+    const { data } = useSelector((state: any) => state?.cart);
     const navigation: any = useNavigation();
     const { shortAddress, state, pincode } = useSelector((state: any) => state?.location);
     return (
-        <View style={[globalStyle.betweenCenter, { marginRight: moderateScale(20), paddingBottom:moderateScale(10) }]} >
+        <View style={[globalStyle.betweenCenter, { marginRight: moderateScale(20), paddingBottom: moderateScale(10) }]} >
             {/* side drawer + location */}
             <View style={[globalStyle.row, { flex: .7 }]} >
                 <Pressable onPress={() => { navigation.openDrawer() }} >
@@ -27,13 +27,19 @@ const ShopHeader1: FC<Props> = () => {
 
                 </Pressable>
             </View>
-            <View style={[globalStyle.betweenCenter, { flex: .2, alignItems: "flex-end" }]} >
+            <View style={[globalStyle.betweenCenter, { flex: .25, alignItems: "flex-end" }]} >
                 <TouchableOpacity onPress={() => { navigation.navigate('Scanner') }} >
                     <CustomIcon type="Ionicons" name='scan' size={27} />
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => { navigation.navigate('MyCart') }} >
                     <CustomIcon type="AntDesign" name='shoppingcart' size={30} />
+                    {
+                        data?.cart_items?.length > 0 && <View style={[globalStyle.center, { backgroundColor: "#000", width: moderateScale(20), height: moderateScale(20), borderRadius: moderateScale(100), position: "absolute", top: -moderateScale(10), right: -moderateScale(10) }]} >
+                            <CustomText text={data?.cart_items?.length} color='#fff' weight='500' />
+                        </View>
+                    }
+
                 </TouchableOpacity>
 
             </View>

@@ -53,7 +53,7 @@ export default StoreOrderCard;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: screenHeight*.3,
+    height: screenHeight*.2,
     backgroundColor: '#fff',
     flexDirection: 'row',
     paddingHorizontal: 5,

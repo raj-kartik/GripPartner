@@ -20,6 +20,7 @@ import * as Yup from 'yup'
 import CalendarPicker from 'react-native-calendar-picker';
 import { Formik } from 'formik'
 import CustomInput from '../../../../components/Customs/CustomInput'
+import axios from 'axios'
 
 const bookingSchema = Yup.object().shape({
   amount: Yup.string().required("*required"),
@@ -39,6 +40,10 @@ const RetreatBookingDetail = () => {
   const [paymentType, setPaymentType] = useState('');
   const { Booking_id }: any = route.params;
 
+
+  console.log("----- booking id ----",Booking_id);
+  
+
   useFocusEffect(useCallback(() => {
     const fetchData = async () => {
       await BookingLisfun();
@@ -55,8 +60,12 @@ const RetreatBookingDetail = () => {
         baseUrl: BASE_URL,
         url: RETREAT_BOOKING_DETAILS(Booking_id),
         method: "POST"
-      })
+      });
 
+      // const repo:any = await axios.post(`${BASE_URL}${RETREAT_BOOKING_DETAILS(Booking_id)}`);
+
+      // console.log("---- repo in the retreat booking details ----",repo);
+      
       if (response.success === true) {
         setBooking(response?.data[0]);
         setBookingRetreat(response?.retreat_details[0]);
@@ -64,9 +73,13 @@ const RetreatBookingDetail = () => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log('error');
+      console.error("Error in the booking retreat details ",error);
     }
   };
+
+
+  console.log("----- booking in retreat details ----", booking);
+
 
   const BookingHistory = async () => {
     setLoading(true);
@@ -258,27 +271,30 @@ const RetreatBookingDetail = () => {
             </View>
           )}
         </ScrollView>
-        <View
-          style={[
-            globalStyle.betweenCenter,
-            { width: '100%', marginTop: moderateScale(10), flex: .2 },
-          ]}>
-          <CustomButton
-            title="Add Payment"
-            onPress={() => {
-              if (bookingRetreat?.balance !== 0) {
-                setPaymentType('balance_payment');
-                setConfirmVisible(true);
-              } else {
-                CustomToast({
-                  type: 'info',
-                  text1: 'No Balance Amount Left',
-                  text2: 'User already paid this amount',
-                });
-              }
-            }}
-          />
-        </View>
+        {
+          booking["payment status"] !== "Ended" && <View
+            style={[
+              globalStyle.betweenCenter,
+              { width: '100%', marginTop: moderateScale(10), flex: .2 },
+            ]}>
+            <CustomButton
+              title="Add Payment"
+              onPress={() => {
+                if (bookingRetreat?.balance !== 0) {
+                  setPaymentType('balance_payment');
+                  setConfirmVisible(true);
+                } else {
+                  CustomToast({
+                    type: 'info',
+                    text1: 'No Balance Amount Left',
+                    text2: 'User already paid this amount',
+                  });
+                }
+              }}
+            />
+          </View>
+        }
+
       </MenuProvider>
 
       <CustomModal
@@ -311,6 +327,7 @@ const RetreatBookingDetail = () => {
                     <CustomInput
                       text='Enter Amount'
                       handleChangeText={handleChange('amount')}
+                      keyboardType='numeric'
                     />
                     {
                       errors.amount && (

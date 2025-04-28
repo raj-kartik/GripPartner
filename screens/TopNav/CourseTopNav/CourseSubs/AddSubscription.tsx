@@ -38,8 +38,8 @@ const AddSubscription = () => {
     const navigation = useNavigation();
 
     const data = [
-        { id: 1, label: 'Paid', value: 'paid' },
-        { id: 2, label: 'Unpaid', value: 'unpaid' },
+        { label: 'Paid', values: 'paid' },
+        { label: 'Unpaid', values: 'unpaid' },
     ];
 
     return (
@@ -101,7 +101,7 @@ const AddSubscription = () => {
             >
                 {({ handleChange, errors, touched, values, setFieldError, setFieldTouched, setFieldValue, handleSubmit }: any) => {
 
-                    // console.log("=== values in add subscription ===",values?.isPaid);
+                    console.log("=== values in add subscription ===", values?.isPaid);
 
                     useEffect(() => {
                         console.log("=== error in the add subscription ===", errors);
@@ -117,46 +117,48 @@ const AddSubscription = () => {
                                     <Dropdown
                                         data={data}
                                         value={values?.isPaid}
-                                        // selectedStyle={styles.selectedStyle}
                                         style={styles.dropdown}
                                         placeholderStyle={styles.placeholderStyle}
                                         selectedTextStyle={styles.selectedTextStyle}
                                         inputSearchStyle={styles.inputSearchStyle}
                                         placeholder='Select payment type'
                                         labelField="label"
+                                        valueField="values"  // keep this
                                         search={false}
-                                        valueField="value"
                                         onChange={item => {
-                                            // setPayType(item)
-                                            setFieldValue('isPaid', item?.label)
+                                            setFieldValue('isPaid', item?.value);  // <-- fix here
                                         }}
                                     />
+
                                 </View>
 
-                                <View style={{ marginTop: moderateScale(10) }} >
-                                    <CustomText text='Payment Date' weight='500' size={15} />
-                                    <Pressable
-                                        style={[
-                                            styles.inputContainer,
-                                            {
-                                                borderWidth: touched.type ? 1 : 0,
-                                                borderColor: touched.type ? '#000' : '#fff',
-                                            },
-                                        ]}
-                                        onPress={() => {
-                                            setIsCalendar({
-                                                payment: !isCalendar.payment,
-                                                subs: false,
-                                            });
-                                        }}>
-                                        <CustomText
-                                            text={values.paymentDate ? values.paymentDate : 'Select Payment Date'}
-                                            color={values.paymentDate ? '#000' : '#909090'}
-                                            weight="400"
-                                            size={15}
-                                        />
-                                    </Pressable>
-                                </View>
+                                {
+                                    values?.isPaid === 'paid' && <View style={{ marginTop: moderateScale(10) }} >
+                                        <CustomText text='Payment Date' weight='500' size={15} />
+                                        <Pressable
+                                            style={[
+                                                styles.inputContainer,
+                                                {
+                                                    borderWidth: touched.type ? 1 : 0,
+                                                    borderColor: touched.type ? '#000' : '#fff',
+                                                },
+                                            ]}
+                                            onPress={() => {
+                                                setIsCalendar({
+                                                    payment: !isCalendar.payment,
+                                                    subs: false,
+                                                });
+                                            }}>
+                                            <CustomText
+                                                text={values.paymentDate ? values.paymentDate : 'Select Payment Date'}
+                                                color={values.paymentDate ? '#000' : '#909090'}
+                                                weight="400"
+                                                size={15}
+                                            />
+                                        </Pressable>
+                                    </View>
+                                }
+
 
                                 <View style={{ marginTop: moderateScale(10) }}>
                                     {isCalendar.payment && (

@@ -123,7 +123,7 @@ const CompletedScreen: FC<Props> = ({ navigation }: any) => {
   }, []);
 
   return (
-    <Container>
+    <View style={{ flex: 1, backgroundColor: "#fff", paddingTop: moderateScale(10) }} >
       <View
         style={[
           globalStyle.row,
@@ -215,7 +215,7 @@ const CompletedScreen: FC<Props> = ({ navigation }: any) => {
           <CustomText text="No data Available" weight="500" size={18} />
         </View>
       )}
-    </Container>
+    </View>
   );
 };
 

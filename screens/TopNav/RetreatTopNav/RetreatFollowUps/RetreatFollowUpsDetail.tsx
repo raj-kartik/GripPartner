@@ -32,6 +32,10 @@ const RetreatFollowUpsDetail = () => {
     fetchData();
   }, []));
 
+
+  // console.log("---- date in the retreat follow ups details ----",data);
+
+
   const followHistory = async () => {
     setLoading(true);
     try {
@@ -39,6 +43,9 @@ const RetreatFollowUpsDetail = () => {
         url: `user-retreat-lead-followup-detail?id=${followid}`,
         method: "GET"
       });
+
+      console.log("---- response in the follow up details ----", response);
+
 
       if (response?.success === true) {
         setData(response['Lead Detail']);
@@ -56,10 +63,8 @@ const RetreatFollowUpsDetail = () => {
   }
 
   const confirmAction = async () => {
-    const update = await leadChangeStatus('Retreat', data?.id, 2);
-    console.log("---- update in retreat follow up details ----", update);
-
-    if(update)
+    const update = await leadChangeStatus('Retreat', data?.lead_id, 2);
+    if (update)
       followHistory();
   };
 
@@ -78,19 +83,25 @@ const RetreatFollowUpsDetail = () => {
             </Pressable>
             <CustomText customStyle={{ marginLeft: moderateScale(10) }} text='Follow Up Details' size={22} weight='600' />
           </View>
-          {data.status !== 'Close' && data.booking !== 'yes' && (
-            <Pressable>
-              <CustomIcon type='AntDesign' name='plus' />
-            </Pressable>
-          )}
-          {data.status !== 'Close' && (
-            <MenuPop
-              navigation={navigation}
-              followid={followid}
-              CloseFun={() => confirmAction()}
-              data={data}
-            />
-          )}
+          <View style={[globalStyle.betweenCenter, { flex: .2 }]} >
+            {data.status !== "Subscribed" && data.booking !== 'yes' && (
+              <Pressable onPress={() => {
+                navigation.navigate('AddBookingScreen', {
+                  lead_id: data?.lead_id
+                })
+              }} >
+                <CustomIcon type='AntDesign' name='plus' />
+              </Pressable>
+            )}
+            {data.status !== "Subscribed" && (
+              <MenuPop
+                navigation={navigation}
+                followid={followid}
+                CloseFun={() => confirmAction()}
+                data={data}
+              />
+            )}
+          </View>
         </View>
 
         {data ? (
@@ -240,7 +251,7 @@ const MenuPop = ({ navigation, followid, CloseFun, data }: any) => {
       <MenuOptions
         customStyles={{
           optionWrapper: {
-            paddingHorizontal: moderateScale(15), // Adjust horizontal padding
+            paddingHorizontal: moderateScale(10), // Adjust horizontal padding
             paddingVertical: moderateScale(7),
             marginVertical: -moderateScale(4),
             height: moderateScale(50),

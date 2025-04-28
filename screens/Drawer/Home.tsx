@@ -29,6 +29,7 @@ import CustomText from '../../components/Customs/CustomText';
 import Colors from '../../utils/Colors';
 import IsKycCard from '../../components/Cards/IsKycCard';
 import { getWalletBalance } from '../../redux/Slice/WalletSlice';
+import { addToCart } from '../../redux/Slice/AddToCartSlice';
 
 const getCurrentYearMonth = () => {
   const date = new Date();
@@ -55,9 +56,6 @@ const Home = ({ navigation }: any) => {
   const { user } = useSelector((state: any) => state?.user);
 
 
-  // console.log("---- user ----",user);
-
-
   useEffect(() => {
     CourseGraph();
   }, [barTypeContent, barContent]);
@@ -70,6 +68,7 @@ const Home = ({ navigation }: any) => {
         await dispatch(fetchLocation({}));
         await dispatch(getWalletBalance(user?.id));
         await BannerList();
+        await dispatch(addToCart());
       }
 
       CourseListFeature();
@@ -91,14 +90,13 @@ const Home = ({ navigation }: any) => {
           }
 
           setLoading(false);
-        } catch (error) {
+        } catch (error:any) {
           setLoading(false);
-          console.log('error');
+          console.log('error in home tsx',error);
         }
       };
 
       ShopList();
-
       fetchRetreatCourse();
     }, [])
   );

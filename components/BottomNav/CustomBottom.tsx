@@ -18,7 +18,7 @@ const CustomBottomTabBar = ({ state, descriptors, navigation, colors }: any) => 
         <View style={styles.container}>
             {state.routes.map((route: any, index: any) => {
 
-                
+
                 const { options } = descriptors[route.key];
                 const label =
                     options.tabBarLabel !== undefined
@@ -47,10 +47,7 @@ const CustomBottomTabBar = ({ state, descriptors, navigation, colors }: any) => 
                         target: route.key,
                     });
                 };
-
-                // console.log("==== options in the bottom ====",options.type);
-
-
+                
                 return (
                     <TouchableOpacity
                         key={index}
@@ -78,13 +75,22 @@ const CustomBottomTabBar = ({ state, descriptors, navigation, colors }: any) => 
                             <>
                                 {
                                     options?.type ? (
-                                        <CustomIcon type={options?.type} name={options?.icon} />
+                                        <View>
+                                            <CustomIcon type={options?.type} name={options?.icon} />
+                                            {/* {
+                                                options?.data === 0 && (
+                                                    <CustomText text='1' />
+                                                )
+                                            } */}
+                                        </View>
                                     ) : (
-                                        <options.Active
-                                            width={moderateScale(21)}
-                                            height={moderateScale(21)}
-                                        // stroke="#000"
-                                        />
+                                        <View>
+                                            <options.Active
+                                                width={moderateScale(21)}
+                                                height={moderateScale(21)}
+                                            // stroke="#000"
+                                            />
+                                        </View>
                                     )
                                 }
 

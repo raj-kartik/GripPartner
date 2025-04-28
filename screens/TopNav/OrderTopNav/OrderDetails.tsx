@@ -264,6 +264,7 @@ const styles = StyleSheet.create({
         height: screenWidth * 0.4,
         borderWidth: 1,
         alignSelf: 'center',
+        marginTop: moderateScale(10)
     },
     content: {
         flex: 0.6,

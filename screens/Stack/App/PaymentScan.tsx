@@ -25,7 +25,7 @@ const PaymentScan = (props: any) => {
 
         // Navigate to home page after 7 seconds
         const timer = setTimeout(() => {
-            navigation.navigate('MenuScreen'); // Replace 'Home' with the actual route name for your home screen
+            navigation.navigate('BottomTabs'); // Replace 'Home' with the actual route name for your home screen
         }, 5000);
 
         // Cleanup function to remove event listener and clear timer

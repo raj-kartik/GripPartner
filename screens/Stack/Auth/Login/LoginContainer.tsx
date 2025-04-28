@@ -9,7 +9,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../../../components/Customs/CustomText';
 import { globalStyle } from '../../../../utils/GlobalStyle';
 
-const LoginContainer = ({ mobile, setMobile, handleLogin }: any) => {
+const LoginContainer = ({ mobile, setMobile, handleLogin, loading }: any) => {
     const navigation: any = useNavigation();
     return (
         <LinearGradient
@@ -33,7 +33,8 @@ const LoginContainer = ({ mobile, setMobile, handleLogin }: any) => {
                 }}
             />
             <CustomButton
-                disabled={mobile.length !== 10}
+                disabled={mobile.length !== 10 && loading}
+                loading={loading}
                 bg={mobile.length !== 10 ? Colors.gray_font : '#666666'}
                 textColor={mobile.length !== 10 ? '#fff' : '#ffffff'}
                 radius={10}
@@ -51,7 +52,7 @@ const LoginContainer = ({ mobile, setMobile, handleLogin }: any) => {
                     </Pressable>
 
                     <Pressable onPress={() => { navigation.navigate('Policy') }} style={globalStyle.center} >
-                        <CustomText customStyle={{ textDecorationStyle: "dashed", textDecorationColor: "#fff" }} text="Privacy Policy" color="#fff" />
+                        <CustomText customStyle={{ textDecorationStyle: "dashed", textDecorationColor: "#fff", textDecorationLine: "underline" }} text="Privacy Policy" color="#fff" />
                     </Pressable>
                 </View>
             </View>

@@ -21,6 +21,7 @@ const Login = () => {
   const [mobile, setMobile] = useState<string>('');
   const [isEdit, setIsEdit] = useState(false);
   const [hash, setHash] = useState<string>('');
+  const [loading,setLoading] = useState(false);
 
   const [videoUrl, setVideoUrl] = useState<string>('');
 
@@ -67,6 +68,7 @@ const Login = () => {
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(`${BASE_URL}${POST_LOGIN_OTP_REQUEST}`, {
         phone_no: mobile,
         hash: hash
@@ -99,6 +101,9 @@ const Login = () => {
         text2: "Something went wrong, please try again.",
       });
     }
+    finally{
+      setLoading(false);
+    }
   };
 
   return (
@@ -115,7 +120,7 @@ const Login = () => {
           ignoreSilentSwitch="obey"
         />
       }
-      <LoginContainer handleLogin={handleLogin} mobile={mobile} setMobile={setMobile} setIsSent={setIsSent} isSent={isSent} />
+      <LoginContainer loading={loading} handleLogin={handleLogin} mobile={mobile} setMobile={setMobile} setIsSent={setIsSent} isSent={isSent} />
     </View>
   )
 }

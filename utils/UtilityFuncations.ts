@@ -65,19 +65,21 @@ export const uploadDocument = async (
 };
 
 export const leadChangeStatus = async (
-  typeOf: string,
+  kind: string,
   id: number,
   status: number,
 ) => {
+  const endpoint =
+    kind === 'Course'
+      ? POST_COURSE_LEAD_CHANGE
+      : kind === 'Retreat'
+      ? POST_RETREAT_LEAD_CHANGE
+      : '';
+
   try {
     const response: any = await makeApiRequest({
       baseUrl: BASE_URL,
-      url:
-        typeOf === 'Course'
-          ? POST_COURSE_LEAD_CHANGE
-          : typeOf === 'Retreat'
-          ? POST_RETREAT_LEAD_CHANGE
-          : '',
+      url: endpoint,
       method: 'POST',
       data: {
         status: status,
@@ -85,20 +87,22 @@ export const leadChangeStatus = async (
       },
     });
 
-    if (response?.success) {
+    console.log('---- response ----', response);
+
+    if (response?.success === true) {
       CustomToast({
         type: 'success',
-        text1: `${typeOf} lead has changed successful`,
+        text1: `${kind} lead has changed successful`,
         text2: response?.message || 'lead has been updated',
       });
       return true;
     } else {
       CustomToast({
-        type: 'success',
+        type: 'error',
         text1: `${typeOf} lead has changed successful`,
         text2: response?.message || 'lead has been updated',
       });
-      return true;
+      return false;
     }
   } catch (err: any) {
     console.log('Error in the change status', err);

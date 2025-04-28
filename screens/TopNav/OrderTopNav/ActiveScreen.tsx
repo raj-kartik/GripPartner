@@ -83,7 +83,7 @@ const ActiveScreen: FC<Props> = ({ navigation }) => {
         }, []),
     );
     return (
-        <Container>
+        <View style={{ backgroundColor: "#fff", paddingTop: moderateScale(10), flex:1 }} >
             {pending.length > 0 ? (
                 <FlatList
                     data={pending}
@@ -110,7 +110,7 @@ const ActiveScreen: FC<Props> = ({ navigation }) => {
                     customStyle={{ flex: 1, alignSelf: 'center' }}
                 />
             )}
-        </Container>
+        </View>
     );
 };
 

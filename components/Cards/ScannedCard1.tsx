@@ -1,8 +1,8 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState, FC, useEffect} from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState, FC, useEffect } from 'react';
 import Container from '../Container';
-import {moderateScale, screenHeight, screenWidth} from '../Matrix/Matrix';
-import {useSelector} from 'react-redux';
+import { moderateScale, screenHeight, screenWidth } from '../Matrix/Matrix';
+import { useSelector } from 'react-redux';
 import CustomText from '../Customs/CustomText';
 import { globalStyle } from '../../utils/GlobalStyle';
 import makeApiRequest from '../../utils/ApiService';
@@ -11,30 +11,26 @@ import CustomIcon from '../Customs/CustomIcon';
 import { DEFAULT_URL, DELETE_STORE_ITEM, UPDATE_STORE_QUANTITY } from '../../utils/api';
 import Images from '../../utils/Images';
 
-const ScannedCard1 = ({item, setCartItems, setLoading, fetchCartItem}: any) => {
+const ScannedCard1 = ({ item, setCartItems, setLoading, fetchCartItem }: any) => {
   const [quantity, setQuantity] = useState(item?.quantity);
   const [debouncedQuantity, setDebouncedQuantity] = useState(item?.quantity);
-  const {user} = useSelector((state: any) => state.user);
+  const [initialQuantity, setInitialQuantity] = useState(item?.quantity);
+  const { user } = useSelector((state: any) => state.user);
 
   // console.log('==== user=== ', item);
 
   useEffect(() => {
-    // Debounce logic: Update the quantity in the store after a delay
     const handler = setTimeout(() => {
-      // console.log('=== calling useEffect ===');
-
-      if (debouncedQuantity !== item?.quantity) {
-        // console.log('=== calling debounce ===');
+      if (debouncedQuantity !== initialQuantity) {
         handleQuantityUpdate(item.id, debouncedQuantity);
+        setInitialQuantity(debouncedQuantity); // Update initial quantity after sync
       }
-    }, 500); // Adjust debounce delay as needed (500ms)
+    }, 500);
 
     return () => clearTimeout(handler);
   }, [debouncedQuantity]);
 
   const handleQuantityUpdate = async (productId: any, qty: number) => {
-    // console.log('=== calling ===');
-
     try {
       const response: any = await makeApiRequest({
         method: 'POST',
@@ -43,10 +39,9 @@ const ScannedCard1 = ({item, setCartItems, setLoading, fetchCartItem}: any) => {
         data: {
           product_id: productId,
           quantity: qty,
-          user_id: user?.data?.id,
+          user_id: user?.id,
         },
       });
-      // console.log('==== response in the update store ===', response);
       if (response.status === 'success') {
         fetchCartItem();
       }
@@ -65,7 +60,7 @@ const ScannedCard1 = ({item, setCartItems, setLoading, fetchCartItem}: any) => {
         baseUrl: DEFAULT_URL,
         url: DELETE_STORE_ITEM,
         data: {
-          user_id: user?.data?.id,
+          user_id: user?.id,
           product_id: item?.id,
         },
       });
@@ -83,7 +78,7 @@ const ScannedCard1 = ({item, setCartItems, setLoading, fetchCartItem}: any) => {
   return (
     <View style={styles.container}>
       {item?.img ? (
-        <Image source={{uri: item?.img}} style={styles.img} />
+        <Image source={{ uri: item?.img }} style={styles.img} />
       ) : (
         <View style={styles.img}>
           <Images.Logo />
@@ -94,14 +89,14 @@ const ScannedCard1 = ({item, setCartItems, setLoading, fetchCartItem}: any) => {
         <CustomText size={18} weight="700" text={item?.product_name} />
 
         {/* price */}
-        <View style={{marginTop: moderateScale(5)}}>
+        <View style={{ marginTop: moderateScale(5) }}>
           <CustomText
             weight="500"
             size={16}
             text={`₹${item?.price * quantity}`}
           />
           <CustomText
-            customStyle={{marginTop: moderateScale(2)}}
+            customStyle={{ marginTop: moderateScale(2) }}
             size={12}
             weight="500"
             color={'gray'}
@@ -124,13 +119,13 @@ const ScannedCard1 = ({item, setCartItems, setLoading, fetchCartItem}: any) => {
                 setCartItems((prev: any) =>
                   prev.map((cartItem: any) =>
                     cartItem.product_id === item.product_id
-                      ? {...cartItem, quantity: quantity - 1}
+                      ? { ...cartItem, quantity: quantity - 1 }
                       : cartItem,
                   ),
                 );
               }
             }}
-            style={{...styles.qtyBtn, marginRight: moderateScale(5)}}>
+            style={{ ...styles.qtyBtn, marginRight: moderateScale(5) }}>
             <CustomIcon type="Entypo" color="#fff" name="minus" />
           </TouchableOpacity>
 
@@ -153,7 +148,7 @@ const ScannedCard1 = ({item, setCartItems, setLoading, fetchCartItem}: any) => {
               // );
             }}
             activeOpacity={0.5}
-            style={{...styles.qtyBtn, marginLeft: moderateScale(5)}}>
+            style={{ ...styles.qtyBtn, marginLeft: moderateScale(5) }}>
             <CustomIcon type="Entypo" color="#fff" name="plus" />
           </TouchableOpacity>
         </View>

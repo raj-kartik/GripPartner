@@ -4,7 +4,7 @@ import Container from '../../../../components/Container'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
 import { useFocusEffect } from '@react-navigation/native';
 import makeApiRequest from '../../../../utils/ApiService';
-import { BASE_URL } from '../../../../utils/api';
+import { BASE_URL, POST_UNSUBSCRIBE_COURSE } from '../../../../utils/api';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
 import CalendarPicker from 'react-native-calendar-picker';
@@ -38,7 +38,6 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
   const [suscription, setSuscription] = useState<any>([]);
   const [message, setMessage] = useState(null);
   const [history, setHistory] = useState([]);
-  const [confirmVisible, setConfirmVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // due
@@ -162,6 +161,43 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
     }
   }
 
+  const today = new Date().toISOString().slice(0, 10);
+
+  console.log("------ subccription ----", suscription);
+
+
+  const handleUnSubscribe = async () => {
+    try {
+      const response: any = await makeApiRequest({
+        baseUrl: BASE_URL,
+        url: POST_UNSUBSCRIBE_COURSE,
+        data: {
+          // subscription_id: lead_id,
+          subscription_id: "",
+          end_date: today,
+        },
+        method: 'POST',
+      });
+
+
+      if (response?.success) {
+        CustomToast({
+          type: "success",
+          text1: "You have succesfully unsubscribe the student",
+          text2: "This user is no longer your student"
+        });
+        suscriptionLisfun();
+        suscriptionHistory();
+        setUnsubModal(false);
+      }
+
+      console.log("---- response in the unsubscribe the trainer ---", response);
+
+    } catch (err: any) {
+      console.error('Error in the unsubscribe the course', err);
+    }
+  };
+
 
   console.log("---- paidAmount ----", paidAmount);
   console.log("---- paidDate ----", paidDate);
@@ -258,6 +294,7 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
             item={history}
             id={suscription_id}
             message={message}
+            handleUnSub={handleUnSubscribe}
             subscriptionDetails={suscription}
           />
         </View>
@@ -559,7 +596,7 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
 
 export default CourseSubsDetails
 
-const MenuPop = ({ navigation, item, id, message, subscriptionDetails }: any) => {
+const MenuPop = ({ navigation, item, id, message, subscriptionDetails, handleUnSub }: any) => {
 
   const [isTransactionModal, setIsTransactionModal] = useState(false);
   return (
@@ -580,6 +617,12 @@ const MenuPop = ({ navigation, item, id, message, subscriptionDetails }: any) =>
           }}
         >
           <CustomText text='Transaction History' />
+        </MenuOption>
+
+        <MenuOption>
+          <Pressable onPress={handleUnSub} >
+            <CustomText text='Unsubscribe' />
+          </Pressable>
         </MenuOption>
       </MenuOptions>
 

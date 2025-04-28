@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "97982021938",
-    "project_id": "gripuser-b9961",
-    "storage_bucket": "gripuser-b9961.firebasestorage.app"
+    "project_number": "994613845173",
+    "project_id": "grip-partner-2e10c",
+    "storage_bucket": "grip-partner-2e10c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:97982021938:android:031c6f00f7a604de58172b",
+        "mobilesdk_app_id": "1:994613845173:android:aad3afd73cc897ba7eb2fc",
         "android_client_info": {
-          "package_name": "com.gripuser"
+          "package_name": "com.grippartnerapp"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBkhn9XZqcmcoThD7Ll8BGSWnFYlQ6gd4o"
+          "current_key": "AIzaSyAJ4ZYXoKO__RG1xsCsCX3njpTmPnurFnc"
         }
       ],
       "services": {

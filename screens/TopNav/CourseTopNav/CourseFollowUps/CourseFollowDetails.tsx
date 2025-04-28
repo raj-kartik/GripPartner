@@ -111,7 +111,7 @@ const CourseFollowDetails: FC<Props> = ({ route, navigation }) => {
           <MenuPop
             navigation={navigation}
             lead_id={lead_id}
-            CloseFun={() => confirmAction(0)}
+            CloseFun={() => confirmAction(2)}
             follow={follow}
           />
         </View>
@@ -237,9 +237,10 @@ const MenuPop = ({ navigation, lead_id, CloseFun, follow }: any) => {
 
   const [isModal, setIsModal] = useState<boolean>(false);
   const SentFun1 = (item: any) => {
+    // confirmAction(1);
     navigation.dispatch(
       CommonActions.navigate({
-        name: 'CourseSubsDetails',
+        name: 'AddSubscription',
         params: {
           lead_id: item,
         },

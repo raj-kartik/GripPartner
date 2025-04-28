@@ -12,7 +12,7 @@ import Colors from '../../../utils/Colors';
 const SearchRetreat = ({ item, type }: any) => {
     const navigation = useNavigation();
     const user = useSelector((state: any) => state.user);
-    const userId = user?.user?.data?.id;
+    const userId = user?.user?.id;
 
     const { fullStars, emptyStars, averageRating } = item?.review;
     const renderStars = () => {

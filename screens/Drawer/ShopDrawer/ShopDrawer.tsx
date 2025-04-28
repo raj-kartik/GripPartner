@@ -17,7 +17,7 @@ const ShopDrawer = () => {
             Authorization: `Bearer y45sgnlki88jt4gp9o6nmfw6fkrds4jc`, // 🔑 Replace with your token
           },
         });
-        console.log('==== shop category ===', response.data);
+        // console.log('==== shop category ===', response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
       }

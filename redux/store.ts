@@ -10,6 +10,7 @@ import FeatureReducer from './Slice/FeatureSlice';
 import CouponReducer from './Slice/CouponSlice';
 import NotificationReducer from './Slice/NotificationSlice'
 import BankReducer from './Slice/BankSlice'
+import cartReducer from './Slice/AddToCartSlice'
 const store = configureStore({
   reducer: {
     location: LocationReducer,
@@ -23,6 +24,7 @@ const store = configureStore({
     coupon:CouponReducer,
     notification:NotificationReducer,
     bank:BankReducer,
+    cart:cartReducer
   },
 });
 

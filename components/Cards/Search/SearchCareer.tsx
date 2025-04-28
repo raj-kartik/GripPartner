@@ -13,7 +13,7 @@ import Images from '../../../utils/Images';
 const SearchCareer = ({ item, type }: any) => {
     const navigation = useNavigation();
     const user = useSelector((state: any) => state.user);
-    const userId = user?.user?.data?.id;
+    const userId = user?.user?.id;
 
     const { fullStars, emptyStars } = item?.review;
     const renderStars = () => {

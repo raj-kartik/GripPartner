@@ -9,7 +9,7 @@ import { moderateScale } from '../../../../../components/Matrix/Matrix';
 
 const CouponSuccess = () => {
 
-    useBackHandler('TrainerCoupons');
+    useBackHandler('BottomTabs');
     return (
         <Container>
             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
