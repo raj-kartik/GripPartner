@@ -59,7 +59,7 @@ const AddSubscription = () => {
                         id: lead_id,
                         fee: values?.fees,
                         feeType: values?.isPaid,
-                        feeDate: values?.paymentDate,
+                        feeDate: values?.paymentDate || "",
                         status: 2,
                     };
                     try {
@@ -68,7 +68,10 @@ const AddSubscription = () => {
                             url: "leadto-suscription",
                             method: "POST",
                             data: row
-                        })
+                        });
+
+                        console.log("---- response in the add subscription -----", response);
+
 
                         if (response?.success === true) {
                             CustomToast({
@@ -89,19 +92,19 @@ const AddSubscription = () => {
 
 
                         }
-                        console.log("==== response in the add subs scription ====", response);
+                        // console.log("==== response in the add subs scription ====", response);
 
                     }
                     catch (err: any) {
                         console.log("Error in the add subscription:", err);
 
                     }
-                    console.log("=== values in the subscription ===", values);
+                    // console.log("=== values in the subscription ===", values);
                 }}
             >
                 {({ handleChange, errors, touched, values, setFieldError, setFieldTouched, setFieldValue, handleSubmit }: any) => {
 
-                    console.log("=== values in add subscription ===", values?.isPaid);
+                    // console.log("=== values in add subscription ===", values?.isPaid);
 
                     useEffect(() => {
                         console.log("=== error in the add subscription ===", errors);
@@ -126,7 +129,7 @@ const AddSubscription = () => {
                                         valueField="values"  // keep this
                                         search={false}
                                         onChange={item => {
-                                            setFieldValue('isPaid', item?.value);  // <-- fix here
+                                            setFieldValue('isPaid', item?.values);  // <-- fix here
                                         }}
                                     />
 

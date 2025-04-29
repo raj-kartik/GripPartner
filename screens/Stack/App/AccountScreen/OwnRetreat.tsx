@@ -20,7 +20,7 @@ import {
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import Container from '../../../../components/Container';
 import AccountCourseCard from '../../../../components/Cards/AccountCourseCard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
 import makeApiRequest from '../../../../utils/ApiService';
 import { BASE_URL } from '../../../../utils/api';
@@ -30,6 +30,7 @@ import CustomText from '../../../../components/Customs/CustomText';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
 import Colors from '../../../../utils/Colors';
 import { globalStyle } from '../../../../utils/GlobalStyle';
+import { getRetreat } from '../../../../redux/Slice/RetreatSlice';
 
 // import {
 //   responsiveFontSize,
@@ -48,7 +49,18 @@ import { globalStyle } from '../../../../utils/GlobalStyle';
 interface Props { }
 const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
 
+  const dispatch = useDispatch();
   const { retreat } = useSelector((state: any) => state?.retreat);
+  const { user } = useSelector((state: any) => state?.user);
+
+
+  useFocusEffect(useCallback(() => {
+    const fetchRetreat = async () => {
+      await dispatch(getRetreat(user?.id));
+    }
+
+    fetchRetreat();
+  }, []));
 
   // console.log("=== retreat on own retreat ===",retreat);
 

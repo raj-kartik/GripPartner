@@ -12,10 +12,12 @@ import CustomIcon from '../../../components/Customs/CustomIcon';
 import { globalStyle } from '../../../utils/GlobalStyle';
 import { moderateScale } from '../../../components/Matrix/Matrix';
 import CustomText from '../../../components/Customs/CustomText';
+import { useNavigation } from '@react-navigation/native';
 
 const CourseTopNav = ({ route }: any) => {
     const { screen } = route?.params;
     const Tab = createMaterialTopTabNavigator();
+    const navigation = useNavigation();
 
     const tabArray = [
         {
@@ -45,11 +47,13 @@ const CourseTopNav = ({ route }: any) => {
     ]
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }} >
-            <View style={[globalStyle.row,{paddingHorizontal:moderateScale(15), marginVertical:moderateScale(15)}]} >
-                <Pressable>
+            <View style={[globalStyle.row, { paddingHorizontal: moderateScale(15), marginVertical: moderateScale(15) }]} >
+                <Pressable onPress={() => {
+                    navigation.goBack();
+                }} >
                     <CustomIcon type='AntDesign' name='arrowleft' size={25} />
                 </Pressable>
-                <CustomText customStyle={{marginLeft:moderateScale(10)}} text='Leads & Follow Ups' weight='700' size={20} />
+                <CustomText customStyle={{ marginLeft: moderateScale(10) }} text='Leads & Follow Ups' weight='700' size={20} />
             </View>
             <Tab.Navigator
                 tabBar={props => <CustomRetreatTopNavigator {...props} />}

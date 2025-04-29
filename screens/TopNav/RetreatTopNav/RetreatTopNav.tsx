@@ -9,9 +9,11 @@ import RetreatBooking from "./RetreatBooking/RetreatBooking";
 import RetreatLead from "./RetreatLead/RetreatLead";
 import RetreatFollow from "./RetreatFollowUps/RetreatFollow";
 import RetreatStudent from "./RetreatStudent/RetreatStudent";
+import { useNavigation } from "@react-navigation/native";
 
 const RetreatTopNav = ({ route }: any) => {
   const Tab = createMaterialTopTabNavigator();
+  const navigation = useNavigation();
   // const { screen }: any = route?.params;
 
   const tabArray = [
@@ -44,14 +46,16 @@ const RetreatTopNav = ({ route }: any) => {
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }} >
       <View style={[globalStyle.row, { paddingHorizontal: moderateScale(15), marginVertical: moderateScale(15) }]} >
-        <Pressable>
+        <Pressable onPress={() => {
+          navigation.goBack();
+        }} >
           <CustomIcon type='AntDesign' name='arrowleft' size={25} />
         </Pressable>
         <CustomText customStyle={{ marginLeft: moderateScale(10) }} text='Leads & Follow Ups' weight='700' size={20} />
       </View>
       <Tab.Navigator
         tabBar={props => <CustomRetreatTopNavigator {...props} />}
-        // initialRouteName={screen}
+      // initialRouteName={screen}
       >
         {
           tabArray.map((item) => (

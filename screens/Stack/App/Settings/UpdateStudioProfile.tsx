@@ -12,6 +12,11 @@ const UpdateStudioProfile = () => {
   return (
     <Container>
         <CustomHeader2 title="Studio Profile" />
+
+        {/* map */}
+        <View>
+
+        </View>
     </Container>
   )
 }

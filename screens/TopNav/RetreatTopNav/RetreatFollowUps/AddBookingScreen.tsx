@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Container from '../../../../components/Container'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
 import CustomInput from '../../../../components/Customs/CustomInput'
@@ -128,6 +128,9 @@ const AddBookingScreen = ({ route }: any) => {
             >
                 {
                     ({ handleChange, handleSubmit, errors, touched, values, setFieldValue }) => {
+                        useEffect(() => {
+                            console.log("---- errors in the add booking ----", errors);
+                        }, [errors]);
                         return (
                             <KeyboardAvoidingView style={{ flex: 1 }} >
                                 <ScrollView showsVerticalScrollIndicator={false} style={{ paddingHorizontal: moderateScale(10) }} >

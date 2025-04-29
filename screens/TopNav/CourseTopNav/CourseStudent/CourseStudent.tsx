@@ -86,13 +86,13 @@ const CourseStudent = () => {
                       text={item?.name || 'No Name'}
                     />
                     <CustomText
-                      size={12}
+                      // size={12}
                       text={item?.course_name}
                       weight="500"
+                      color={Colors.gray_font}
                     />
                   </View>
                 </View>
-                <View></View>
               </View>
             );
           })

@@ -20,7 +20,9 @@ const ShopHeader1: FC<Props> = () => {
                 <Pressable onPress={() => { navigation.openDrawer() }} >
                     <CustomIcon size={30} type='Entypo' name='menu' />
                 </Pressable>
-                <Pressable style={{ marginLeft: moderateScale(10) }} >
+                <Pressable onPress={()=>{
+                    // navigation.navigate('LocationTracker');
+                }} style={{ marginLeft: moderateScale(10) }} >
                     {
                         (shortAddress && state && pincode) ? <CustomText weight='500' customStyle={{ width: "70%" }} text={`${shortAddress},${state},${pincode}`} /> : <CustomText text='Tap to Detect Location' />
                     }

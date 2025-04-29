@@ -51,8 +51,8 @@ const SubscriptionCard = ({ item, handlePress }: any) => {
                     <Image
                         source={{ uri: item?.image }}
                         style={{
-                            width: moderateScale(50),
-                            height: moderateScale(50),
+                            width: moderateScale(60),
+                            height: moderateScale(60),
                             borderRadius: moderateScale(100),
                         }}
                     />
@@ -61,8 +61,8 @@ const SubscriptionCard = ({ item, handlePress }: any) => {
                         style={[
                             globalStyle.center,
                             {
-                                width: moderateScale(50),
-                                height: moderateScale(50),
+                                width: moderateScale(60),
+                                height: moderateScale(60),
                                 backgroundColor: '#f7f7f7',
                                 borderRadius: moderateScale(50),
                             },
@@ -78,7 +78,6 @@ const SubscriptionCard = ({ item, handlePress }: any) => {
                         text={item?.Name || item?.name || 'No Name'}
                     />
                     <CustomText
-                        size={12}
                         text={item?.course_name || item['course name'] || item?.course}
                         weight="500"
                     />
@@ -89,11 +88,13 @@ const SubscriptionCard = ({ item, handlePress }: any) => {
             <View style={{ flex: 0.35 }}>
                 <View style={[styles.row1, { marginBottom: moderateScale(5) }]}>
                     {/* <Icon name="update" size={20} color="black" /> */}
+                    <CustomIcon type='Ionicons' name='link-outline' />
                     <CustomText
                         text={
                             item?.type || item?.status || item?.subscription_type || 'No Data'
                         }
                         weight="500"
+                        size={16}
                         customStyle={{ marginLeft: moderateScale(5) }}
                     />
                 </View>

@@ -43,7 +43,7 @@ const CourseLead = ({ route }: any) => {
         url: endpoint,
       })
 
-      console.log("---- response in the lead coruse ----", response);
+      // console.log("---- response in the lead coruse ----", response);
 
       if (response.success == true) {
         setLead(response.leads);

@@ -9,9 +9,11 @@ import Images from './utils/Images'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Provider } from 'react-redux'
 import store from './redux/store'
+import { useOneSignal } from './components/Hooks/useOneSignal'
 
 
 const App = () => {
+  useOneSignal();
   return (
     <GestureHandlerRootView>
       <Provider store={store} >

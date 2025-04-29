@@ -252,7 +252,7 @@ const RetreatLeadDetail = () => {
                 <Pressable onPress={() => {
                   navigation.goBack();
                 }} >
-                  <CustomIcon type='AntDesign' name='arrowleft' />
+                  <CustomIcon type='AntDesign' size={30} name='arrowleft' />
                 </Pressable>
                 <CustomText customStyle={{ marginLeft: moderateScale(10) }} weight='700' size={22} text={`${lead['retreat name']} Details`} />
               </View>
@@ -274,7 +274,7 @@ const RetreatLeadDetail = () => {
               </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: moderateScale(20) }} >
+            <ScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: moderateScale(10), flex: 1 }} >
               <View style={{ marginBottom: moderateScale(10) }}>
                 <AccountCourseCard
                   isDisable={false}
@@ -337,38 +337,30 @@ const RetreatLeadDetail = () => {
                 <UserTrainerPaymentModal handlePayment={(amount: number) => { handlePayment(amount) }} data={data} transactionModal={transactionModal} settransactionModal={settransactionModal} bankData={bankData} />
               )}
 
-              {lead.status === 'Close' ? null : (
-                <View
-                  style={[
-                    {
-                      width: '100%',
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      alignSelf: 'center',
-                    },
-                  ]}>
-                  {lead.booking !== 'yes' ? (
-                    <CustomButton
-                      onPress={() => handleBooking(lead.id)}
-                      title="Add Booking"
-                      bg={Colors.orange}
-                      customStyle={{ width: '45%' }}
-                      radius={30}
-                    />
-                  ) : null}
-
-                  <CustomButton
-                    radius={30}
-                    onPress={() => {
-                      setFollowModal(true)
-                    }}
-                    title="Add Follow Up"
-                    customStyle={{ width: '45%' }}
-                  />
-                </View>
-              )}
             </ScrollView>
+            {lead.status === 'Close' ? null : (
+              <View
+                style={[globalStyle.betweenCenter, { marginBottom: moderateScale(10), backgroundColor: 'transparent' }]}>
+                {lead.booking !== 'yes' ? (
+                  <CustomButton
+                    onPress={() => handleBooking(lead.id)}
+                    title="Add Booking"
+                    bg={Colors.orange}
+                    customStyle={{ width: '45%' }}
+                    radius={30}
+                  />
+                ) : null}
+
+                <CustomButton
+                  radius={30}
+                  onPress={() => {
+                    setFollowModal(true)
+                  }}
+                  title="Add Follow Up"
+                  customStyle={{ width: '45%' }}
+                />
+              </View>
+            )}
           </>
         )}
       </MenuProvider>

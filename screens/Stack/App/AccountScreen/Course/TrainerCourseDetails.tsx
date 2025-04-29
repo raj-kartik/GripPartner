@@ -324,12 +324,25 @@ const TrainerCourseDetails = (props: any) => {
                                                 name="access-time"
                                             />
                                         </View>
-                                        <View>
-                                            <CustomText text={`${item?.start_time}-${item?.end_time}`} size={16}
+                                        <View style={{ width: "100%", paddingRight: moderateScale(50) }}>
+                                            <CustomText
+                                                text={`${item?.start_time} - ${item?.end_time}`}
+                                                // size={16}
                                                 weight="600"
-                                                color={Colors.gray_font} />
-                                            <CustomText text={item?.slot_days} size={16} weight='600' />
+                                                color={Colors.gray_font}
+                                            />
+                                            <CustomText
+                                                text={item?.slot_days}
+                                                customStyle={{
+                                                    flexWrap: 'wrap',
+                                                    flexShrink: 1, // allow shrinking if needed
+                                                    flexGrow: 1, // allow growth
+                                                }}
+                                                // size={16}
+                                                weight="600"
+                                            />
                                         </View>
+
                                     </View>
                                 )
 
@@ -359,7 +372,7 @@ const styles = StyleSheet.create({
         elevation: 2,
         backgroundColor: "#f7f7f7",
         borderRadius: moderateScale(10),
-        height: moderateScale(70),
+        height: moderateScale(80),
         marginBottom: moderateScale(10),
         marginTop: moderateScale(5),
         width: "98%",
