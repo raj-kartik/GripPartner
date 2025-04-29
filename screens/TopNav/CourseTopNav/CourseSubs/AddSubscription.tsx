@@ -59,7 +59,7 @@ const AddSubscription = () => {
                         id: lead_id,
                         fee: values?.fees,
                         feeType: values?.isPaid,
-                        feeDate: values?.paymentDate || "",
+                        fee_date: values?.paymentDate || "",
                         status: 2,
                     };
                     try {
