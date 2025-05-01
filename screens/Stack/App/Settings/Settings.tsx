@@ -33,6 +33,7 @@ const Settings = () => {
             id: 4,
             label: 'Studio Profile',
             route: "UpdateStudioProfile"
+            // route: "AadharCardKyc"
         },
         {
             id: 2,
