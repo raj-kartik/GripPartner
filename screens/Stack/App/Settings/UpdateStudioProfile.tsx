@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { use, useState } from 'react'
 import Container from '../../../../components/Container'
 import { useSelector } from 'react-redux'
@@ -11,6 +11,7 @@ import CustomText from '../../../../components/Customs/CustomText'
 import { moderateScale } from '../../../../components/Matrix/Matrix'
 import Colors from '../../../../utils/Colors'
 import StateModal from '../../../../components/Modal/StateModal'
+import TimeModal from '../../../../components/Modal/TimeModal'
 
 interface StudioFormValues {
   name: string;
@@ -119,8 +120,10 @@ const studioSchema = yup.object().shape({
 const UpdateStudioProfile: React.FC = () => {
   const { user } = useSelector((state: any) => state?.user);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [startModal, setStartModal] = useState(false);
+  const [endModal, setEndModal] = useState(false);
 
-  console.log("--- studio profile user details ----", user);
+  // console.log("--- studio profile user details ----", user);
 
   return (
     <Container>
@@ -139,109 +142,165 @@ const UpdateStudioProfile: React.FC = () => {
         }}
       >
         {({ handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched }: any) => (
-          <ScrollView contentContainerStyle={{ flexGrow: 1, paddingHorizontal: moderateScale(5) }}>
-            {/* Text Inputs */}
-            {[
-              'name',
-              'location',
-              'pincode',
-              'capacity',
-              'aadharCardNumber',
-              'panCardNumber',
-              'openingTime',
-              'closingTime',
-            ].map((field) => (
-              <View key={field} style={{ marginBottom: moderateScale(0) }}>
-                <CustomInput
-                  text={fieldLabels[field as keyof StudioFormValues]}
-                  handleChangeText={handleChange(field)}
-                  value={values[field as keyof StudioFormValues] as string}
-                  maxLength={maxLengths[field as keyof StudioFormValues]}
-                  keyboardType={
-                    ['pincode', 'capacity', 'aadharCardNumber'].includes(field)
-                      ? 'numeric'
-                      : 'default'
-                  }
-                />
-                {errors[field as keyof StudioFormValues] && touched[field as keyof StudioFormValues] && (
-                  <CustomText color={Colors.red} customStyle={{ marginTop: moderateScale(5) }} text={errors[field as keyof StudioFormValues] as string} />
+          <KeyboardAvoidingView style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} persistentScrollbar={true} contentContainerStyle={{ flexGrow: 1, paddingHorizontal: moderateScale(5) }}>
+              {/* Text Inputs */}
+              {[
+                'name',
+                'location',
+                'pincode',
+                'capacity',
+                'aadharCardNumber',
+                'panCardNumber',
+              ].map((field) => (
+                <View key={field} style={{ marginBottom: moderateScale(0) }}>
+                  <CustomInput
+                    text={fieldLabels[field as keyof StudioFormValues]}
+                    handleChangeText={handleChange(field)}
+                    value={values[field as keyof StudioFormValues] as string}
+                    maxLength={maxLengths[field as keyof StudioFormValues]}
+                    keyboardType={
+                      ['pincode', 'capacity', 'aadharCardNumber'].includes(field)
+                        ? 'numeric'
+                        : 'default'
+                    }
+                  />
+                  {errors[field as keyof StudioFormValues] && touched[field as keyof StudioFormValues] && (
+                    <CustomText color={Colors.red} customStyle={{ marginTop: moderateScale(5) }} text={errors[field as keyof StudioFormValues] as string} />
+                  )}
+                </View>
+              ))}
+
+              <View style={{ marginVertical: moderateScale(10) }}>
+                <CustomText text='State' size={16} weight='500' customStyle={{ marginBottom: moderateScale(3) }} />
+                <TouchableOpacity
+                  onPress={() => setIsModalVisible(true)} // Open the modal to select state
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    padding: moderateScale(15),
+                    borderRadius: moderateScale(8),
+                    // alignItems: 'center',
+                    // marginTop:moderateScale(10)
+                  }}
+                >
+                  <CustomText weight='500' text={values?.state || "Select State"} />
+                </TouchableOpacity>
+                {errors.state && touched.state && (
+                  <CustomText color="red" customStyle={{ marginTop: moderateScale(5) }} text={errors.state as string} />
                 )}
               </View>
-            ))}
 
-            <View style={{ marginVertical: moderateScale(10) }}>
-              <CustomText text='State' size={16} weight='500' customStyle={{ marginBottom: moderateScale(3) }} />
+              <StateModal showmodal={isModalVisible} setShowModal={setIsModalVisible} handleState={(country: any) => {
+                console.log("--- value in the state modal ---", country);
+                setFieldValue('state', country)
+                setIsModalVisible(false);
+              }} />
+
+              <View style={{ marginVertical: moderateScale(10) }}>
+                <CustomText text='Opening Timing' size={16} weight='500' customStyle={{ marginBottom: moderateScale(3) }} />
+
+                {/* opening timing */}
+                <TouchableOpacity
+                  onPress={() => setStartModal(true)} // Open the modal to select state
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    padding: moderateScale(15),
+                    borderRadius: moderateScale(8),
+                    // alignItems: 'center',
+                    // marginTop:moderateScale(10)
+                  }}
+                >
+                  <CustomText weight='500' color={values?.openingTime ? "#000000" : Colors.gray_font} text={values?.openingTime || "From"} />
+                </TouchableOpacity>
+                {errors.openingTime && touched.openingTime && (
+                  <CustomText color="red" customStyle={{ marginTop: moderateScale(5) }} text={errors.openingTime as string} />
+                )}
+
+                <TimeModal values={values?.openingTime} timeModal={startModal} setTimeModal={setStartModal} handleTime={(time: any) => {
+                  setFieldValue('openingTime', time?.value)
+                  setStartModal(false);
+                }} />
+
+
+
+                {/* close timing */}
+                <TouchableOpacity
+                  onPress={() => setEndModal(true)} // Open the modal to select state
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    padding: moderateScale(15),
+                    borderRadius: moderateScale(8),
+                    // alignItems: 'center',
+                    marginTop: moderateScale(10)
+                  }}
+                >
+                  <CustomText weight='500' color={values?.closingTime ? "#000000" : Colors.gray_font} text={values?.closingTime || "To"} />
+                </TouchableOpacity>
+                {errors.closingTime && touched.closingTime && (
+                  <CustomText color="red" customStyle={{ marginTop: moderateScale(5) }} text={errors.closingTime as string} />
+                )}
+
+                <TimeModal values={values?.closingTime} timeModal={endModal} setTimeModal={setEndModal} handleTime={(time: any) => {
+                  // console.log("--- end timing ---", time);
+                  setFieldValue('closingTime', time?.value)
+                  setStartModal(false);
+                }} />
+
+              </View>
+
+
+              {/* Aadhaar Upload */}
+              {/* <View style={{ marginBottom: 10 }}>
               <TouchableOpacity
-                onPress={() => setIsModalVisible(true)} // Open the modal to select state
                 style={{
                   borderWidth: 1,
                   borderColor: '#ccc',
-                  padding: moderateScale(12),
+                  padding: 10,
                   borderRadius: 5,
                   alignItems: 'center',
-                  // marginTop:moderateScale(10)
                 }}
+                onPress={() => pickDocument(setFieldValue, 'aadharCard')}
               >
-                <CustomText weight='500' text={values?.state || "Select State"} />
+                <Text>
+                  {values.aadharCard ? values.aadharCard.name : 'Choose Aadhaar Card'}
+                </Text>
               </TouchableOpacity>
-              {errors.state && touched.state && (
-                <CustomText color="red" customStyle={{ marginTop: moderateScale(5) }} text={errors.state as string} />
+              {errors.aadharCard && touched.aadharCard && (
+                <CustomText text={errors.aadharCard as string} />
               )}
-            </View>
+            </View> */}
 
-            <StateModal showmodal={isModalVisible} setShowModal={setIsModalVisible} handleState={(country: any) => {
-              console.log("--- value in the state modal ---", country);
-              setFieldValue('state', country)
-              setIsModalVisible(false);
-            }} />
+              {/* PAN Upload */}
+              {/* <View style={{ marginBottom: 10 }}>
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  borderColor: '#ccc',
+                  padding: 10,
+                  borderRadius: 5,
+                  alignItems: 'center',
+                }}
+                onPress={() => pickDocument(setFieldValue, 'panCard')}
+              >
+                <Text>
+                  {values.panCard ? values.panCard.name : 'Choose PAN Card'}
+                </Text>
+              </TouchableOpacity>
+              {errors.panCard && touched.panCard && (
+                <CustomText text={errors.panCard as string} />
+              )}
+            </View> */}
 
-
-            {/* Aadhaar Upload */}
-            {/* <View style={{ marginBottom: 10 }}>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                borderColor: '#ccc',
-                padding: 10,
-                borderRadius: 5,
-                alignItems: 'center',
-              }}
-              onPress={() => pickDocument(setFieldValue, 'aadharCard')}
-            >
-              <Text>
-                {values.aadharCard ? values.aadharCard.name : 'Choose Aadhaar Card'}
-              </Text>
-            </TouchableOpacity>
-            {errors.aadharCard && touched.aadharCard && (
-              <CustomText text={errors.aadharCard as string} />
-            )}
-          </View> */}
-
-            {/* PAN Upload */}
-            {/* <View style={{ marginBottom: 10 }}>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                borderColor: '#ccc',
-                padding: 10,
-                borderRadius: 5,
-                alignItems: 'center',
-              }}
-              onPress={() => pickDocument(setFieldValue, 'panCard')}
-            >
-              <Text>
-                {values.panCard ? values.panCard.name : 'Choose PAN Card'}
-              </Text>
-            </TouchableOpacity>
-            {errors.panCard && touched.panCard && (
-              <CustomText text={errors.panCard as string} />
-            )}
-          </View> */}
-
-            {/* Submit */}
-            <CustomButton onPress={handleSubmit} title="Submit" customStyle={{ marginTop: moderateScale(10) }} />
-            <View style={{ marginBottom: moderateScale(50) }} />
-          </ScrollView>
+              {/* Submit */}
+              <CustomButton onPress={handleSubmit} title="Submit" customStyle={{ marginTop: moderateScale(10) }} />
+              <View style={{ marginBottom: moderateScale(50) }} />
+            </ScrollView>
+          </KeyboardAvoidingView>
         )}
       </Formik>
 
