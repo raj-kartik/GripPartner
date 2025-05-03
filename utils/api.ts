@@ -54,8 +54,7 @@ export const GOOGLE_LOCATION_KEY = 'AIzaSyB5D8cCcugZPm2WiQh106c-K1-2dmSEiv0';
 
 // PAYMENT
 export const PAYMENT_ID = 'GRIP0042095811400073';
-export const stagingUrl =
-  'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=123_1';
+export const stagingUrl = 'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=123_1';
 
 // USER
 export const GET_USER_DETAILS = 'user-detail';
@@ -96,7 +95,7 @@ export const AGORA_APP_KEY = '518be2a3c5ee4c0da1bbd3f99b15809c';
 
 // course
 export const POST_PAY_COURSE_FEE = 'pay-for-course';
-export const POST_UNSUBSCRIBE_COURSE = "subscription-end"
+export const POST_UNSUBSCRIBE_COURSE = 'subscription-end';
 
 // retreat
 export const POST_PAY_RETREAT_FEE = 'pay-for-retreat';

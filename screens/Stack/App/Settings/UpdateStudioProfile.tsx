@@ -5,12 +5,11 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import Container from '../../../../components/Container';
 import { useSelector } from 'react-redux';
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
@@ -19,13 +18,14 @@ import { FieldArray, Formik } from 'formik';
 import CustomButton from '../../../../components/Customs/CustomButton';
 import CustomInput from '../../../../components/Customs/CustomInput';
 import CustomText from '../../../../components/Customs/CustomText';
-import { moderateScale, screenWidth } from '../../../../components/Matrix/Matrix';
+import { moderateScale } from '../../../../components/Matrix/Matrix';
 import Colors from '../../../../utils/Colors';
 import StateModal from '../../../../components/Modal/StateModal';
 import TimeModal from '../../../../components/Modal/TimeModal';
 import { globalStyle } from '../../../../utils/GlobalStyle';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
 import DocumentPickerComponent from '../../../../components/DocumentPicker';
+
 interface StudioFormValues {
   name: string;
   location: string;
@@ -165,8 +165,6 @@ const UpdateStudioProfile: React.FC = () => {
   const [startModal, setStartModal] = useState(false);
   const [endModal, setEndModal] = useState(false);
 
-  // console.log("--- studio profile user details ----", user);
-
   const studioTypeArray = [
     {
       id: 1,
@@ -244,7 +242,7 @@ const UpdateStudioProfile: React.FC = () => {
                           globalStyle.betweenCenter,
                           { marginVertical: moderateScale(10) },
                         ]}>
-                        <CustomText text={`Studios`} weight="600" size={20} />
+                        <CustomText text="Studios" weight="600" size={20} />
                         <Pressable
                           onPress={() => {
                             push({
@@ -365,7 +363,7 @@ const UpdateStudioProfile: React.FC = () => {
                               keyboardType: 'phone-pad',
                               maxLengths: 10,
                             },
-                          ].map(field => (
+                          ].map((field:any) => (
                             <View
                               key={field.name}
                               style={{ marginBottom: moderateScale(10) }}>
@@ -591,7 +589,7 @@ const UpdateStudioProfile: React.FC = () => {
                     label: 'PAN Card Number',
                     maxLengths: 10,
                   },
-                ].map(field => (
+                ].map((field: any) => (
                   <View
                     key={field.name}
                     style={{ marginBottom: moderateScale(10) }}>
