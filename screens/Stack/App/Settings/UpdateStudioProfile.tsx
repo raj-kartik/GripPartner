@@ -1,10 +1,10 @@
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { use, useState } from 'react'
 import Container from '../../../../components/Container'
 import { useSelector } from 'react-redux'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
 import * as yup from 'yup'
-import { Formik } from 'formik';
+import { FieldArray, Formik } from 'formik';
 import CustomButton from '../../../../components/Customs/CustomButton'
 import CustomInput from '../../../../components/Customs/CustomInput'
 import CustomText from '../../../../components/Customs/CustomText'
@@ -12,7 +12,8 @@ import { moderateScale } from '../../../../components/Matrix/Matrix'
 import Colors from '../../../../utils/Colors'
 import StateModal from '../../../../components/Modal/StateModal'
 import TimeModal from '../../../../components/Modal/TimeModal'
-
+import { globalStyle } from '../../../../utils/GlobalStyle'
+import CustomIcon from '../../../../components/Customs/CustomIcon'
 interface StudioFormValues {
   name: string;
   location: string;
@@ -47,37 +48,25 @@ interface StudioFormValues {
   closingTime: string;
 }
 
-const initialValues: StudioFormValues = {
-  name: '',
-  location: '',
-  state: '',
-  pincode: '',
-  contactNumber: '',
-  email: '',
-  capacity: '',
+
+const initialValues: any = {
   aadharCard: null,
   aadharCardNumber: '',
   panCard: null,
   panCardNumber: '',
-  openingTime: '',
-  closingTime: '',
-};
+  studio: [{
+    name: '',
+    location: '',
+    state: '',
+    pincode: '',
+    email: '',
+    capacity: '',
+    openingTime: '',
+    closingTime: '',
+    contactNumber: '',
+  }]
+}
 
-const fieldLabels: Record<keyof StudioFormValues, string> = {
-  name: 'Studio Name',
-  location: 'Location',
-  state: 'State',
-  pincode: 'Pincode',
-  contactNumber: 'Contact Number',
-  email: 'Email',
-  capacity: 'Capacity',
-  aadharCard: 'Aadhaar Card Upload',
-  aadharCardNumber: 'Aadhaar Card Number',
-  panCard: 'PAN Card Upload',
-  panCardNumber: 'PAN Card Number',
-  openingTime: 'Opening Time',
-  closingTime: 'Closing Time',
-};
 
 const maxLengths: Record<keyof StudioFormValues, number> = {
   name: 50,
@@ -96,23 +85,27 @@ const maxLengths: Record<keyof StudioFormValues, number> = {
 };
 
 
-const studioSchema = yup.object().shape({
+const studioItemSchema = yup.object().shape({
   name: yup.string().trim().required('*required').min(2, '*too short').max(50, '*too long'),
   location: yup.string().trim().required('*required').min(2, '*too short').max(50, '*too long'),
   state: yup.string().trim().required('*required').min(2, '*too short').max(50, '*too long'),
   pincode: yup.string().matches(/^[0-9]{6}$/, '*must be a valid 6-digit pincode').required('*required'),
-  // contactNumber: yup.string().matches(/^[6-9][0-9]{9}$/, '*must be a valid 10-digit phone number').required('*required'),
-  // email: yup.string().email('*enter valid email').required('*required'),
+  email: yup.string().email('*enter valid email').required('*required'),
   capacity: yup.number().typeError('*must be a number').min(1, '*must be at least 1').required('*required'),
-  aadharCard: yup.mixed().required('*Aadhaar card is required'),
+  openingTime: yup.string().required('*required'),
+  closingTime: yup.string().required('*required'),
+  contactNumber: yup.string().matches(/^[6-9][0-9]{9}$/, '*must be a valid 10-digit phone number').required('*required'),
+});
+
+const overallSchema = yup.object().shape({
+  aadharCard: yup.mixed().notRequired(),
   aadharCardNumber: yup.string().matches(/^[0-9]{12}$/, '*must be a valid 12-digit Aadhaar number').required('*required'),
-  panCard: yup.mixed().required('*PAN card is required'),
+  panCard: yup.mixed().notRequired(),
   panCardNumber: yup.string()
     .transform(value => value?.toUpperCase())
     .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, '*must be a valid PAN number')
     .required('*required'),
-  openingTime: yup.string().required('*required'),
-  closingTime: yup.string().required('*required'),
+  studio: yup.array().of(studioItemSchema).min(1, '*at least one studio is required'),
 });
 
 
@@ -136,168 +129,221 @@ const UpdateStudioProfile: React.FC = () => {
 
       <Formik
         initialValues={initialValues}
-        validationSchema={studioSchema}
+        validationSchema={overallSchema}
         onSubmit={(values: StudioFormValues) => {
           console.log('Submitted values:', values);
         }}
       >
         {({ handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched }: any) => (
-          <KeyboardAvoidingView style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          >
-            <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} persistentScrollbar={true} contentContainerStyle={{ flexGrow: 1, paddingHorizontal: moderateScale(5) }}>
-              {/* Text Inputs */}
+          <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ flexGrow: 1, paddingHorizontal: moderateScale(5) }}
+            >
+              {/* FieldArray for Studio */}
+              <FieldArray name="studio">
+                {({ push, remove }) => (
+                  <>
+                    <View style={[globalStyle.betweenCenter, { marginVertical: moderateScale(10) }]} >
+                      <CustomText text={`Studios`} weight='600' size={20} />
+                      <Pressable onPress={() => {
+                        push({
+                          name: '',
+                          location: '',
+                          state: '',
+                          pincode: '',
+                          email: '',
+                          capacity: '',
+                          openingTime: '',
+                          closingTime: '',
+                          contactNumber: ''
+                        })
+                        ToastAndroid.show('Added a new studio field', ToastAndroid.SHORT);
+                      }} >
+                        <CustomIcon type='AntDesign' size={27} name='pluscircle' />
+                      </Pressable>
+                    </View>
+                    {values.studio.map((studioItem: any, index: any) => (
+                      <View key={index} style={{ marginBottom: moderateScale(20), borderWidth: 1, borderRadius: moderateScale(10), padding: moderateScale(10) }}>
+
+                        <View style={[globalStyle.between]} >
+                          <CustomText text={studioItem?.name || `Studio ${index + 1}`} size={20} weight='600' />
+                          {
+                            values?.studio.length > 1 && (
+                              <Pressable onPress={() => {
+                                remove(index)
+                              }} >
+                                <CustomIcon type='AntDesign' name='minuscircle' />
+                              </Pressable>
+                            )
+                          }
+                        </View>
+                        {/* Studio Fields */}
+                        {[
+                          { name: 'name', label: 'Studio Name', maxLengths: 50 },
+                          { name: 'location', label: 'Location' },
+                          { name: 'pincode', label: 'Pincode', keyboardType: 'numeric', maxLengths: 6 },
+                          { name: 'capacity', label: 'Capacity', keyboardType: 'numeric', maxLengths: 10 },
+                          { name: 'email', label: 'Email', keyboardType: 'email-address', maxLengths: 100 },
+                          { name: 'contactNumber', label: 'Contact Number', keyboardType: 'phone-pad', maxLengths: 10 }
+                        ].map((field) => (
+                          <View key={field.name} style={{ marginBottom: moderateScale(10) }}>
+
+                            <CustomInput
+                              text={field.label}
+                              handleChangeText={handleChange(`studio[${index}].${field.name}`)}
+                              value={values.studio[index][field.name]}
+                              maxLength={field?.maxLengths}
+                              keyboardType={field?.keyboardType || 'default'}
+                            // keyboardType='ascii-capable'
+                            />
+                            {errors.studio?.[index]?.[field.name] && touched.studio?.[index]?.[field.name] && (
+                              <CustomText
+                                color={Colors.red}
+                                customStyle={{ marginTop: moderateScale(5) }}
+                                text={errors.studio[index][field.name]}
+                              />
+                            )}
+                          </View>
+                        ))}
+
+                        {/* State Selector */}
+                        <View style={{ marginVertical: moderateScale(10) }}>
+                          <CustomText text="State" size={16} weight="500" customStyle={{ marginBottom: moderateScale(3) }} />
+                          <TouchableOpacity
+                            onPress={() => setIsModalVisible(index)} // pass index to identify which studio item
+                            style={{
+                              borderWidth: 1,
+                              borderColor: '#ccc',
+                              padding: moderateScale(15),
+                              borderRadius: moderateScale(8)
+                            }}
+                          >
+                            <CustomText
+                              color={values.studio[index].state ? "#000" : Colors.gray_font}
+                              weight="500"
+                              text={values.studio[index].state || 'Select State'}
+                            />
+                          </TouchableOpacity>
+                          {errors.studio?.[index]?.state && touched.studio?.[index]?.state && (
+                            <CustomText
+                              color="red"
+                              customStyle={{ marginTop: moderateScale(5) }}
+                              text={errors.studio[index].state}
+                            />
+                          )}
+                        </View>
+
+                        <StateModal
+                          showmodal={isModalVisible === index}
+                          setShowModal={setIsModalVisible}
+                          handleState={(stateValue: string) => {
+                            setFieldValue(`studio[${index}].state`, stateValue);
+                            setIsModalVisible(false);
+                          }}
+                        />
+
+                        {/* Opening Time */}
+                        <View style={{ marginVertical: moderateScale(10) }}>
+                          <CustomText text="Opening Timing" size={16} weight="500" customStyle={{ marginBottom: moderateScale(3) }} />
+                          <TouchableOpacity
+                            onPress={() => setStartModal(index)}
+                            style={{
+                              borderWidth: 1,
+                              borderColor: '#ccc',
+                              padding: moderateScale(15),
+                              borderRadius: moderateScale(8)
+                            }}
+                          >
+                            <CustomText
+                              weight="500"
+                              color={values.studio[index].openingTime ? "#000000" : Colors.gray_font}
+                              text={values.studio[index].openingTime || "From"}
+                            />
+                          </TouchableOpacity>
+                          {errors.studio?.[index]?.openingTime && touched.studio?.[index]?.openingTime && (
+                            <CustomText
+                              color="red"
+                              customStyle={{ marginTop: moderateScale(5) }}
+                              text={errors.studio[index].openingTime}
+                            />
+                          )}
+
+                          <TimeModal
+                            values={values.studio[index].openingTime}
+                            timeModal={startModal === index}
+                            setTimeModal={setStartModal}
+                            handleTime={(time: any) => {
+                              setFieldValue(`studio[${index}].openingTime`, time.value);
+                              setStartModal(false);
+                            }}
+                          />
+
+                          {/* Closing Time */}
+                          <TouchableOpacity
+                            onPress={() => setEndModal(index)}
+                            style={{
+                              borderWidth: 1,
+                              borderColor: '#ccc',
+                              padding: moderateScale(15),
+                              borderRadius: moderateScale(8),
+                              marginTop: moderateScale(10)
+                            }}
+                          >
+                            <CustomText
+                              weight="500"
+                              color={values.studio[index].closingTime ? "#000000" : Colors.gray_font}
+                              text={values.studio[index].closingTime || "To"}
+                            />
+                          </TouchableOpacity>
+                          {errors.studio?.[index]?.closingTime && touched.studio?.[index]?.closingTime && (
+                            <CustomText
+                              color="red"
+                              customStyle={{ marginTop: moderateScale(5) }}
+                              text={errors.studio[index].closingTime}
+                            />
+                          )}
+
+                          <TimeModal
+                            values={values.studio[index].closingTime}
+                            timeModal={endModal === index}
+                            setTimeModal={setEndModal}
+                            handleTime={(time: any) => {
+                              setFieldValue(`studio[${index}].closingTime`, time.value);
+                              setEndModal(false);
+                            }}
+                          />
+                        </View>
+                      </View>
+                    ))}
+                  </>
+                )}
+              </FieldArray>
+
+              {/* Aadhaar and PAN Fields */}
               {[
-                'name',
-                'location',
-                'pincode',
-                'capacity',
-                'aadharCardNumber',
-                'panCardNumber',
+                { name: 'aadharCardNumber', label: 'Aadhaar Card Number', maxLengths: 12, keyType: "numeric" },
+                { name: 'panCardNumber', label: 'PAN Card Number', maxLengths: 10 }
               ].map((field) => (
-                <View key={field} style={{ marginBottom: moderateScale(0) }}>
+                <View key={field.name} style={{ marginBottom: moderateScale(10) }}>
                   <CustomInput
-                    text={fieldLabels[field as keyof StudioFormValues]}
-                    handleChangeText={handleChange(field)}
-                    value={values[field as keyof StudioFormValues] as string}
-                    maxLength={maxLengths[field as keyof StudioFormValues]}
-                    keyboardType={
-                      ['pincode', 'capacity', 'aadharCardNumber'].includes(field)
-                        ? 'numeric'
-                        : 'default'
-                    }
+                    text={field.label}
+                    handleChangeText={handleChange(field.name)}
+                    value={values[field.name]}
+                    maxLength={field?.maxLengths}
+                    keyboardType={field?.keyType || "default"}
                   />
-                  {errors[field as keyof StudioFormValues] && touched[field as keyof StudioFormValues] && (
-                    <CustomText color={Colors.red} customStyle={{ marginTop: moderateScale(5) }} text={errors[field as keyof StudioFormValues] as string} />
+                  {errors[field.name] && touched[field.name] && (
+                    <CustomText color={Colors.red} customStyle={{ marginTop: moderateScale(5) }} text={errors[field.name]} />
                   )}
                 </View>
               ))}
 
-              <View style={{ marginVertical: moderateScale(10) }}>
-                <CustomText text='State' size={16} weight='500' customStyle={{ marginBottom: moderateScale(3) }} />
-                <TouchableOpacity
-                  onPress={() => setIsModalVisible(true)} // Open the modal to select state
-                  style={{
-                    borderWidth: 1,
-                    borderColor: '#ccc',
-                    padding: moderateScale(15),
-                    borderRadius: moderateScale(8),
-                    // alignItems: 'center',
-                    // marginTop:moderateScale(10)
-                  }}
-                >
-                  <CustomText weight='500' text={values?.state || "Select State"} />
-                </TouchableOpacity>
-                {errors.state && touched.state && (
-                  <CustomText color="red" customStyle={{ marginTop: moderateScale(5) }} text={errors.state as string} />
-                )}
-              </View>
 
-              <StateModal showmodal={isModalVisible} setShowModal={setIsModalVisible} handleState={(country: any) => {
-                console.log("--- value in the state modal ---", country);
-                setFieldValue('state', country)
-                setIsModalVisible(false);
-              }} />
-
-              <View style={{ marginVertical: moderateScale(10) }}>
-                <CustomText text='Opening Timing' size={16} weight='500' customStyle={{ marginBottom: moderateScale(3) }} />
-
-                {/* opening timing */}
-                <TouchableOpacity
-                  onPress={() => setStartModal(true)} // Open the modal to select state
-                  style={{
-                    borderWidth: 1,
-                    borderColor: '#ccc',
-                    padding: moderateScale(15),
-                    borderRadius: moderateScale(8),
-                    // alignItems: 'center',
-                    // marginTop:moderateScale(10)
-                  }}
-                >
-                  <CustomText weight='500' color={values?.openingTime ? "#000000" : Colors.gray_font} text={values?.openingTime || "From"} />
-                </TouchableOpacity>
-                {errors.openingTime && touched.openingTime && (
-                  <CustomText color="red" customStyle={{ marginTop: moderateScale(5) }} text={errors.openingTime as string} />
-                )}
-
-                <TimeModal values={values?.openingTime} timeModal={startModal} setTimeModal={setStartModal} handleTime={(time: any) => {
-                  setFieldValue('openingTime', time?.value)
-                  setStartModal(false);
-                }} />
-
-
-
-                {/* close timing */}
-                <TouchableOpacity
-                  onPress={() => setEndModal(true)} // Open the modal to select state
-                  style={{
-                    borderWidth: 1,
-                    borderColor: '#ccc',
-                    padding: moderateScale(15),
-                    borderRadius: moderateScale(8),
-                    // alignItems: 'center',
-                    marginTop: moderateScale(10)
-                  }}
-                >
-                  <CustomText weight='500' color={values?.closingTime ? "#000000" : Colors.gray_font} text={values?.closingTime || "To"} />
-                </TouchableOpacity>
-                {errors.closingTime && touched.closingTime && (
-                  <CustomText color="red" customStyle={{ marginTop: moderateScale(5) }} text={errors.closingTime as string} />
-                )}
-
-                <TimeModal values={values?.closingTime} timeModal={endModal} setTimeModal={setEndModal} handleTime={(time: any) => {
-                  // console.log("--- end timing ---", time);
-                  setFieldValue('closingTime', time?.value)
-                  setStartModal(false);
-                }} />
-
-              </View>
-
-
-              {/* Aadhaar Upload */}
-              {/* <View style={{ marginBottom: 10 }}>
-              <TouchableOpacity
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#ccc',
-                  padding: 10,
-                  borderRadius: 5,
-                  alignItems: 'center',
-                }}
-                onPress={() => pickDocument(setFieldValue, 'aadharCard')}
-              >
-                <Text>
-                  {values.aadharCard ? values.aadharCard.name : 'Choose Aadhaar Card'}
-                </Text>
-              </TouchableOpacity>
-              {errors.aadharCard && touched.aadharCard && (
-                <CustomText text={errors.aadharCard as string} />
-              )}
-            </View> */}
-
-              {/* PAN Upload */}
-              {/* <View style={{ marginBottom: 10 }}>
-              <TouchableOpacity
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#ccc',
-                  padding: 10,
-                  borderRadius: 5,
-                  alignItems: 'center',
-                }}
-                onPress={() => pickDocument(setFieldValue, 'panCard')}
-              >
-                <Text>
-                  {values.panCard ? values.panCard.name : 'Choose PAN Card'}
-                </Text>
-              </TouchableOpacity>
-              {errors.panCard && touched.panCard && (
-                <CustomText text={errors.panCard as string} />
-              )}
-            </View> */}
 
               {/* Submit */}
-              <CustomButton onPress={handleSubmit} title="Submit" customStyle={{ marginTop: moderateScale(10) }} />
+              <CustomButton onPress={handleSubmit} title="Submit" customStyle={{ marginTop: moderateScale(20) }} />
               <View style={{ marginBottom: moderateScale(50) }} />
             </ScrollView>
           </KeyboardAvoidingView>
