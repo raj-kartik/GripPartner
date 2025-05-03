@@ -94,6 +94,10 @@ android {
             keyPassword 'android'
         }
     }
+    buildFeatures {
+        viewBinding true
+        dataBinding true
+    }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -114,6 +118,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.12.0')
     implementation 'com.google.android.gms:play-services-auth:20.6.0' // or latest
     implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.github.digio-tech:protean-esign:v3.2'
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
