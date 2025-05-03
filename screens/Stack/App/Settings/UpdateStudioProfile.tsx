@@ -1,19 +1,31 @@
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
-import React, { use, useState } from 'react'
-import Container from '../../../../components/Container'
-import { useSelector } from 'react-redux'
-import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
-import * as yup from 'yup'
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, { use, useState } from 'react';
+import Container from '../../../../components/Container';
+import { useSelector } from 'react-redux';
+import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
+import * as yup from 'yup';
 import { FieldArray, Formik } from 'formik';
-import CustomButton from '../../../../components/Customs/CustomButton'
-import CustomInput from '../../../../components/Customs/CustomInput'
-import CustomText from '../../../../components/Customs/CustomText'
-import { moderateScale } from '../../../../components/Matrix/Matrix'
-import Colors from '../../../../utils/Colors'
-import StateModal from '../../../../components/Modal/StateModal'
-import TimeModal from '../../../../components/Modal/TimeModal'
-import { globalStyle } from '../../../../utils/GlobalStyle'
-import CustomIcon from '../../../../components/Customs/CustomIcon'
+import CustomButton from '../../../../components/Customs/CustomButton';
+import CustomInput from '../../../../components/Customs/CustomInput';
+import CustomText from '../../../../components/Customs/CustomText';
+import { moderateScale, screenWidth } from '../../../../components/Matrix/Matrix';
+import Colors from '../../../../utils/Colors';
+import StateModal from '../../../../components/Modal/StateModal';
+import TimeModal from '../../../../components/Modal/TimeModal';
+import { globalStyle } from '../../../../utils/GlobalStyle';
+import CustomIcon from '../../../../components/Customs/CustomIcon';
+import DocumentPickerComponent from '../../../../components/DocumentPicker';
 interface StudioFormValues {
   name: string;
   location: string;
@@ -48,25 +60,27 @@ interface StudioFormValues {
   closingTime: string;
 }
 
-
 const initialValues: any = {
   aadharCard: null,
   aadharCardNumber: '',
   panCard: null,
   panCardNumber: '',
-  studio: [{
-    name: '',
-    location: '',
-    state: '',
-    pincode: '',
-    email: '',
-    capacity: '',
-    openingTime: '',
-    closingTime: '',
-    contactNumber: '',
-  }]
-}
-
+  studio: [
+    {
+      name: '',
+      studioType: '',
+      studioPic: [],
+      location: '',
+      state: '',
+      pincode: '',
+      email: '',
+      capacity: '',
+      openingTime: '',
+      closingTime: '',
+      contactNumber: '',
+    },
+  ],
+};
 
 const maxLengths: Record<keyof StudioFormValues, number> = {
   name: 50,
@@ -84,31 +98,66 @@ const maxLengths: Record<keyof StudioFormValues, number> = {
   closingTime: 10,
 };
 
-
 const studioItemSchema = yup.object().shape({
-  name: yup.string().trim().required('*required').min(2, '*too short').max(50, '*too long'),
-  location: yup.string().trim().required('*required').min(2, '*too short').max(50, '*too long'),
-  state: yup.string().trim().required('*required').min(2, '*too short').max(50, '*too long'),
-  pincode: yup.string().matches(/^[0-9]{6}$/, '*must be a valid 6-digit pincode').required('*required'),
+  name: yup
+    .string()
+    .trim()
+    .required('*required')
+    .min(2, '*too short')
+    .max(50, '*too long'),
+  studioType: yup
+    .string()
+    .trim()
+    .required('*required')
+    .min(2, '*too short')
+    .max(50, '*too long'),
+  location: yup
+    .string()
+    .trim()
+    .required('*required')
+    .min(2, '*too short')
+    .max(50, '*too long'),
+  state: yup
+    .string()
+    .trim()
+    .required('*required')
+    .min(2, '*too short')
+    .max(50, '*too long'),
+  pincode: yup
+    .string()
+    .matches(/^[0-9]{6}$/, '*must be a valid 6-digit pincode')
+    .required('*required'),
   email: yup.string().email('*enter valid email').required('*required'),
-  capacity: yup.number().typeError('*must be a number').min(1, '*must be at least 1').required('*required'),
+  capacity: yup
+    .number()
+    .typeError('*must be a number')
+    .min(1, '*must be at least 1')
+    .required('*required'),
   openingTime: yup.string().required('*required'),
   closingTime: yup.string().required('*required'),
-  contactNumber: yup.string().matches(/^[6-9][0-9]{9}$/, '*must be a valid 10-digit phone number').required('*required'),
+  contactNumber: yup
+    .string()
+    .matches(/^[6-9][0-9]{9}$/, '*must be a valid 10-digit phone number')
+    .required('*required'),
 });
 
 const overallSchema = yup.object().shape({
   aadharCard: yup.mixed().notRequired(),
-  aadharCardNumber: yup.string().matches(/^[0-9]{12}$/, '*must be a valid 12-digit Aadhaar number').required('*required'),
+  aadharCardNumber: yup
+    .string()
+    .matches(/^[0-9]{12}$/, '*must be a valid 12-digit Aadhaar number')
+    .required('*required'),
   panCard: yup.mixed().notRequired(),
-  panCardNumber: yup.string()
+  panCardNumber: yup
+    .string()
     .transform(value => value?.toUpperCase())
     .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, '*must be a valid PAN number')
     .required('*required'),
-  studio: yup.array().of(studioItemSchema).min(1, '*at least one studio is required'),
+  studio: yup
+    .array()
+    .of(studioItemSchema)
+    .min(1, '*at least one studio is required'),
 });
-
-
 
 const UpdateStudioProfile: React.FC = () => {
   const { user } = useSelector((state: any) => state?.user);
@@ -118,242 +167,467 @@ const UpdateStudioProfile: React.FC = () => {
 
   // console.log("--- studio profile user details ----", user);
 
+  const studioTypeArray = [
+    {
+      id: 1,
+      label: 'Gym',
+    },
+
+    {
+      id: 2,
+      label: 'Yoga',
+    },
+
+    {
+      id: 3,
+      label: 'Zumba',
+    },
+
+    {
+      id: 4,
+      label: 'Pilates',
+    },
+
+    {
+      id: 5,
+      label: 'Dance',
+    },
+
+    {
+      id: 6,
+      label: 'Crossfit',
+    },
+  ];
+
   return (
     <Container>
       <CustomHeader2 title="Studio Profile" />
 
       {/* map */}
-      <View>
-
-      </View>
+      <View></View>
 
       <Formik
         initialValues={initialValues}
         validationSchema={overallSchema}
         onSubmit={(values: StudioFormValues) => {
           console.log('Submitted values:', values);
-        }}
-      >
-        {({ handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched }: any) => (
-          <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <ScrollView
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ flexGrow: 1, paddingHorizontal: moderateScale(5) }}
-            >
-              {/* FieldArray for Studio */}
-              <FieldArray name="studio">
-                {({ push, remove }) => (
-                  <>
-                    <View style={[globalStyle.betweenCenter, { marginVertical: moderateScale(10) }]} >
-                      <CustomText text={`Studios`} weight='600' size={20} />
-                      <Pressable onPress={() => {
-                        push({
-                          name: '',
-                          location: '',
-                          state: '',
-                          pincode: '',
-                          email: '',
-                          capacity: '',
-                          openingTime: '',
-                          closingTime: '',
-                          contactNumber: ''
-                        })
-                        ToastAndroid.show('Added a new studio field', ToastAndroid.SHORT);
-                      }} >
-                        <CustomIcon type='AntDesign' size={27} name='pluscircle' />
-                      </Pressable>
-                    </View>
-                    {values.studio.map((studioItem: any, index: any) => (
-                      <View key={index} style={{ marginBottom: moderateScale(20), borderWidth: 1, borderRadius: moderateScale(10), padding: moderateScale(10) }}>
+        }}>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          setFieldValue,
+          values,
+          errors,
+          touched,
+        }: any) => {
 
-                        <View style={[globalStyle.between]} >
-                          <CustomText text={studioItem?.name || `Studio ${index + 1}`} size={20} weight='600' />
-                          {
-                            values?.studio.length > 1 && (
-                              <Pressable onPress={() => {
-                                remove(index)
-                              }} >
-                                <CustomIcon type='AntDesign' name='minuscircle' />
-                              </Pressable>
-                            )
-                          }
-                        </View>
-                        {/* Studio Fields */}
-                        {[
-                          { name: 'name', label: 'Studio Name', maxLengths: 50 },
-                          { name: 'location', label: 'Location' },
-                          { name: 'pincode', label: 'Pincode', keyboardType: 'numeric', maxLengths: 6 },
-                          { name: 'capacity', label: 'Capacity', keyboardType: 'numeric', maxLengths: 10 },
-                          { name: 'email', label: 'Email', keyboardType: 'email-address', maxLengths: 100 },
-                          { name: 'contactNumber', label: 'Contact Number', keyboardType: 'phone-pad', maxLengths: 10 }
-                        ].map((field) => (
-                          <View key={field.name} style={{ marginBottom: moderateScale(10) }}>
+          // console.log("----- values of the studio type ----", values?.studio);
 
-                            <CustomInput
-                              text={field.label}
-                              handleChangeText={handleChange(`studio[${index}].${field.name}`)}
-                              value={values.studio[index][field.name]}
-                              maxLength={field?.maxLengths}
-                              keyboardType={field?.keyboardType || 'default'}
-                            // keyboardType='ascii-capable'
+          return (
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  paddingHorizontal: moderateScale(5),
+                }}>
+                {/* FieldArray for Studio */}
+                <FieldArray name="studio">
+                  {({ push, remove }) => (
+                    <>
+                      <View
+                        style={[
+                          globalStyle.betweenCenter,
+                          { marginVertical: moderateScale(10) },
+                        ]}>
+                        <CustomText text={`Studios`} weight="600" size={20} />
+                        <Pressable
+                          onPress={() => {
+                            push({
+                              name: '',
+                              location: '',
+                              state: '',
+                              pincode: '',
+                              email: '',
+                              capacity: '',
+                              openingTime: '',
+                              closingTime: '',
+                              contactNumber: '',
+                              studioType: ''
+                            });
+                            ToastAndroid.show(
+                              'Added a new studio field',
+                              ToastAndroid.SHORT,
+                            );
+                          }}>
+                          <CustomIcon
+                            type="AntDesign"
+                            size={27}
+                            name="pluscircle"
+                          />
+                        </Pressable>
+                      </View>
+                      {values.studio.map((studioItem: any, index: any) => (
+                        <View
+                          key={index}
+                          style={{
+                            marginBottom: moderateScale(20),
+                            borderWidth: 1,
+                            borderRadius: moderateScale(10),
+                            padding: moderateScale(10),
+                          }}>
+                          <View style={[globalStyle.between]}>
+                            <CustomText
+                              text={studioItem?.name || `Studio ${index + 1}`}
+                              size={20}
+                              weight="600"
                             />
-                            {errors.studio?.[index]?.[field.name] && touched.studio?.[index]?.[field.name] && (
-                              <CustomText
-                                color={Colors.red}
-                                customStyle={{ marginTop: moderateScale(5) }}
-                                text={errors.studio[index][field.name]}
-                              />
+                            {values?.studio.length > 1 && (
+                              <Pressable
+                                onPress={() => {
+                                  remove(index);
+                                }}>
+                                <CustomIcon type="AntDesign" name="minuscircle" />
+                              </Pressable>
                             )}
                           </View>
-                        ))}
 
-                        {/* State Selector */}
-                        <View style={{ marginVertical: moderateScale(10) }}>
-                          <CustomText text="State" size={16} weight="500" customStyle={{ marginBottom: moderateScale(3) }} />
-                          <TouchableOpacity
-                            onPress={() => setIsModalVisible(index)} // pass index to identify which studio item
-                            style={{
-                              borderWidth: 1,
-                              borderColor: '#ccc',
-                              padding: moderateScale(15),
-                              borderRadius: moderateScale(8)
-                            }}
-                          >
+                          <View style={{ marginTop: moderateScale(10) }}>
                             <CustomText
-                              color={values.studio[index].state ? "#000" : Colors.gray_font}
+                              size={16}
+                              text="Select Studio Type"
                               weight="500"
-                              text={values.studio[index].state || 'Select State'}
                             />
-                          </TouchableOpacity>
-                          {errors.studio?.[index]?.state && touched.studio?.[index]?.state && (
-                            <CustomText
-                              color="red"
-                              customStyle={{ marginTop: moderateScale(5) }}
-                              text={errors.studio[index].state}
-                            />
-                          )}
-                        </View>
+                            <ScrollView
+                              horizontal
+                              showsHorizontalScrollIndicator={false}>
+                              {studioTypeArray.map((item: any) => (
+                                <Pressable
+                                  onPress={() => {
+                                    setFieldValue(`studio[${index}].studioType`, item?.label);
+                                  }}
+                                  style={[globalStyle.row, { marginTop: moderateScale(7), width: moderateScale(90), marginRight: moderateScale(5) }]}>
+                                  <View
+                                    style={[globalStyle.center, {
+                                      width: moderateScale(18),
+                                      height: moderateScale(18),
+                                      borderRadius: moderateScale(100),
+                                      marginRight: moderateScale(3),
+                                      borderWidth: 2,
+                                      borderColor: values.studio[index]?.studioType === item?.label ? Colors.success : Colors.gray,
+                                    }]}
+                                  >
+                                    <View
+                                      style={{
+                                        width: moderateScale(10),
+                                        height: moderateScale(10),
+                                        borderRadius: moderateScale(100),
+                                        // marginRight: moderateScale(3),
+                                        backgroundColor: values.studio[index]?.studioType === item?.label ? Colors.success : Colors.gray,
+                                      }}
+                                    />
+                                  </View>
+                                  <CustomText text={item?.label} />
+                                </Pressable>
+                              ))}
+                            </ScrollView>
+                          </View>
 
-                        <StateModal
-                          showmodal={isModalVisible === index}
-                          setShowModal={setIsModalVisible}
-                          handleState={(stateValue: string) => {
-                            setFieldValue(`studio[${index}].state`, stateValue);
-                            setIsModalVisible(false);
-                          }}
-                        />
+                          {/* Studio Fields */}
+                          {[
+                            { name: 'name', label: 'Studio Name', maxLengths: 50 },
+                            { name: 'location', label: 'Location' },
+                            {
+                              name: 'pincode',
+                              label: 'Pincode',
+                              keyboardType: 'numeric',
+                              maxLengths: 6,
+                            },
+                            {
+                              name: 'capacity',
+                              label: 'Capacity',
+                              keyboardType: 'numeric',
+                              maxLengths: 10,
+                            },
+                            {
+                              name: 'email',
+                              label: 'Email',
+                              keyboardType: 'email-address',
+                              maxLengths: 100,
+                            },
+                            {
+                              name: 'contactNumber',
+                              label: 'Contact Number',
+                              keyboardType: 'phone-pad',
+                              maxLengths: 10,
+                            },
+                          ].map(field => (
+                            <View
+                              key={field.name}
+                              style={{ marginBottom: moderateScale(10) }}>
+                              <CustomInput
+                                text={field.label}
+                                handleChangeText={handleChange(
+                                  `studio[${index}].${field.name}`,
+                                )}
+                                value={values.studio[index][field.name]}
+                                maxLength={field?.maxLengths}
+                                keyboardType={field?.keyboardType || 'default'}
+                              // keyboardType='ascii-capable'
+                              />
+                              {errors.studio?.[index]?.[field.name] &&
+                                touched.studio?.[index]?.[field.name] && (
+                                  <CustomText
+                                    color={Colors.red}
+                                    customStyle={{ marginTop: moderateScale(5) }}
+                                    text={errors.studio[index][field.name]}
+                                  />
+                                )}
+                            </View>
+                          ))}
 
-                        {/* Opening Time */}
-                        <View style={{ marginVertical: moderateScale(10) }}>
-                          <CustomText text="Opening Timing" size={16} weight="500" customStyle={{ marginBottom: moderateScale(3) }} />
-                          <TouchableOpacity
-                            onPress={() => setStartModal(index)}
-                            style={{
-                              borderWidth: 1,
-                              borderColor: '#ccc',
-                              padding: moderateScale(15),
-                              borderRadius: moderateScale(8)
-                            }}
-                          >
+                          {/* State Selector */}
+                          <View style={{ marginVertical: moderateScale(10) }}>
                             <CustomText
+                              text="State"
+                              size={16}
                               weight="500"
-                              color={values.studio[index].openingTime ? "#000000" : Colors.gray_font}
-                              text={values.studio[index].openingTime || "From"}
+                              customStyle={{ marginBottom: moderateScale(3) }}
                             />
-                          </TouchableOpacity>
-                          {errors.studio?.[index]?.openingTime && touched.studio?.[index]?.openingTime && (
-                            <CustomText
-                              color="red"
-                              customStyle={{ marginTop: moderateScale(5) }}
-                              text={errors.studio[index].openingTime}
-                            />
-                          )}
+                            <TouchableOpacity
+                              onPress={() => setIsModalVisible(index)} // pass index to identify which studio item
+                              style={{
+                                borderWidth: 1,
+                                borderColor: '#ccc',
+                                padding: moderateScale(15),
+                                borderRadius: moderateScale(8),
+                              }}>
+                              <CustomText
+                                color={
+                                  values.studio[index].state
+                                    ? '#000'
+                                    : Colors.gray_font
+                                }
+                                weight="500"
+                                text={
+                                  values.studio[index].state || 'Select State'
+                                }
+                              />
+                            </TouchableOpacity>
+                            {errors.studio?.[index]?.state &&
+                              touched.studio?.[index]?.state && (
+                                <CustomText
+                                  color="red"
+                                  customStyle={{ marginTop: moderateScale(5) }}
+                                  text={errors.studio[index].state}
+                                />
+                              )}
+                          </View>
 
-                          <TimeModal
-                            values={values.studio[index].openingTime}
-                            timeModal={startModal === index}
-                            setTimeModal={setStartModal}
-                            handleTime={(time: any) => {
-                              setFieldValue(`studio[${index}].openingTime`, time.value);
-                              setStartModal(false);
+
+
+                          <StateModal
+                            showmodal={isModalVisible === index}
+                            setShowModal={setIsModalVisible}
+                            handleState={(stateValue: string) => {
+                              setFieldValue(`studio[${index}].state`, stateValue);
+                              setIsModalVisible(false);
                             }}
                           />
 
-                          {/* Closing Time */}
-                          <TouchableOpacity
-                            onPress={() => setEndModal(index)}
-                            style={{
-                              borderWidth: 1,
-                              borderColor: '#ccc',
-                              padding: moderateScale(15),
-                              borderRadius: moderateScale(8),
-                              marginTop: moderateScale(10)
-                            }}
-                          >
+                          {/* Opening Time */}
+                          <View style={{ marginVertical: moderateScale(10) }}>
                             <CustomText
+                              text="Opening Timing"
+                              size={16}
                               weight="500"
-                              color={values.studio[index].closingTime ? "#000000" : Colors.gray_font}
-                              text={values.studio[index].closingTime || "To"}
+                              customStyle={{ marginBottom: moderateScale(3) }}
                             />
-                          </TouchableOpacity>
-                          {errors.studio?.[index]?.closingTime && touched.studio?.[index]?.closingTime && (
-                            <CustomText
-                              color="red"
+                            <TouchableOpacity
+                              onPress={() => setStartModal(index)}
+                              style={{
+                                borderWidth: 1,
+                                borderColor: '#ccc',
+                                padding: moderateScale(15),
+                                borderRadius: moderateScale(8),
+                              }}>
+                              <CustomText
+                                weight="500"
+                                color={
+                                  values.studio[index].openingTime
+                                    ? '#000000'
+                                    : Colors.gray_font
+                                }
+                                text={values.studio[index].openingTime || 'From'}
+                              />
+                            </TouchableOpacity>
+                            {errors.studio?.[index]?.openingTime &&
+                              touched.studio?.[index]?.openingTime && (
+                                <CustomText
+                                  color="red"
+                                  customStyle={{ marginTop: moderateScale(5) }}
+                                  text={errors.studio[index].openingTime}
+                                />
+                              )}
+
+                            <TimeModal
+                              values={values.studio[index].openingTime}
+                              timeModal={startModal === index}
+                              setTimeModal={setStartModal}
+                              handleTime={(time: any) => {
+                                setFieldValue(
+                                  `studio[${index}].openingTime`,
+                                  time.value,
+                                );
+                                setStartModal(false);
+                              }}
+                            />
+
+                            {/* Closing Time */}
+                            <TouchableOpacity
+                              onPress={() => setEndModal(index)}
+                              style={{
+                                borderWidth: 1,
+                                borderColor: '#ccc',
+                                padding: moderateScale(15),
+                                borderRadius: moderateScale(8),
+                                marginTop: moderateScale(10),
+                              }}>
+                              <CustomText
+                                weight="500"
+                                color={
+                                  values.studio[index].closingTime
+                                    ? '#000000'
+                                    : Colors.gray_font
+                                }
+                                text={values.studio[index].closingTime || 'To'}
+                              />
+                            </TouchableOpacity>
+                            {errors.studio?.[index]?.closingTime &&
+                              touched.studio?.[index]?.closingTime && (
+                                <CustomText
+                                  color="red"
+                                  customStyle={{ marginTop: moderateScale(5) }}
+                                  text={errors.studio[index].closingTime}
+                                />
+                              )}
+
+                            <TimeModal
+                              values={values.studio[index].closingTime}
+                              timeModal={endModal === index}
+                              setTimeModal={setEndModal}
+                              handleTime={(time: any) => {
+                                setFieldValue(
+                                  `studio[${index}].closingTime`,
+                                  time.value,
+                                );
+                                setEndModal(false);
+                              }}
+                            />
+                          </View>
+
+                          {/* studio pics */}
+                          <View>
+                            <CustomText text='Studio Photos' size={16} weight='500' />
+                            <DocumentPickerComponent
+                              allowMultiple={true}
+                              docType={["image/*"]}
                               customStyle={{ marginTop: moderateScale(5) }}
-                              text={errors.studio[index].closingTime}
+                              onPickDocument={documents => {
+                                // console.log("---- documents in the studio form ----", documents);
+                                setFieldValue(`studio[${index}].studioPic`, documents);
+                              }}
                             />
-                          )}
 
-                          <TimeModal
-                            values={values.studio[index].closingTime}
-                            timeModal={endModal === index}
-                            setTimeModal={setEndModal}
-                            handleTime={(time: any) => {
-                              setFieldValue(`studio[${index}].closingTime`, time.value);
-                              setEndModal(false);
-                            }}
-                          />
+                            <ScrollView
+                              showsHorizontalScrollIndicator={false}
+                              horizontal
+                            >
+                              {
+                                values?.studio[index]?.studioPic.length > 1 && values?.studio[index]?.studioPic.map((item: any) => {
+                                  // console.log("---- item in the image ----", item);
+                                  return (
+                                    <View
+                                      style={{
+                                        borderWidth: 1.5,
+                                        borderColor: Colors.orange,
+                                        padding: moderateScale(5),
+                                        marginRight: moderateScale(10),
+                                        borderRadius: moderateScale(5)
+                                      }}
+                                    >
+                                      <Image
+                                        source={{ uri: item?.uri }}
+                                        width={moderateScale(100)}
+                                        height={moderateScale(100)}
+                                        borderRadius={moderateScale(3)}
+                                      />
+                                    </View>
+                                  )
+                                })
+                              }
+                            </ScrollView>
+                          </View>
                         </View>
-                      </View>
-                    ))}
-                  </>
-                )}
-              </FieldArray>
-
-              {/* Aadhaar and PAN Fields */}
-              {[
-                { name: 'aadharCardNumber', label: 'Aadhaar Card Number', maxLengths: 12, keyType: "numeric" },
-                { name: 'panCardNumber', label: 'PAN Card Number', maxLengths: 10 }
-              ].map((field) => (
-                <View key={field.name} style={{ marginBottom: moderateScale(10) }}>
-                  <CustomInput
-                    text={field.label}
-                    handleChangeText={handleChange(field.name)}
-                    value={values[field.name]}
-                    maxLength={field?.maxLengths}
-                    keyboardType={field?.keyType || "default"}
-                  />
-                  {errors[field.name] && touched[field.name] && (
-                    <CustomText color={Colors.red} customStyle={{ marginTop: moderateScale(5) }} text={errors[field.name]} />
+                      ))}
+                    </>
                   )}
-                </View>
-              ))}
+                </FieldArray>
 
+                {/* Aadhaar and PAN Fields */}
+                {[
+                  {
+                    name: 'aadharCardNumber',
+                    label: 'Aadhaar Card Number',
+                    maxLengths: 12,
+                    keyType: 'numeric',
+                  },
+                  {
+                    name: 'panCardNumber',
+                    label: 'PAN Card Number',
+                    maxLengths: 10,
+                  },
+                ].map(field => (
+                  <View
+                    key={field.name}
+                    style={{ marginBottom: moderateScale(10) }}>
+                    <CustomInput
+                      text={field.label}
+                      handleChangeText={handleChange(field.name)}
+                      value={values[field.name]}
+                      maxLength={field?.maxLengths}
+                      keyboardType={field?.keyType || 'default'}
+                    />
+                    {errors[field.name] && touched[field.name] && (
+                      <CustomText
+                        color={Colors.red}
+                        customStyle={{ marginTop: moderateScale(5) }}
+                        text={errors[field.name]}
+                      />
+                    )}
+                  </View>
+                ))}
 
-
-              {/* Submit */}
-              <CustomButton onPress={handleSubmit} title="Submit" customStyle={{ marginTop: moderateScale(20) }} />
-              <View style={{ marginBottom: moderateScale(50) }} />
-            </ScrollView>
-          </KeyboardAvoidingView>
-        )}
+                {/* Submit */}
+                <CustomButton
+                  onPress={handleSubmit}
+                  title="Submit"
+                  customStyle={{ marginTop: moderateScale(20) }}
+                />
+                <View style={{ marginBottom: moderateScale(50) }} />
+              </ScrollView>
+            </KeyboardAvoidingView>
+          )
+        }}
       </Formik>
-
     </Container>
-  )
-}
+  );
+};
 
-export default UpdateStudioProfile
+export default UpdateStudioProfile;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});
