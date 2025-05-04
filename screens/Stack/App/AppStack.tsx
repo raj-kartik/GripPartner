@@ -54,6 +54,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { addToCart } from '../../../redux/Slice/AddToCartSlice'
 import AddBookingScreen from '../../TopNav/RetreatTopNav/RetreatFollowUps/AddBookingScreen'
 import AadharCardKyc from './KYC/AadharCardKyc'
+import LocationTracker from './LocationTracker'
 // import LocationTracker from './LocationTracker'
 
 // changes noething has made
@@ -104,11 +105,10 @@ const AppStack = () => {
                 <Stack.Screen name='PaymentScan' component={PaymentScan} />
                 <Stack.Screen name='AddBookingScreen' component={AddBookingScreen} />
 
-
                 <Stack.Screen name='AddSubscription' component={AddSubscription} />
                 <Stack.Screen name='ProductList' component={ProductList} />
                 <Stack.Screen name='AadharCardKyc' component={AadharCardKyc} />
-                {/* <Stack.Screen name='LocationTracker' component={LocationTracker} /> */}
+                <Stack.Screen name='LocationTracker' component={LocationTracker} />
 
                 {/* course top navigation */}
                 <Stack.Screen name='CourseTopNav' component={CourseTopNav} />

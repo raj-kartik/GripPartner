@@ -32,8 +32,8 @@ const Settings = () => {
         {
             id: 4,
             label: 'Studio Profile',
-            route: "UpdateStudioProfile"
-            // route: "AadharCardKyc"
+            // route: "UpdateStudioProfile"
+            route: "LocationTracker"
         },
         {
             id: 2,
