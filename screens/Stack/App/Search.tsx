@@ -29,24 +29,6 @@ import SearchCareer from '../../../components/Cards/Search/SearchCareer';
 import SearchFranchise from '../../../components/Cards/Search/SearchFranchise';
 import SearchShop from '../../../components/Cards/Search/SearchShop';
 
-
-//   import Container from '../../Component/Container';
-//   import CustomIcon from '../../Component/Custom/CustomIcon';
-//   import {globalStyle} from '../../../utils/GlobalStyles';
-//   import Colors from '../../style/Colors';
-//   import {moderateScale, screenWidth} from '../../Component/Matrix/Matrix';
-//   import {getMethod} from '../../../utils/helper';
-//   import CustomText from '../../Component/Custom/CustomText';
-//   import SearchCard1 from '../../Component/Cards/SearchCard1';
-//   import makeApiRequest from '../../../utils/API/apiServices';
-//   import {DEFAULT_URL, POST_SEARCH} from '../../../utils/API/api';
-//   import SearchCourse from '../../Component/Cards/Search/SearchCourse';
-//   import SearchTrainer from '../../Component/Cards/Search/SearchTrainer';
-//   import SearchRetreat from '../../Component/Cards/Search/SearchRetreat';
-//   import SearchCareer from '../../Component/Cards/Search/SearchCareer';
-//   import SearchShop from '../../Component/Cards/Search/SearchShop';
-//   import SearchFranchize from '../../Component/Cards/Search/SearchFranchize';
-
 const Search = ({ route }: any) => {
   const { type = 'Course', isTypeVisible = true } = route.params || {};
   const [search, setSearch] = useState<string>('');
@@ -160,7 +142,7 @@ const Search = ({ route }: any) => {
                   text={item}
                   color={isSelected ? '#fff' : '#000'}
                   weight={!isSelected ? '400' : '500'}
-                  size={13}
+                  size={14}
                 />
               </TouchableOpacity>
             );
@@ -170,7 +152,7 @@ const Search = ({ route }: any) => {
 
       {/* Results */}
       {loading ? (
-        <ActivityIndicator size={20} color={Colors.brand_primary} />
+        <ActivityIndicator size="large" color="#000" style={[globalStyle.center,{flex:1}]} />
       ) : (
         <View
           style={{
@@ -208,10 +190,13 @@ const Search = ({ route }: any) => {
                 ),
             )
           ) : (
-            <CustomText
-              customStyle={{ textAlign: 'center' }}
-              text={`No Results Found`}
-            />
+            <View style={[globalStyle.center, { flex: 1 }]} >
+              <CustomText
+                customStyle={{ textAlign: 'center' }}
+                text={`No Results Found`}
+              />
+
+            </View>
           )}
         </View>
       )}
@@ -234,8 +219,8 @@ const styles = StyleSheet.create({
     // backgroundColor:"red",
     flex: 1,
     color: Colors.black,
-    fontSize: 14,
-    height:moderateScale(50)
+    fontSize: 15,
+    height: moderateScale(50)
     // marginBottom:moderateScale(10)
   },
   searchType: {

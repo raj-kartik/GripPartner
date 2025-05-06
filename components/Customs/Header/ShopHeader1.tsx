@@ -20,7 +20,7 @@ const ShopHeader1: FC<Props> = () => {
                 <Pressable onPress={() => { navigation.openDrawer() }} >
                     <CustomIcon size={30} type='Entypo' name='menu' />
                 </Pressable>
-                <Pressable onPress={()=>{
+                <Pressable onPress={() => {
                     // navigation.navigate('LocationTracker');
                 }} style={{ marginLeft: moderateScale(10) }} >
                     {
@@ -29,10 +29,20 @@ const ShopHeader1: FC<Props> = () => {
 
                 </Pressable>
             </View>
-            <View style={[globalStyle.betweenCenter, { flex: .25, alignItems: "flex-end" }]} >
+            <View style={[globalStyle.betweenCenter, { flex: .35, alignItems: "flex-end" }]} >
+
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate('Search', {
+                        type: "Shop"
+                    })
+                }} >
+                    <CustomIcon type="AntDesign" name='search1' size={27} />
+                </TouchableOpacity>
+
                 <TouchableOpacity onPress={() => { navigation.navigate('Scanner') }} >
                     <CustomIcon type="Ionicons" name='scan' size={27} />
                 </TouchableOpacity>
+
 
                 <TouchableOpacity onPress={() => { navigation.navigate('MyCart') }} >
                     <CustomIcon type="AntDesign" name='shoppingcart' size={30} />

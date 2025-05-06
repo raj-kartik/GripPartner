@@ -57,8 +57,8 @@ const Section = React.memo(({ index, banner, products, loading }: any) => {
   return (
     <View style={{ height: screenHeight }}>
       {loading ? (
-        <View></View>
-        // <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+        // <ActivityIndicator size="large" style={{ marginTop: 20 }}  />
+        <View />
       ) : (
         <>
           {banner && banner.length > 0 && (
@@ -68,30 +68,32 @@ const Section = React.memo(({ index, banner, products, loading }: any) => {
               keyExtractor={(_, i) => `banner-${index}-${i}`}
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ marginVertical: moderateScale(10) }}
-              renderItem={({ item }: any) => {
-                return (
-                  <Image
-                    source={{ uri: item?.url }}
-                    style={{
-                      width: screenWidth * 0.92,
-                      // height: screenHeight * 0.28,
-                      marginRight: 10,
-                      borderRadius: moderateScale(10),
-                      backgroundColor: '#ccc',
-                    }}
-                    resizeMode="cover"
-                  />
-                );
-              }}
+              renderItem={({ item }: any) => (
+                <Image
+                  source={{ uri: item?.url }}
+                  style={{
+                    width: screenWidth * 0.92,
+                    marginRight: 10,
+                    borderRadius: moderateScale(10),
+                    backgroundColor: '#ccc',
+                  }}
+                  resizeMode="cover"
+                />
+              )}
             />
           )}
 
           {products?.products && products?.products.length > 0 ? (
-            <View style={{ marginTop: moderateScale(10) }} >
-              <View style={[globalStyle.betweenCenter]} >
-                <CustomText text={products?.name} weight='700' size={22} />
+            <View style={{ marginTop: moderateScale(10) }}>
+              <View style={[globalStyle.betweenCenter]}>
+                <CustomText text={products?.name} weight="700" size={22} />
                 <Pressable>
-                  <CustomText size={14} text='View all' weight='500' color={Colors.gray_font} />
+                  <CustomText
+                    size={14}
+                    text="View all"
+                    weight="500"
+                    color={Colors.gray_font}
+                  />
                 </Pressable>
               </View>
               <FlatList
@@ -99,15 +101,12 @@ const Section = React.memo(({ index, banner, products, loading }: any) => {
                 columnWrapperStyle={{ justifyContent: 'space-between' }}
                 numColumns={2}
                 data={products?.products}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => {
-                  // console.log('--- item in special ---', item);
-                  return <SpecialCard item={item} />;
-                }}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <SpecialCard item={item} />}
               />
             </View>
           ) : (
-            <View></View>
+            <View />
           )}
         </>
       )}
@@ -123,8 +122,15 @@ const Products = ({ navigation }: any) => {
 
   const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 50 });
 
-  const fetchSectionData = async (index: number) => {
-    if (bannerMap[index] || productMap[index] || loadingMap[index]) return;
+  const preloadBuffer = 2; // Preload 2 sections ahead
+
+  const fetchSectionData = async (index: number, force = false) => {
+    if (
+      (!force && (bannerMap[index] || productMap[index] || loadingMap[index])) ||
+      index >= categoryEndpoints.length
+    ) {
+      return; // Already fetched or out of bounds
+    }
 
     setLoadingMap((prev: any) => ({ ...prev, [index]: true }));
 
@@ -151,48 +157,59 @@ const Products = ({ navigation }: any) => {
       }
     } catch (error) {
       console.error(`Error loading data for section ${index}`, error);
+    } finally {
+      setLoadingMap((prev: any) => ({ ...prev, [index]: false }));
     }
-
-    setLoadingMap((prev: any) => ({ ...prev, [index]: false }));
   };
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     viewableItems.forEach(({ index }: any) => {
-      if (index !== null) fetchSectionData(index);
+      if (index !== null) {
+        fetchSectionData(index);
+        for (let i = 1; i <= preloadBuffer; i++) {
+          fetchSectionData(index + i);
+        }
+      }
     });
   });
 
   const renderItem = useCallback(
-    ({ _, index }) => (
-      <Section
-        index={index}
-        banner={bannerMap[index]}
-        products={productMap[index]}
-        loading={loadingMap[index]}
-      />
-    ),
+    ({ _, index }) => {
+      const banner = bannerMap[index];
+      const products = productMap[index];
+      const loading = loadingMap[index];
+
+      return (
+        <Section
+          index={index}
+          banner={banner}
+          products={products}
+          loading={loading}
+        />
+      );
+    },
     [bannerMap, productMap, loadingMap]
   );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
 
-    // Clear the existing maps
-    setBannerMap({});
-    setProductMap({});
-    setLoadingMap({});
+    // Only refresh sections that are already loaded (existing keys in bannerMap/productMap)
+    const loadedIndices = Object.keys(bannerMap)
+      .map((key) => parseInt(key))
+      .filter((index) => !isNaN(index));
 
-    // Refetch data for all sections
     try {
-      const fetchAllSections = categoryEndpoints.map((_, index) => fetchSectionData(index));
-      await Promise.all(fetchAllSections);
+      const refreshPromises = loadedIndices.map((index) =>
+        fetchSectionData(index, true) // Pass 'force' to re-fetch
+      );
+      await Promise.all(refreshPromises);
     } catch (err) {
-      console.error('Error refreshing all sections', err);
+      console.error('Error refreshing loaded sections', err);
     }
 
     setRefreshing(false);
-  }, []);
-
+  }, [bannerMap]); // Depend on bannerMap to detect which indices were loaded
 
   return (
     <Container>
@@ -201,18 +218,22 @@ const Products = ({ navigation }: any) => {
         data={categoryEndpoints}
         keyExtractor={(_, index) => index.toString()}
         showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        ListFooterComponent={<View style={{ marginBottom: moderateScale(100) }} />}
+        ListFooterComponent={
+          <View style={{ marginBottom: moderateScale(100) }} />
+        }
         renderItem={renderItem}
         onViewableItemsChanged={onViewableItemsChanged.current}
         viewabilityConfig={viewabilityConfig.current}
+        initialNumToRender={3}
+        maxToRenderPerBatch={5}
       />
     </Container>
   );
 };
+
 
 export default Products;
 

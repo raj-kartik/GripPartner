@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { FlatList, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Container from '../../../../../components/Container'
 import CustomHeader2 from '../../../../../components/Customs/Header/CustomHeader2'
@@ -15,7 +15,7 @@ import { MultiSelect } from 'react-native-element-dropdown';
 import Colors from '../../../../../utils/Colors'
 import CustomButton from '../../../../../components/Customs/CustomButton'
 import { globalStyle } from '../../../../../utils/GlobalStyle'
-import { uploadDocument } from '../../../../../utils/UtilityFuncations'
+import { fetchLocationUtility, uploadDocument } from '../../../../../utils/UtilityFuncations'
 import DocumentPickerComponent from '../../../../../components/DocumentPicker'
 import { BASE_URL, GOOGLE_LOCATION_KEY } from '../../../../../utils/api'
 import makeApiRequest from '../../../../../utils/ApiService'
@@ -65,6 +65,10 @@ const CreateRetreat = (props: any) => {
     const { user } = useSelector((state: any) => state?.user);
     const [loading, setLoading] = useState(false)
     const navigation = useNavigation();
+    const [placeText, setPlaceText] = useState('');
+    const [place, setPlace] = useState<any>([]);
+    const [locationPlaceText, setLocationPlaceText] = useState<any>([]);
+    const [locationPlace, setLocationPlace] = useState<any>([]);
     const [isCalendar, setIsCalendar] = useState({
         start: false,
         end: false
@@ -92,6 +96,28 @@ const CreateRetreat = (props: any) => {
         { label: 'Nine Rooms', value: 'Nine Rooms' },
         { label: 'Ten Rooms', value: 'Ten Rooms' },
     ];
+
+    const fetchAndSetPlace = async (text: string, setter: any) => {
+        try {
+            const response = await fetchLocationUtility(text);
+            setter(response);
+        } catch (error) {
+            console.error('Error fetching place:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (placeText) {
+            fetchAndSetPlace(placeText, setPlace);
+        }
+    }, [placeText]);
+
+    useEffect(() => {
+        if (locationPlaceText) {  // Assuming you have a different input like `locationText`
+            fetchAndSetPlace(locationPlaceText, setLocationPlace);
+        }
+    }, [locationPlaceText]);  // <-- NOT `locationPlace`
+
 
     return (
         <Container>
@@ -192,6 +218,7 @@ const CreateRetreat = (props: any) => {
                             <View style={{ flex: 1 }} >
                                 <ScrollView
                                     showsVerticalScrollIndicator={false}
+                                    keyboardShouldPersistTaps="handled"
                                     style={{ flex: 1, paddingHorizontal: moderateScale(5), paddingBottom: moderateScale(20) }}
                                 >
                                     <CustomInput
@@ -208,56 +235,13 @@ const CreateRetreat = (props: any) => {
                                         />
                                     )}
 
-                                    {/* <GooglePlacesAutocomplete
-                                        placeholder="Accommodation Hotel"
-                                        currentLocationLabel={'Accommodation Hotel'}
-                                        onPress={(data: any, details = null) => {
-                                            console.log("=== data in the google autp complete ===",data);
-                                            console.log("=== details in the google autp complete ===",details);
-                                            
-                                            // onChange(data.description); // Update the field value
-                                        }}
-                                        query={{
-                                            // key: GOOGLE_LOCATION_KEY,
-                                            key: 'AIzaSyCH_1ahy6xNmFxDxEk7Xr2V1n2RnhK96oU',
-                                            language: 'en',
-                                        }}
-                                        textInputProps={{
-                                            placeholderTextColor: Colors.gray_font,
-                                            returnKeyType: 'search',
-                                            // autoFocus: true,
-                                            blurOnSubmit: false,
-                                        }}
-                                        styles={{
-                                            textInput: {
-                                                ...styles.inputContainer,
-                                            },
 
-                                            listView: {
-                                                width: '98%',
-                                                alignSelf: 'center',
-                                            },
-
-                                            description: {
-                                                color: Colors.black,
-                                                fontFamily: 'Roboto-Regular',
-                                                fontSize: 14,
-                                            },
-                                        }}
-                                        fetchDetails={true}
-                                    /> */}
 
                                     <View>
-                                        {/* <GooglePlacesAutocomplete
-                                            placeholder='Search a place'
-                                            query={{
-                                                key: GOOGLE_LOCATION_KEY,
-                                                language: "en"
-                                            }}
-                                            fetchDetails={true}
-                                            onFail={(error) => console.log('Google API Error:', error)}
-                                        /> */}
-                                        <CustomInput text="Accommodation Hotel" handleChangeText={handleChange('hotel')} />
+                                        <CustomInput value={values?.accommodation_hotel || placeText} text="Accommodation Hotel" handleChangeText={(text: string) => {
+                                            setPlaceText(text);
+                                            setFieldValue('accommodation_hotel', '');
+                                        }} />
                                         {errors?.hotel && touched?.hotel && (
                                             <CustomText
                                                 customStyle={styles.error}
@@ -267,10 +251,84 @@ const CreateRetreat = (props: any) => {
                                             />
                                         )}
 
+                                        {
+                                            place?.length > 0 && placeText.length > 0 && (
+                                                <FlatList
+                                                    data={place}
+                                                    keyboardShouldPersistTaps="handled"
+                                                    contentContainerStyle={{
+                                                        height: moderateScale(300),
+                                                        zIndex: 2,
+                                                        borderRadius: moderateScale(10),
+                                                        borderWidth: 1,
+                                                        marginTop: moderateScale(10)
+                                                    }}
+                                                    keyExtractor={(item: any, index) => index.toString()}
+                                                    renderItem={({ item }) => (
+                                                        <TouchableOpacity
+                                                            onPress={() => {
+                                                                setFieldValue(
+                                                                    `accommodation_hotel`,
+                                                                    item?.description,
+                                                                );
+                                                                setPlaceText('');
+                                                                setPlace([]);
+                                                            }}
+                                                            style={{
+                                                                padding: moderateScale(10),
+                                                                borderBottomWidth: 1,
+                                                                borderBottomColor: Colors.gray,
+                                                            }}>
+                                                            <CustomText text={item?.description} />
+                                                        </TouchableOpacity>
+                                                    )}
+                                                />
+                                            )
+                                        }
+
                                     </View>
 
                                     <View>
-                                        <CustomInput text='Location' values={values?.location} handleChangeText={handleChange('location')} />
+                                        <CustomInput text='Location' values={values?.location || locationPlaceText} handleChangeText={
+                                            (text: string) => {
+                                                setLocationPlaceText(text);
+                                                setFieldValue('location', '');
+                                            }} />
+
+                                        {
+                                            locationPlace?.length > 0 && locationPlaceText.length > 0 && (
+                                                <FlatList
+                                                    data={locationPlace}
+                                                    keyboardShouldPersistTaps="handled"
+                                                    contentContainerStyle={{
+                                                        height: moderateScale(300),
+                                                        zIndex: 2,
+                                                        borderRadius: moderateScale(10),
+                                                        borderWidth: 1,
+                                                        marginTop: moderateScale(10)
+                                                    }}
+                                                    keyExtractor={(item: any, index) => index.toString()}
+                                                    renderItem={({ item }) => (
+                                                        <TouchableOpacity
+                                                            onPress={() => {
+                                                                setFieldValue(
+                                                                    `location`,
+                                                                    item?.description,
+                                                                );
+                                                                setLocationPlaceText('');
+                                                                setLocationPlace([]);
+                                                            }}
+                                                            style={{
+                                                                padding: moderateScale(10),
+                                                                borderBottomWidth: 1,
+                                                                borderBottomColor: Colors.gray,
+                                                            }}>
+                                                            <CustomText text={item?.description} />
+                                                        </TouchableOpacity>
+                                                    )}
+                                                />
+                                            )
+                                        }
                                         {errors?.location && touched?.location && (
                                             <CustomText
                                                 customStyle={styles.error}

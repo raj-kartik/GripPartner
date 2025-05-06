@@ -56,6 +56,10 @@ const Home = ({ navigation }: any) => {
   const { user } = useSelector((state: any) => state?.user);
   const [refreshing, setRefreshing] = useState(false);
 
+
+  // console.log("--- user in the home page ---", user);
+  
+
   useEffect(() => {
     CourseGraph();
   }, [barTypeContent, barContent]);
