@@ -14,7 +14,7 @@ import Container from '../../../../components/Container';
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
-import { CustomToast } from '../../../../components/Customs/CustomToast';
+// import CustomToast  from '../../../../components/Customs/CustomToast';
 import Colors from '../../../../utils/Colors';
 import CustomText from '../../../../components/Customs/CustomText';
 import {
@@ -29,6 +29,7 @@ import makeApiRequest from '../../../../utils/ApiService';
 import CustomButton from '../../../../components/Customs/CustomButton';
 import { useSelector } from 'react-redux';
 import { shopCustomEvent } from '../../../../components/Events/FirebaseStats';
+import CustomToast from '../../../../components/Customs/CustomToast';
 
 const Description = ({ navigation, route }: any) => {
   // console.log("==== route ====", route);
@@ -79,7 +80,7 @@ const Description = ({ navigation, route }: any) => {
         color="#000"
         style={{ flex: 1, backgroundColor: '#fff' }}
       />
-    );
+    )
 
   const addToCart = async () => {
     setCartLoading(true);

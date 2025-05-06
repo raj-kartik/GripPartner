@@ -21,7 +21,7 @@ import { BASE_URL, GOOGLE_LOCATION_KEY } from '../../../../../utils/api'
 import makeApiRequest from '../../../../../utils/ApiService'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
-import { CustomToast } from '../../../../../components/Customs/CustomToast'
+import CustomToast  from '../../../../../components/Customs/CustomToast'
 import { useNavigation } from '@react-navigation/native'
 
 const retreatSchema = yup.object().shape({

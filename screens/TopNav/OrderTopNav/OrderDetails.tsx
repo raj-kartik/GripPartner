@@ -41,7 +41,7 @@ import { globalStyle } from '../../../utils/GlobalStyle';
 import CustomButton from '../../../components/Customs/CustomButton';
 import CustomModal from '../../../components/Customs/CustomModal';
 import Colors from '../../../utils/Colors';
-import { CustomToast } from '../../../components/Customs/CustomToast';
+import CustomToast  from '../../../components/Customs/CustomToast';
 const OrderDetails = (props: any) => {
     const params = props.route.params;
     const [details, setDetails] = useState<any>({});

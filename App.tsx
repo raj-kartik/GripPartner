@@ -7,6 +7,7 @@ import AppNavigation from './screens/Stack/AppNavigation';
 import store from './redux/store';
 import { useOneSignal } from './components/Hooks/useOneSignal';
 import analytics from '@react-native-firebase/analytics';
+import CustomToast from './components/Customs/CustomToast';
 
 const App = () => {
   useOneSignal();
@@ -39,6 +40,7 @@ const App = () => {
         >
           <AppNavigation />
           <Toast />
+          <CustomToast.ToastManager />
         </NavigationContainer>
       </Provider>
     </GestureHandlerRootView>

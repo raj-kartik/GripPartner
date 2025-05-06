@@ -27,7 +27,7 @@ import makeApiRequest from '../../../../utils/ApiService';
 import { BASE_URL, TRAINER_REGISTRATION } from '../../../../utils/api';
 import { useDispatch } from 'react-redux';
 import { signUp } from '../../../../redux/Slice/UserSlice/UserSlice';
-import { CustomToast } from '../../../../components/Customs/CustomToast';
+import CustomToast  from '../../../../components/Customs/CustomToast';
 
 // Define validation schema using Yup
 const trainerSchema = yup.object().shape({

@@ -28,7 +28,7 @@ import {
 import makeApiRequest from '../../../../utils/ApiService';
 import { moderateScale, screenHeight, screenWidth } from '../../../../components/Matrix/Matrix';
 import CustomButton from '../../../../components/Customs/CustomButton';
-import { CustomToast } from '../../../../components/Customs/CustomToast';
+import CustomToast  from '../../../../components/Customs/CustomToast';
 import Container from '../../../../components/Container';
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
 import CustomText from '../../../../components/Customs/CustomText';

@@ -15,7 +15,7 @@ import { Dropdown, MultiSelect } from 'react-native-element-dropdown'
 import CustomIcon from '../../../../components/Customs/CustomIcon'
 import makeApiRequest from '../../../../utils/ApiService'
 import { BASE_URL } from '../../../../utils/api'
-import { CustomToast } from '../../../../components/Customs/CustomToast'
+import CustomToast  from '../../../../components/Customs/CustomToast'
 
 const bookingSchema = yup.object().shape({
     room_type: yup.array()

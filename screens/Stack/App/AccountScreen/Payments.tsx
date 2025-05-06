@@ -25,7 +25,7 @@ import CustomModal from '../../../../components/Customs/CustomModal';
 import CustomInput from '../../../../components/Customs/CustomInput';
 import makeApiRequest from '../../../../utils/ApiService';
 import { POST_ADD_BANK, POST_ADD_WALLET } from '../../../../utils/api';
-import { CustomToast } from '../../../../components/Customs/CustomToast';
+import CustomToast  from '../../../../components/Customs/CustomToast';
 import WalletCard from '../../../../components/Cards/WalletCard';
 import AddAmountCard from '../../../../components/Cards/AddAmountCard';
 import { fetchTrainerBank } from '../../../../redux/Slice/BankSlice';

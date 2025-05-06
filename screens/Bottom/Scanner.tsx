@@ -7,7 +7,7 @@ import {
     useCameraDevice,
     useCodeScanner,
 } from 'react-native-vision-camera';
-import { CustomToast } from "../../components/Customs/CustomToast";
+import CustomToast  from "../../components/Customs/CustomToast";
 import makeApiRequest from "../../utils/ApiService";
 import { DEFAULT_URL, STORE_API } from "../../utils/api";
 import Container from "../../components/Container";

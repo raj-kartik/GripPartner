@@ -1,32 +1,41 @@
-import Toast from 'react-native-toast-message';
-import Colors from '../../utils/Colors';
+import React, { useState, useCallback, useEffect } from 'react';
+import CustomToastUI from './CustomToastUI';
 
+let toastFn: any = null;
 
-type ToastType = 'error' | 'info' | 'success';
+const ToastManager = () => {
+  const [toastOptions, setToastOptions] = useState<any>(null);
 
-interface CustomToastProps {
-  type: ToastType;
-  text1: string;
-  text2: string;
-}
+  const show = useCallback((options) => {
+    setToastOptions({ ...options, key: Date.now() });
+  }, []);
 
-export const CustomToast = ({type, text1, text2}: CustomToastProps) => {
-  return Toast.show({
-    type: type,
-    text1: text1,
-    text2: text2,
-    text1Style: {
-      fontSize: 14,
-      color:
-        type === 'error'
-          ? 'red'
-          : type === 'info'
-          ? Colors.button
-          : Colors.success,
-    },
-    text2Style: {
-      fontSize: 13,
-      color: Colors.gray_font,
-    },
-  });
+  useEffect(() => {
+    toastFn = show;
+    return () => {
+      toastFn = null;
+    };
+  }, [show]);
+
+  const handleHide = () => {
+    setToastOptions(null);
+  };
+
+  return toastOptions ? (
+    <CustomToastUI {...toastOptions} onHide={handleHide} />
+  ) : null;
 };
+
+// The function you call
+const CustomToast = (options: any) => {
+  if (toastFn) {
+    toastFn(options);
+  } else {
+    console.warn('Toast system not initialized yet.');
+  }
+};
+
+// Export both
+CustomToast.ToastManager = ToastManager;
+
+export default CustomToast;

@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import LoginContainer from './LoginContainer'
 import axios from 'axios'
 import { BASE_URL, LOGIN_VIDEO, POST_LOGIN_OTP_REQUEST } from '../../../../utils/api'
-import { CustomToast } from '../../../../components/Customs/CustomToast'
+import CustomToast  from '../../../../components/Customs/CustomToast'
 import { screenHeight, screenWidth } from '../../../../components/Matrix/Matrix'
 import makeApiRequest from '../../../../utils/ApiService'
 import Video from 'react-native-video';

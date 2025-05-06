@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import { moderateScale, screenHeight } from '../Matrix/Matrix';
 import CustomModal from '../Customs/CustomModal';
-import { CustomToast } from '../Customs/CustomToast';
+import CustomToast  from '../Customs/CustomToast';
 import { globalStyle } from '../../utils/GlobalStyle';
 import Colors from '../../utils/Colors';
 import CustomText from '../Customs/CustomText';

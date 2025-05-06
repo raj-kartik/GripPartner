@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import RazorpayCheckout from 'react-native-razorpay';
 import Container from '../../../components/Container';
-import { CustomToast } from '../../../components/Customs/CustomToast';
+import CustomToast  from '../../../components/Customs/CustomToast';
 import makeApiRequest from '../../../utils/ApiService';
 import CustomText from '../../../components/Customs/CustomText';
 import { moderateScale } from '../../../components/Matrix/Matrix';

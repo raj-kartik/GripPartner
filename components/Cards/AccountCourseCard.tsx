@@ -1,6 +1,6 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
-import { CustomToast } from '../Customs/CustomToast';
+import CustomToast  from '../Customs/CustomToast';
 import { moderateScale } from '../Matrix/Matrix';
 import Colors from '../../utils/Colors';
 import { globalStyle } from '../../utils/GlobalStyle';

@@ -25,7 +25,7 @@ import { globalStyle } from '../../../../../utils/GlobalStyle';
 import CustomIcon from '../../../../../components/Customs/CustomIcon';
 import makeApiRequest from '../../../../../utils/ApiService';
 import { POST_ADD_COUPON } from '../../../../../utils/api';
-import { CustomToast } from '../../../../../components/Customs/CustomToast';
+import CustomToast  from '../../../../../components/Customs/CustomToast';
 import CustomHeader2 from '../../../../../components/Customs/Header/CustomHeader2';
 import Colors from '../../../../../utils/Colors';
 import CalendarPicker from 'react-native-calendar-picker';

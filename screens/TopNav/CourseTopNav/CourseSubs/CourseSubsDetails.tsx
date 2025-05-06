@@ -16,7 +16,7 @@ import Colors from '../../../../utils/Colors';
 import CustomButton from '../../../../components/Customs/CustomButton';
 import CustomModal from '../../../../components/Customs/CustomModal';
 import CustomInput from '../../../../components/Customs/CustomInput';
-import { CustomToast } from '../../../../components/Customs/CustomToast';
+import CustomToast  from '../../../../components/Customs/CustomToast';
 
 
 interface Props {

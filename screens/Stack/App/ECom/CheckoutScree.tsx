@@ -26,7 +26,7 @@ import CustomInput from '../../../../components/Customs/CustomInput';
 import CustomButton from '../../../../components/Customs/CustomButton';
 import CustomText from '../../../../components/Customs/CustomText';
 import { globalStyle } from '../../../../utils/GlobalStyle';
-import { CustomToast } from '../../../../components/Customs/CustomToast';
+import CustomToast  from '../../../../components/Customs/CustomToast';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
 import CustomModal from '../../../../components/Customs/CustomModal';
 import Colors from '../../../../utils/Colors';

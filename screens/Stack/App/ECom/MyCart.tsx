@@ -20,7 +20,7 @@ import {
 } from '../../../../utils/api';
 import { throttle, times } from 'lodash';
 import axios from 'axios';
-import { CustomToast } from '../../../../components/Customs/CustomToast';
+import CustomToast  from '../../../../components/Customs/CustomToast';
 import CustomButton from '../../../../components/Customs/CustomButton';
 import CustomText from '../../../../components/Customs/CustomText';
 import Images from '../../../../utils/Images';

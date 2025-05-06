@@ -36,7 +36,7 @@ import SubscriptionCard from '../../../../components/Cards/SubscriptionCard';
 import CustomModal from '../../../../components/Customs/CustomModal';
 import { Formik } from 'formik';
 import CustomInput from '../../../../components/Customs/CustomInput';
-import { CustomToast } from '../../../../components/Customs/CustomToast';
+import CustomToast  from '../../../../components/Customs/CustomToast';
 import * as Yup from 'yup';
 import { leadChangeStatus } from '../../../../utils/UtilityFuncations';
 

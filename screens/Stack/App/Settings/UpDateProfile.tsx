@@ -19,7 +19,7 @@ import Images from '../../../../utils/Images'
 // import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios'
 import { BASE_URL } from '../../../../utils/api'
-import { CustomToast } from '../../../../components/Customs/CustomToast'
+import CustomToast  from '../../../../components/Customs/CustomToast'
 import { useNavigation } from '@react-navigation/native'
 
 const profileSchema = yup.object().shape({

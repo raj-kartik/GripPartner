@@ -18,7 +18,7 @@ import ChatPhoneCard from '../../../../components/Cards/ChatPhoneCard'
 import UserTrainerPaymentModal from '../../../../components/Modal/UserTrainerPaymentModal'
 import CalendarPicker from 'react-native-calendar-picker';
 import { Formik } from 'formik'
-import { CustomToast } from '../../../../components/Customs/CustomToast'
+import CustomToast  from '../../../../components/Customs/CustomToast'
 import * as Yup from 'yup'
 import CustomModal from '../../../../components/Customs/CustomModal'
 import CustomInput from '../../../../components/Customs/CustomInput'

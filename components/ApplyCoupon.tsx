@@ -19,7 +19,7 @@ import { globalStyle } from '../utils/GlobalStyle';
 import CustomButton from './Customs/CustomButton';
 import { moderateScale, screenHeight, screenWidth } from './Matrix/Matrix';
 import { DEFAULT_URL, POST_APPLY_COUPON } from '../utils/api';
-import { CustomToast } from './Customs/CustomToast';
+import CustomToast from './Customs/CustomToast';
 import Colors from '../utils/Colors';
 
 interface Props {
@@ -129,6 +129,7 @@ const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
     return (
         <View style={styles.cover}>
             <ScrollView
+                keyboardShouldPersistTaps="handled"
                 style={{ marginTop: moderateScale(20) }}
                 showsVerticalScrollIndicator={false}>
                 <CustomText text="Apply Coupon" weight="600" size={16} />
@@ -139,11 +140,13 @@ const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
                             marginBottom: moderateScale(10),
                             alignItems: 'center',
                             marginTop: moderateScale(5),
+                            // width: screenWidth * 0.9,
                         },
                     ]}>
                     <CustomInput
                         placeholder="Enter coupon code"
                         editable={!isCoupon}
+                        autoCapitalize='characters'
                         textColor={isCoupon ? '#808080' : '#000'}
                         customStyle={{
                             flex: 1,
@@ -153,25 +156,31 @@ const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
                         value={couponCode}
                         handleChangeText={setCouponCode}
                     />
-                    {!isCoupon ? (
-                        <CustomButton
-                            title="Apply"
-                            customStyle={{ flex: 0.5, margin: 0 }}
-                            onPress={() => {
-                                if (couponCode) {
-                                    applyCoupon();
-                                } else {
-                                    CustomToast({
-                                        type: 'info',
-                                        text1: 'Invalid Coupon Code',
-                                        text2: 'Please add coupon code',
-                                    });
-                                }
-                            }}
-                        />
-                    ) : (
-                        <CustomButton title="Cancel" bg="red" onPress={deleteCoupon} />
-                    )}
+                    <View style={{ flex: .6 }} >
+                        {!isCoupon ? (
+                            <CustomButton
+                                title="Apply"
+                                // customStyle={{ flex: 0.5, margin: 0, width: "45%" }}
+
+                                onPress={() => {
+                                    if (couponCode) {
+                                        applyCoupon();
+                                    } else {
+                                        CustomToast({
+                                            type: 'info',
+                                            text1: 'Invalid Coupon Code',
+                                            text2: 'Please add coupon code',
+                                        });
+                                    }
+                                }}
+                            />
+                        ) : (
+                            <CustomButton
+                                // customStyle={{ flex: 0.5, margin: 0, width: "45%" }} 
+                                title="Cancel" bg="red" onPress={deleteCoupon}
+                            />
+                        )}
+                    </View>
                 </View>
                 {isCoupon && (
                     <CustomText text="Coupon Applied" color="#55b910" weight="500" />
@@ -190,7 +199,7 @@ const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
                         <CustomText
                             size={14}
                             weight="500"
-                            text={`₹${localItemBill?.totals?.subtotal}`}
+                            text={`₹${localItemBill?.totals?.subtotal || 0.0}`}
                         />
                     </View>
                     <View style={styles.paymentRow}>
@@ -207,7 +216,7 @@ const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
                         <CustomText
                             size={18}
                             weight="600"
-                            text={`₹${localItemBill?.totals?.grand_total || 0}`}
+                            text={`₹${localItemBill?.totals?.grand_total || 0.0}`}
                         />
                     </View>
                 </View>

@@ -22,7 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Container from '../../../components/Container';
 import CustomHeader2 from '../../../components/Customs/Header/CustomHeader2';
-import { CustomToast } from '../../../components/Customs/CustomToast';
+import CustomToast  from '../../../components/Customs/CustomToast';
 import makeApiRequest from '../../../utils/ApiService';
 import { DEFAULT_URL } from '../../../utils/api';
 import ScannedCard1 from '../../../components/Cards/ScannedCard1';

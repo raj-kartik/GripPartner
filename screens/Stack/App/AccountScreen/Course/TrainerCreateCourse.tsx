@@ -30,7 +30,7 @@ import CustomIcon from '../../../../../components/Customs/CustomIcon';
 import CustomModal from '../../../../../components/Customs/CustomModal';
 import makeApiRequest from '../../../../../utils/ApiService';
 import { BASE_URL, POST_ADD_COURSE } from '../../../../../utils/api';
-import { CustomToast } from '../../../../../components/Customs/CustomToast';
+import CustomToast  from '../../../../../components/Customs/CustomToast';
 import DocumentPickerComponent from '../../../../../components/DocumentPicker';
 import Colors from '../../../../../utils/Colors';
 

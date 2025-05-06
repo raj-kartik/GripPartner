@@ -15,7 +15,7 @@ import Colors from '../../../../utils/Colors'
 import CustomText from '../../../../components/Customs/CustomText'
 import makeApiRequest from '../../../../utils/ApiService'
 import { BASE_URL } from '../../../../utils/api'
-import { CustomToast } from '../../../../components/Customs/CustomToast'
+import CustomToast  from '../../../../components/Customs/CustomToast'
 
 const addSubsSchema = Yup.object().shape({
     isPaid: Yup.string().required('*required'),

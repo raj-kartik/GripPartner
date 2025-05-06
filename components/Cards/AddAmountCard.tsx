@@ -7,7 +7,7 @@ import CustomText from '../Customs/CustomText'
 import { moderateScale, screenHeight } from '../Matrix/Matrix'
 import CustomInput from '../Customs/CustomInput'
 import { POST_WITHDRAW_REQUEST } from '../../utils/api'
-import { CustomToast } from '../Customs/CustomToast'
+import CustomToast  from '../Customs/CustomToast'
 import makeApiRequest from '../../utils/ApiService'
 import CustomButton from '../Customs/CustomButton'
 import Colors from '../../utils/Colors'
@@ -20,7 +20,7 @@ import Colors from '../../utils/Colors'
 // import CustomButton from '../../Custom/CustomButton'
 // import makeApiRequest from '../../../../utils/API/apiServices'
 // import { POST_WITHDRAW_REQUEST } from '../../../../utils/API/api'
-// import { CustomToast } from '../../Custom/CustomToast'
+// import CustomToast  from '../../Custom/CustomToast'
 
 const AddAmountCard = ({ visiable, onDismiss, isAddAmount = true, title = "Add Amount", handlePayment }: any) => {
     const [number, setNumber] = useState('')
