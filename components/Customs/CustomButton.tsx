@@ -33,6 +33,7 @@ interface CustomButtonProps {
     radius?: number;
     contentStyle?: StyleProp<ViewStyle>;
     loading?: boolean;
+    loadingColor?: string;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -40,6 +41,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     weight = '600',
     title,
     customStyle = {},
+    loadingColor = '#fff',
     textColor = '#fff',
     textStyle = {},
     iconType,
@@ -87,7 +89,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
                     )}
 
                     {loading ? (
-                        <ActivityIndicator size="small" color="#fff" />
+                        <ActivityIndicator size="small" color={loadingColor} />
                     ) : (
                         <CustomText
                             customStyle={[textStyle]}

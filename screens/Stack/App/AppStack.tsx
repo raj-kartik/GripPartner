@@ -46,7 +46,6 @@ import LeadFollowUp from '../../TopNav/CourseTopNav/CourseFollowUps/LeadFollowUp
 import Settings from './Settings/Settings'
 import UpdateProfile from './Settings/UpDateProfile'
 import { ProductList } from '../../Drawer/ShopDrawer/ProductList'
-import RegisterUser from '../RegisterUser'
 import UpdateStudioProfile from './Settings/UpdateStudioProfile'
 import PaymentScan from './PaymentScan'
 import { useDispatch, useSelector } from 'react-redux'
@@ -55,6 +54,7 @@ import { addToCart } from '../../../redux/Slice/AddToCartSlice'
 import AddBookingScreen from '../../TopNav/RetreatTopNav/RetreatFollowUps/AddBookingScreen'
 import AadharCardKyc from './KYC/AadharCardKyc'
 import LocationTracker from './LocationTracker'
+import KycVerification from '../KycVerification'
 // import LocationTracker from './LocationTracker'
 
 // changes noething has made
@@ -101,7 +101,7 @@ const AppStack = () => {
                 <Stack.Screen name='Settings' component={Settings} />
                 <Stack.Screen name='UpdateProfile' component={UpdateProfile} />
                 <Stack.Screen name='UpdateStudioProfile' component={UpdateStudioProfile} />
-                <Stack.Screen name='RegisterUser' component={RegisterUser} />
+                <Stack.Screen name='KycVerification' component={KycVerification} />
                 <Stack.Screen name='PaymentScan' component={PaymentScan} />
                 <Stack.Screen name='AddBookingScreen' component={AddBookingScreen} />
 

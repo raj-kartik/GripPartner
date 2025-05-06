@@ -83,7 +83,7 @@ const Payments = () => {
         await dispatch(fetchTrainerBank(user?.id));
         // await dispatch(userDetail());
     };
-    
+
     const handleSaveAccount = async (value: any) => {
         setLoading(true);
         try {
@@ -400,7 +400,7 @@ const Payments = () => {
                 isKyc != 0 && withdrawModal && <AddAmountCard title="Withdraw Amount" isAddAmount={false} visiable={withdrawModal} onDismiss={() => setWithdrawModalModal(false)} />
             }
 
-            <View style={{flex:1}} >
+            <View style={{ flex: 1 }} >
                 <CustomText text="Transactions" weight="700" size={18} />
                 <WalletTransaction />
             </View>

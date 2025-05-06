@@ -175,120 +175,126 @@ const MyCart = () => {
   return (
     <Container>
       <CustomHeader2 title="My Cart" />
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}>
-        {itemBill && itemBill?.length <= 0 ? (
-          <View
-            style={[globalStyle.center, { flex: 1, height: screenHeight * 0.9 }]}>
-            <Images.Logo
-              width={moderateScale(100)}
-              height={moderateScale(100)}
-            />
-            <CustomText text="ohhh. Your cart is empty" weight="500" />
-            <CustomText text="but it doesn’t have to be" weight="500" />
-            <CustomButton
-              title="Shop Now"
-              customStyle={{
-                width: screenWidth * 0.5,
-                marginTop: moderateScale(10),
-              }}
-              onPress={() => {
-                // navigation.navigate('BottomTabs')
-                navigation.navigate('BottomTabs', {
-                  screen: 'ShopDrawer',
-                });
-              }}
-            />
-          </View>
+      
+      {
+        loading ? (
+          <ActivityIndicator style={{ flex: 5 }} size="large" color="#000" />
         ) : (
-          itemBill.length > 0 &&
-          itemBill.map((item: any, index: number) => {
-            // console.log("--- index in the 243 line ----",index);
-            return (
-              <View style={[styles.cart, globalStyle.flex]} key={item.id}>
+          <View style={{flex:5}} >
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              {itemBill && itemBill?.length <= 0 ? (
                 <View
-                  style={{
-                    position: 'absolute',
-                    top: moderateScale(10),
-                    right: moderateScale(5),
-                    zIndex: 9,
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: moderateScale(50),
-                    padding: moderateScale(2),
-                  }}>
-                  <Pressable onPress={() => removeFromCart(item)}>
-                    <CustomIcon type="AntDesign" name="closecircleo" />
-                  </Pressable>
+                  style={[globalStyle.center, { flex: 1, height: screenHeight * .9 }]}>
+                  <Images.Logo
+                    width={moderateScale(100)}
+                    height={moderateScale(100)}
+                  />
+                  <CustomText text="ohhh. Your cart is empty" weight="500" />
+                  <CustomText text="but it doesn’t have to be" weight="500" />
+                  <CustomButton
+                    title="Shop Now"
+                    customStyle={{
+                      width: screenWidth * 0.5,
+                      marginTop: moderateScale(10),
+                    }}
+                    onPress={() => {
+                      // navigation.navigate('BottomTabs')
+                      navigation.navigate('BottomTabs', {
+                        screen: 'ShopDrawer',
+                      });
+                    }}
+                  />
                 </View>
-                <View
-                  style={[
-                    styles.content,
-                    {
-                      backgroundColor: item?.image !== '' ? '#f7f7f7' : null,
-                      elevation: 0,
-                    },
-                  ]}>
-                  {item?.image ? (
-                    <Image
-                      source={{ uri: item?.image }}
-                      style={[
-                        styles.image,
-                        { width: moderateScale(100), height: '100%', flex: 1 },
-                      ]}
-                    />
-                  ) : (
-                    <Images.Logo />
-                  )}
-                </View>
+              ) : (
+                itemBill.length > 0 &&
+                itemBill.map((item: any, index: number) => {
+                  // console.log("--- index in the 243 line ----",index);
+                  return (
+                    <View style={[styles.cart, globalStyle.flex]} key={index}>
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: moderateScale(10),
+                          right: moderateScale(5),
+                          zIndex: 9,
+                          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                          borderRadius: moderateScale(50),
+                          padding: moderateScale(2),
+                        }}>
+                        <Pressable onPress={() => removeFromCart(item)}>
+                          <CustomIcon type="AntDesign" name="closecircleo" />
+                        </Pressable>
+                      </View>
+                        {item?.image ? (
+                          <View style={[styles.image, { width: moderateScale(100), height: '100%' }]}>
+                            <Image
+                              source={{ uri: item?.image }}
+                              style={[
+                                styles.image,
+                                { width: moderateScale(100), height: '100%', flex: 1 },
+                              ]}
+                            />
+                          </View>
+                        ) : (
+                          <View style={[styles.image, { width: moderateScale(100), height: '100%' }]}>
+                            <Images.Logo />
+                          </View>
+                        )}
 
-                <View style={{ marginLeft: moderateScale(10) }}>
-                  <CustomText
-                    weight="600"
-                    customStyle={{ flexWrap: 'wrap' }}
-                    size={15}
-                    text={
-                      item?.name.length > 28
-                        ? `${item?.name.substring(0, 28)}...`
-                        : item?.name
-                    }
-                  />
-                  <CustomText
-                    weight="600"
-                    customStyle={{ marginVertical: moderateScale(5) }}
-                    text={`Rs ${item.qty < 1 ? item.price : item.price * item.qty
-                      }`}
-                  />
-                  <View
-                    style={[
-                      styles.numberContainer,
-                      {
-                        borderWidth: 1,
-                        marginTop: moderateScale(5),
-                        borderRadius: moderateScale(5),
-                      },
-                    ]}>
-                    <Pressable
-                      // style=
-                      onPress={() =>
-                        handleQuantityChange(index, item, item.qty - 1)
-                      }>
-                      <CustomIcon type="AntDesign" name="minuscircleo" />
-                    </Pressable>
-                    <CustomText text={item.qty.toString()} weight="600" />
-                    <Pressable
-                      onPress={() =>
-                        handleQuantityChange(index, item, item.qty + 1)
-                      }>
-                      <CustomIcon type="AntDesign" name="pluscircleo" />
-                    </Pressable>
-                  </View>
-                </View>
-              </View>
-            );
-          })
-        )}
-      </ScrollView>
+                      <View style={{ marginLeft: moderateScale(10) }}>
+                        <CustomText
+                          weight="600"
+                          customStyle={{ flexWrap: 'wrap' }}
+                          size={15}
+                          text={
+                            item?.name.length > 28
+                              ? `${item?.name.substring(0, 28)}...`
+                              : item?.name
+                          }
+                        />
+                        <CustomText
+                          weight="600"
+                          customStyle={{ marginVertical: moderateScale(5) }}
+                          text={`Rs ${item.qty < 1 ? item.price : item.price * item.qty
+                            }`}
+                        />
+                        <View
+                          style={[
+                            styles.numberContainer,
+                            {
+                              borderWidth: 1,
+                              marginTop: moderateScale(5),
+                              borderRadius: moderateScale(5),
+                            },
+                          ]}>
+                          <Pressable
+                            // style=
+                            onPress={() =>
+                              handleQuantityChange(index, item, item.qty - 1)
+                            }>
+                            <CustomIcon type="AntDesign" name="minuscircleo" />
+                          </Pressable>
+                          <CustomText text={item.qty.toString()} weight="600" />
+                          <Pressable
+                            onPress={() =>
+                              handleQuantityChange(index, item, item.qty + 1)
+                            }>
+                            <CustomIcon type="AntDesign" name="pluscircleo" />
+                          </Pressable>
+                        </View>
+                      </View>
+                    </View>
+                  );
+                })
+              )}
+            </ScrollView>
+          </View>
+        )
+      }
+
       {
         allItem && <ApplyCoupon itemBill={allItem} navigation={navigation} />
       }
@@ -317,6 +323,7 @@ const styles = StyleSheet.create({
     width: moderateScale(100),
     height: "10%",
     resizeMode: 'contain',
+    // backgroundColor:"red"
   },
   content: {
     elevation: 1,
@@ -332,7 +339,6 @@ const styles = StyleSheet.create({
     width: screenWidth * 0.89,
     backgroundColor: 'white',
     borderRadius: 10,
-    // justifyContent: 'space-between',
     alignItems: 'flex-start',
     elevation: 3,
     opacity: 85,

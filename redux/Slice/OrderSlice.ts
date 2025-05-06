@@ -51,10 +51,6 @@ export const orderStatus = createAsyncThunk(
   'order/orderStatus',
   async (id: string, {rejectWithValue}) => {
     try {
-      // Retrieve user data from AsyncStorage
-      const userData = await AsyncStorage.getItem('user_data');
-      const data = JSON.parse(userData || '{}');
-      // const email = 'gaurav.kumar9718@gmail.com';
       const email = id;
 
       if (!email) {

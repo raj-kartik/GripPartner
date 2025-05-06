@@ -1,16 +1,22 @@
-import analytics from '@react-native-firebase/analytics';
-const firbaseEvent = async ({
-    eventName="",
-    itemName="",
-    description="",
-    size="",
-    id=0,
+import analytics, {logEvent} from '@react-native-firebase/analytics';
+export const shopCustomEvent = async ({
+  eventName = '',
+  itemName = '',
+  description = '',
+  size = 0,
+  id = 0,
 }) => {
-  analytics().logEvent('basket', {
-    id: id,
-    item: itemName,
-    description: description,
-    name: eventName,
-    size: size,
-  });
+  try {
+    await analytics().logEvent(eventName, {
+      id: id,
+      name: itemName,
+      description: description,
+      // name: eventName,
+      size: size,
+    });
+
+    console.log('Event captured succesfully');
+  } catch (e) {
+    console.log('Error in shopCustomEvent', e);
+  }
 };

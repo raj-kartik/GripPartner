@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import React, { useCallback } from 'react';
 import Container from '../../../../components/Container';
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
@@ -16,18 +16,24 @@ const OwnCourse = () => {
   const { user }: any = useSelector((state: any) => state?.user);
   const { course } = useSelector((state: any) => state?.course);
   const navigation = useNavigation();
+  const [refreshing, setRefreshing] = React.useState(false);
 
   // console.log("----- user id -----",user?.id);
-  
+
   useFocusEffect(
     useCallback(() => {
-      const fetchCourses = async () => {
-        await dispatch(getCourse(user?.id));
-      };
-
       fetchCourses();
     }, []),
   );
+
+  const fetchCourses = async () => {
+    await dispatch(getCourse(user?.id));
+  };
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchCourses().then(() => setRefreshing(false));
+  }, []);
+
   return (
     <Container>
       <CustomHeader2 title="Own Courses" isMore={true} iconType="AntDesign" iconName="plus" handleMore={() => {
@@ -42,6 +48,15 @@ const OwnCourse = () => {
       <View style={{ flex: 1 }} >
         {course && course.length > 0 ? <FlatList
           data={course}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={'#000'}
+              colors={['#000']}
+              progressBackgroundColor="#fff"
+            />
+          }
           renderItem={({ item }) => { return <ProfileCourseCard item={item} /> }}
           showsVerticalScrollIndicator={false}
         /> : <View style={[globalStyle.center, { flex: 1 }]} >

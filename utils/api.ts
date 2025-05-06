@@ -50,7 +50,8 @@ export const DELETE_STORE_ITEM = 'store-api/delete-cart-item';
 // INVOICE
 export const ORDER_INVOICE = 'shop/fetch-invoices/';
 
-export const GOOGLE_LOCATION_KEY = 'AIzaSyB5D8cCcugZPm2WiQh106c-K1-2dmSEiv0';
+// export const GOOGLE_LOCATION_KEY = 'AIzaSyCH_1ahy6xNmFxDxEk7Xr2V1n2RnhK96oU';
+export const GOOGLE_LOCATION_KEY = 'AIzaSyAAMvO2UwddhG8a3Z-miopVUI1Q6VDWqZA';
 
 // PAYMENT
 export const PAYMENT_ID = 'GRIP0042095811400073';
@@ -141,3 +142,5 @@ export const RETREAT_BOOKING_DETAILS = (id: number) =>
 export const RETREAT_BOOKING_HISTORY = (id: number) =>
   `retreat-booking-history?booking_id=${id}`;
 export const RETREAT_BOOING_END = 'retreat-booking-end';
+
+export const TRAINER_REGISTRATION = "trainer-registration"

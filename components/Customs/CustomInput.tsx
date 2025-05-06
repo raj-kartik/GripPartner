@@ -33,6 +33,7 @@ interface CustomInputProps extends TextInputProps {
     inputStyle?: StyleProp<ViewStyle>;
     isSecure?: boolean;
     showCross?: boolean;
+    color?: string;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -43,9 +44,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
     numOfLine = 4,
     maxLength,
     keyboardType,
+    color = "#000",
     onBlur,
     handleChangeText,
-    textColor = Colors.text_primary,
+    textColor = "#000",
     autoCaptital = 'none',
     borderColor,
     editable = true,
@@ -78,6 +80,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
                     text={text}
                     size={15}
                     weight="500"
+                    color={color}
                     customStyle={{ marginBottom: moderateScale(3) }}
                 />
             )}

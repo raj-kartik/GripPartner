@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import makeApiRequest from '../../utils/ApiService';
+import { BASE_URL } from '../../utils/api';
 
 const initialState: any = {
     loading: false,
@@ -13,7 +14,8 @@ export const getRetreat = createAsyncThunk(
         try {
             const response: any = await makeApiRequest({
                 method: "GET",
-                url: `user-retreat-list?user_id=${id}`
+                url: `user-retreat-list?user_id=${id}`,
+                baseUrl:BASE_URL
             })
 
             if (response?.data) {

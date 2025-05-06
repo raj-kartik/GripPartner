@@ -13,7 +13,7 @@ const LoginContainer = ({ mobile, setMobile, handleLogin, loading }: any) => {
     const navigation: any = useNavigation();
     return (
         <LinearGradient
-            colors={['transparent', 'transparent', '#333333', '#000000']}
+            colors={['transparent', 'transparent', 'transparent', '#333333', '#000000']}
             style={styles.container}>
             <CustomText
                 color="#fff"
@@ -32,16 +32,24 @@ const LoginContainer = ({ mobile, setMobile, handleLogin, loading }: any) => {
                     setMobile(text);
                 }}
             />
-            <CustomButton
-                disabled={mobile.length !== 10 && loading}
-                loading={loading}
-                bg={mobile.length !== 10 ? Colors.gray_font : '#666666'}
-                textColor={mobile.length !== 10 ? '#fff' : '#ffffff'}
-                radius={10}
-                customStyle={{ marginTop: moderateScale(10) }}
-                onPress={handleLogin}
-                title="Continue"
-            />
+            <View>
+                <CustomButton
+                    disabled={mobile.length !== 10 && loading}
+                    loading={loading}
+                    bg={mobile.length !== 10 ? Colors.gray_font : '#666666'}
+                    textColor={mobile.length !== 10 ? '#fff' : '#ffffff'}
+                    radius={10}
+                    customStyle={{ marginTop: moderateScale(10) }}
+                    onPress={handleLogin}
+                    title="Continue"
+                />
+                <Pressable onPress={() => {
+                    navigation.navigate('SignUp')
+                }} style={[globalStyle.row, { alignSelf: 'center', marginTop: moderateScale(10) }]} >
+                    <CustomText text='Do not have Account?' color='#666' size={16} />
+                    <CustomText text='Sign Up' color='#fff' size={16} customStyle={{ marginLeft: moderateScale(5) }} />
+                </Pressable>
+            </View>
 
             <View style={styles.temrs}>
                 <CustomText customStyle={{ textAlign: "center" }} size={18} weight='600' text="By continuing, You agree our" color="#fff" />

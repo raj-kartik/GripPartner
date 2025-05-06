@@ -5,7 +5,7 @@ import {Alert, Linking, Platform} from 'react-native';
 import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyB5D8cCcugZPm2WiQh106c-K1-2dmSEiv0'; // Replace with your API key
+const GOOGLE_MAPS_API_KEY = 'AIzaSyCH_1ahy6xNmFxDxEk7Xr2V1n2RnhK96oU'; // Replace with your API key
 
 // Initial state
 const initialState = {
@@ -87,8 +87,12 @@ export const fetchLocation: any = createAsyncThunk(
 
       // Reverse geocode
       const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`,
+        // `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`,
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyB5D8cCcugZPm2WiQh106c-K1-2dmSEiv0`,
       );
+
+      // console.log("---- response in the fetch location ====", response);
+      
 
       const result = response.data.results[0];
       const fullAddress = result?.formatted_address || '';

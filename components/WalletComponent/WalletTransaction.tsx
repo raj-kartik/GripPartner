@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Colors from '../../utils/Colors';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,35 +14,42 @@ const WalletTransaction = () => {
   const [loading, setLoading] = useState(false);
   const [transaction, setTransaction] = useState<any>([]);
   const { user } = useSelector((state: any) => state.user);
+  const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
   console.log('====== user in the transaction ===', transaction);
 
   useEffect(() => {
-    const fetchTransaction = async () => {
-      setLoading(true);
-      try {
-        const response: any = await makeApiRequest({
-          url: GET_TRANSAXTION,
-          method: 'POST',
-          data: { user_id: user?.id },
-        });
-        // console.log("==== response in transaction ====", response);
-
-        if (response?.status === 'success') {
-          setLoading(false);
-          setTransaction(response?.transactions);
-        }
-      } catch (error) {
-        console.log('==== error in transaction ====', error);
-        setLoading(false);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchTransaction();
   }, []);
+
+  const fetchTransaction = async () => {
+    setLoading(true);
+    try {
+      const response: any = await makeApiRequest({
+        url: GET_TRANSAXTION,
+        method: 'POST',
+        data: { user_id: user?.id },
+      });
+      // console.log("==== response in transaction ====", response);
+
+      if (response?.status === 'success') {
+        setLoading(false);
+        setTransaction(response?.transactions);
+      }
+    } catch (error) {
+      console.log('==== error in transaction ====', error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchTransaction().then(() => setRefreshing(false));
+  };
 
   console.log('==== response in transaction ====', transaction);
 
@@ -50,6 +57,15 @@ const WalletTransaction = () => {
     <View style={{ marginTop: moderateScale(5), flex: 1 }}>
       {transaction && transaction.length > 0 ? (
         <FlatList
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={Colors.orange}
+              colors={[Colors.orange]}
+              progressBackgroundColor="#fff"
+            />
+          }
           data={transaction}
           style={{ flex: 1 }}
           showsVerticalScrollIndicator={false}
@@ -81,16 +97,22 @@ const WalletTransaction = () => {
               </View>
               <View style={[globalStyle.center, { flex: 0.2 }]}>
                 {item?.type === 'debit' ? (
-                  <Images.Redcoin
-                    width={moderateScale(50)}
-                    stroke="#ff0000"
-                    height={moderateScale(50)}
-                  />
+                  <View>
+                    <Images.Logo />
+                    <Images.Redcoin
+                      width={moderateScale(50)}
+                      stroke="#ff0000"
+                      height={moderateScale(50)}
+                    />
+                  </View>
                 ) : (
-                  <Images.Coins
-                    width={moderateScale(50)}
-                    height={moderateScale(50)}
-                  />
+                  <View>
+                    {/* <Images.Logo width={10} height={50} fill="#000" stroke="#000" /> */}
+                    <Images.Coins
+                      width={moderateScale(50)}
+                      height={moderateScale(50)}
+                    />
+                  </View>
                 )}
               </View>
             </View>

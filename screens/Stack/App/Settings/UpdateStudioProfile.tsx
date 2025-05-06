@@ -1,4 +1,5 @@
 import {
+  FlatList,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -9,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '../../../../components/Container';
 import { useSelector } from 'react-redux';
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
@@ -25,6 +26,7 @@ import TimeModal from '../../../../components/Modal/TimeModal';
 import { globalStyle } from '../../../../utils/GlobalStyle';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
 import DocumentPickerComponent from '../../../../components/DocumentPicker';
+import { fetchLocationUtility } from '../../../../utils/UtilityFuncations';
 
 interface StudioFormValues {
   name: string;
@@ -164,6 +166,8 @@ const UpdateStudioProfile: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [startModal, setStartModal] = useState(false);
   const [endModal, setEndModal] = useState(false);
+  const [placeText, setPlaceText] = useState('');
+  const [place, setPlace] = useState<any>([]);
 
   const studioTypeArray = [
     {
@@ -196,6 +200,18 @@ const UpdateStudioProfile: React.FC = () => {
       label: 'Crossfit',
     },
   ];
+
+  useEffect(() => {
+    const fetchPlace = async () => {
+      try {
+        const response = await fetchLocationUtility(placeText);
+        setPlace(response); // Assuming the API returns a placeName field
+      } catch (error) {
+        console.error('Error fetching place:', error);
+      }
+    }
+    fetchPlace();
+  }, [placeText]);
 
   return (
     <Container>
@@ -308,7 +324,7 @@ const UpdateStudioProfile: React.FC = () => {
                                   onPress={() => {
                                     setFieldValue(`studio[${index}].studioType`, item?.label);
                                   }}
-                                  style={[globalStyle.row, { marginTop: moderateScale(7), width: moderateScale(90), marginRight: moderateScale(5) }]}>
+                                  style={[globalStyle.row, { marginTop: moderateScale(7), width: moderateScale(90), marginRight: moderateScale(5), height: moderateScale(40) }]}>
                                   <View
                                     style={[globalStyle.center, {
                                       width: moderateScale(18),
@@ -325,7 +341,7 @@ const UpdateStudioProfile: React.FC = () => {
                                         height: moderateScale(10),
                                         borderRadius: moderateScale(100),
                                         // marginRight: moderateScale(3),
-                                        backgroundColor: values.studio[index]?.studioType === item?.label ? Colors.success : Colors.gray,
+                                        backgroundColor: values.studio[index]?.studioType === item?.label ? Colors.success : "#fff",
                                       }}
                                     />
                                   </View>
@@ -335,10 +351,59 @@ const UpdateStudioProfile: React.FC = () => {
                             </ScrollView>
                           </View>
 
+                          <View>
+                            <CustomInput maxLength={50} text='Studio Name' handleChangeText={handleChange(
+                              `studio[${index}].name`,
+                            )} value={values.studio[index]?.name} />
+                          </View>
+
+
+                          <View>
+                            <CustomInput text='Location' value={placeText} handleChangeText={(text: string) => {
+                              setPlaceText(text);
+                            }} />
+                            {
+                              place?.length > 0 && placeText.length > 0 && (
+                                <FlatList
+                                  data={place}
+                                  keyboardShouldPersistTaps="handled"
+                                  contentContainerStyle={{
+                                    height: moderateScale(300),
+                                    zIndex: 2,
+                                    borderRadius: moderateScale(10),
+                                    borderWidth: 1,
+                                    marginTop: moderateScale(10)
+                                  }}
+                                  keyExtractor={(item: any, index) => index.toString()}
+                                  renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                      onPress={() => {
+                                        setFieldValue(
+                                          `studio[${index}].location`,
+                                          item?.description,
+                                        );
+                                        setPlaceText(item?.description);
+                                        setPlace([]);
+                                      }}
+                                      style={{
+                                        padding: moderateScale(10),
+                                        borderBottomWidth: 1,
+                                        borderBottomColor: Colors.gray,
+                                      }}>
+                                      <CustomText text={item?.description} />
+                                    </TouchableOpacity>
+                                  )}
+                                />
+                              )
+                            }
+
+                          </View>
+
+
                           {/* Studio Fields */}
                           {[
-                            { name: 'name', label: 'Studio Name', maxLengths: 50 },
-                            { name: 'location', label: 'Location' },
+                            // { name: 'name', label: 'Studio Name', maxLengths: 50 },
+                            // { name: 'location', label: 'Location' },
                             {
                               name: 'pincode',
                               label: 'Pincode',
@@ -363,7 +428,7 @@ const UpdateStudioProfile: React.FC = () => {
                               keyboardType: 'phone-pad',
                               maxLengths: 10,
                             },
-                          ].map((field:any) => (
+                          ].map((field: any) => (
                             <View
                               key={field.name}
                               style={{ marginBottom: moderateScale(10) }}>

@@ -28,11 +28,13 @@ import { DEFAULT_URL, POST_ADD_TO_CART } from '../../../../utils/api';
 import makeApiRequest from '../../../../utils/ApiService';
 import CustomButton from '../../../../components/Customs/CustomButton';
 import { useSelector } from 'react-redux';
+import { shopCustomEvent } from '../../../../components/Events/FirebaseStats';
 
 const Description = ({ navigation, route }: any) => {
   // console.log("==== route ====", route);
   const { sku, specialPrice } = route.params;
   const [loading, setLoading] = useState(false);
+  const [cartLoading, setCartLoading] = useState(false);
   const [category, setCategory] = useState<any>({});
   const [quantity, setQuantity] = useState(1);
   const { user } = useSelector((state: any) => state?.user);
@@ -80,12 +82,7 @@ const Description = ({ navigation, route }: any) => {
     );
 
   const addToCart = async () => {
-    setLoading(true);
-
-    if (!user?.is_registred) {
-      navigation.navigate('RegisterUser');
-      return;
-    }
+    setCartLoading(true);
 
     try {
       // Check if SKU is valid before proceeding
@@ -117,11 +114,19 @@ const Description = ({ navigation, route }: any) => {
           },
         },
       );
-      console.log('--- response being add to cart ---', response?.data);
       // return;
+      await shopCustomEvent({
+        eventName: 'cart',
+        itemName: category?.name,
+        description: response?.data?.message,
+        size: 1,
+        id: category?.id,
+      })
 
       if (response.data?.error) {
         // If there's an error in the response, show the message
+
+
         CustomToast({
           type: 'error',
           text1: 'Add To Cart Unsuccessful',
@@ -139,7 +144,7 @@ const Description = ({ navigation, route }: any) => {
     } catch (error) {
       console.error('Error adding to cart:', error);
     } finally {
-      setLoading(false);
+      setCartLoading(false);
     }
   };
 
@@ -346,13 +351,15 @@ const Description = ({ navigation, route }: any) => {
         <View style={{ flex: 0.7 }}>
           <CustomButton
             title="Add To Cart"
+            loadingColor='#000'
             onPress={addToCart}
+            loading={cartLoading}
             bg="#fff"
             textColor="#000"
             disabled={
               !category?.stock_item?.is_in_stock || quantity === 0
                 ? true
-                : false
+                : cartLoading ? true : false
             }
           />
         </View>

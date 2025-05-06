@@ -12,6 +12,8 @@ const HomeHeader1 = ({ handlePress }: any) => {
     const navigation:any = useNavigation();
     const { shortAddress, state, pincode } = useSelector((state: any) => state?.location);
 
+    // console.log("==== shortAddress ====", shortAddress);
+
     return (
         <View style={[globalStyle.betweenCenter, styles.container]} >
             <View style={[globalStyle.row]} >

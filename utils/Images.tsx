@@ -1,4 +1,4 @@
-import Logo from '../assets/svg/logo.svg';
+import Logo from '../assets/svg/logo.svg'
 import LogoW from '../assets/svg/logow.svg';
 import Cap from '../assets/svg/cap.svg';
 import Search from '../assets/svg/search.svg';
@@ -21,6 +21,7 @@ import Transaction from '../assets/svg/transaction.svg';
 import OTP from '../assets/images/otp.jpg'
 
 const Images = {
+  Logo,
   LogoW,
   Search,
   Location,
@@ -31,7 +32,6 @@ const Images = {
   Coin,
   Redcoin,
   Coins,
-  Logo,
   Transaction,
   Career,
   Review,

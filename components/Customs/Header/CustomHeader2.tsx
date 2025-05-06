@@ -1,10 +1,10 @@
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import {globalStyle} from '../../../utils/GlobalStyle';
-import {moderateScale} from '../../Matrix/Matrix';
+import { globalStyle } from '../../../utils/GlobalStyle';
+import { moderateScale } from '../../Matrix/Matrix';
 import Images from '../../../utils/Images';
 import CustomIcon from '../CustomIcon';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import CustomText from '../CustomText';
 
 const CustomHeader2 = ({
@@ -23,23 +23,23 @@ const CustomHeader2 = ({
     <View
       style={[
         globalStyle.between,
-        {paddingVertical: moderateScale(5), backgroundColor: bg},
+        { paddingVertical: moderateScale(5), backgroundColor: bg },
         customStyle,
       ]}>
-      <View style={[globalStyle.row, {flex: 0.8}]}>
+      <View style={[globalStyle.row, { flex: 0.8 }]}>
         {isBack && (
           <Pressable onPress={() => navigation.goBack()}>
             <CustomIcon
               type="AntDesign"
               color={color}
               name="arrowleft"
-              size={25}
+              size={30}
             />
           </Pressable>
         )}
 
         <CustomText
-          customStyle={{marginLeft: moderateScale(10)}}
+          customStyle={{ marginLeft: moderateScale(10) }}
           color={color}
           text={title}
           size={22}
@@ -47,7 +47,7 @@ const CustomHeader2 = ({
         />
       </View>
       {isMore && (
-        <View style={{flex: 0.1}}>
+        <View style={{ flex: 0.1 }}>
           <Pressable onPress={handleMore}>
             <CustomIcon type={iconType} size={30} name={iconName} />
           </Pressable>

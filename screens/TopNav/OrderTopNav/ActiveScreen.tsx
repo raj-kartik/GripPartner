@@ -26,52 +26,22 @@ import {
 } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { moderateScale, screenWidth } from '../../../components/Matrix/Matrix';
-import Container from '../../../components/Container';
-import { userDetail } from '../../../redux/Slice/UserSlice/UserSlice';
 import { orderStatus } from '../../../redux/Slice/OrderSlice';
 import OrderCard from '../../../components/Cards/OrderCard';
 import CustomText from '../../../components/Customs/CustomText';
-
-// import {moderateScale, screenWidth} from '../../../Component/Matrix/Matrix';
-// import {orderStatus} from '../../../../Redux/Slice/Order/OrderSlice';
-// import Container from '../../../Component/Container';
-// import CustomText from '../../../Component/Custom/CustomText';
-// import OrderCard from '../../../Component/Cards/Order/OrderCard';
-// import {userDetail} from '../../../../Redux/Slice/User/UserSlice';
+import Images from '../../../utils/Images';
+import { globalStyle } from '../../../utils/GlobalStyle';
 
 interface Props {
     navigation: any
 }
 
 const ActiveScreen: FC<Props> = ({ navigation }) => {
-    const [couponCode, setCouponCode] = useState('');
-    const [applied, setApplied] = useState(false);
-    const [product, setProduct] = useState<[]>([]);
     const dispatch = useDispatch();
     const { user } = useSelector((state: any) => state.user);
-
     const { data } = useSelector((state: any) => state.order);
+    const [refreshing, setRefreshing] = useState(false);
     const { pending } = data;
-
-    const applyCoupon = () => {
-        if (couponCode.trim() === '') {
-            Alert.alert('Error', 'Please enter a valid coupon code.');
-        } else {
-            setApplied(true);
-            Alert.alert('Success', `Coupon "${couponCode}" applied!`);
-        }
-    };
-
-    const sentFun = () => {
-        navigation.dispatch(
-            CommonActions.navigate({
-                name: 'Description',
-                // params: {
-                //   franchiseid: id,
-                // },
-            }),
-        );
-    };
 
     const OrderStatus = async () => {
         return await dispatch(orderStatus(user?.email));
@@ -82,11 +52,25 @@ const ActiveScreen: FC<Props> = ({ navigation }) => {
             OrderStatus();
         }, []),
     );
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        OrderStatus().then(() => setRefreshing(false));
+    }, []);
+
     return (
-        <View style={{ backgroundColor: "#fff", paddingTop: moderateScale(10), flex:1 }} >
+        <View style={{ backgroundColor: "#fff", paddingTop: moderateScale(10), flex: 1 }} >
             {pending.length > 0 ? (
                 <FlatList
                     data={pending}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            colors={['#000']}
+                            tintColor="#000"
+                        />
+                    }
                     showsVerticalScrollIndicator={false}
                     keyExtractor={item => item?.order_id}
                     renderItem={({ item }) => (
@@ -103,12 +87,15 @@ const ActiveScreen: FC<Props> = ({ navigation }) => {
                     )}
                 />
             ) : (
-                <CustomText
-                    text="No Data Available"
-                    weight="700"
-                    size={20}
-                    customStyle={{ flex: 1, alignSelf: 'center' }}
-                />
+                <View style={[globalStyle.center,{flex:1}]} >
+                    <Images.Logo/>
+                    <CustomText
+                        text="No Data Available"
+                        weight="700"
+                        size={20}
+                        customStyle={{ flex: 1, alignSelf: 'center' }}
+                    />
+                </View>
             )}
         </View>
     );

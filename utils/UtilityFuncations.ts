@@ -7,6 +7,8 @@ import {
   POST_RETREAT_LEAD_CHANGE,
 } from './api';
 import {CustomToast} from '../components/Customs/CustomToast';
+import axios from 'axios';
+const locationApi = 'AIzaSyB5D8cCcugZPm2WiQh106c-K1-2dmSEiv0';
 
 export const titleImpressionFunction = async (row: any) => {
   try {
@@ -106,5 +108,23 @@ export const leadChangeStatus = async (
     }
   } catch (err: any) {
     console.log('Error in the change status', err);
+  }
+};
+
+export const fetchLocationUtility = async (place: string) => {
+  // console.log("---- place in the location tracker ----", place);
+  
+  try {
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${place}&key=${locationApi}`,
+    );
+
+    console.log('---- response in the location tracker ----', response?.data?.predictions);
+    
+    if (response?.status === 200) {
+      return response?.data?.predictions;
+    }
+  } catch (error) {
+    console.error('Error fetching location:', error);
   }
 };

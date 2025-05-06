@@ -21,7 +21,7 @@ const Login = () => {
   const [mobile, setMobile] = useState<string>('');
   const [isEdit, setIsEdit] = useState(false);
   const [hash, setHash] = useState<string>('');
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [videoUrl, setVideoUrl] = useState<string>('');
 
@@ -91,6 +91,13 @@ const Login = () => {
           setIsEdit,
         });
       }
+      else{
+        CustomToast({
+          type: "error",
+          text1: "Login Failed",
+          text2: response.data.message || "Something went wrong, please try again.",
+        })
+      }
 
       // console.log("==== response in login otp ====", response);
     } catch (err: any) {
@@ -101,7 +108,7 @@ const Login = () => {
         text2: "Something went wrong, please try again.",
       });
     }
-    finally{
+    finally {
       setLoading(false);
     }
   };

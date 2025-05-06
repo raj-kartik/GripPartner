@@ -1,13 +1,15 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import {moderateScale, screenWidth} from '../Matrix/Matrix';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import { moderateScale, screenWidth } from '../Matrix/Matrix';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import CustomText from '../Customs/CustomText';
 import { globalStyle } from '../../utils/GlobalStyle';
 import Colors from '../../utils/Colors';
 import Images from '../../utils/Images';
+import FastImage from 'react-native-fast-image';
 
-const ShopCard1 = ({item}:any) => {
+
+const ShopCard1 = ({ item }: any) => {
   // console.log('--- item in the shop card ---', item);
 
   const productName =
@@ -32,16 +34,20 @@ const ShopCard1 = ({item}:any) => {
       }}
       style={styles.container}>
       {item?.image ? (
-        <Image
-          style={[styles.img, {marginBottom: moderateScale(10)}]}
-          source={{uri: item?.image}}
+        <FastImage
+          // resizeMode={FastImage.resizeMode.contain}
+          style={[styles.img, { marginBottom: moderateScale(10) }]}
+          source={{
+            uri: item?.image,
+            priority: FastImage.priority.high,
+          }}
         />
       ) : (
         <View
           style={[
             styles.img,
             globalStyle.center,
-            {backgroundColor: '#f7f7f7', marginBottom: moderateScale(10)},
+            { backgroundColor: '#f7f7f7', marginBottom: moderateScale(10) },
           ]}>
           <Images.Logo />
         </View>
@@ -49,7 +55,7 @@ const ShopCard1 = ({item}:any) => {
       <View>
         <CustomText text={productName} size={18} weight="700" />
         <View
-          style={[globalStyle.betweenCenter, {marginTop: moderateScale(10)}]}>
+          style={[globalStyle.betweenCenter, { marginTop: moderateScale(10) }]}>
           <CustomText
             text={`₹${parseFloat(item?.special_price).toFixed(2)}`}
             weight="700"

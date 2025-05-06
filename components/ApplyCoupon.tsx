@@ -26,12 +26,11 @@ interface Props {
     navigation: any;
     itemBill: any
 }
+
 const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
-    const [loading, setLoading] = useState(false);
     const [couponCode, setCouponCode] = useState('');
     const [localItemBill, setLocalItemBill] = useState(itemBill); // Local state for instant updates
     const [isCoupon, setIsCoupon] = useState(false);
-    const dispatch = useDispatch();
     useEffect(() => {
         // Sync localItemBill with the itemBill prop
         setLocalItemBill(itemBill);
@@ -42,7 +41,7 @@ const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
             const formData = new FormData();
             formData.append('coupon_code', couponCode);
 
-            setLoading(true);
+            // setLoading(true);
 
             const response = await axios.post(
                 `${DEFAULT_URL}${POST_APPLY_COUPON}`,
@@ -81,15 +80,13 @@ const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
             // setCouponCode('');
         } catch (err: any) {
             console.log('Error in the Apply Coupon', err);
-        } finally {
-            setLoading(false);
         }
     };
 
     const deleteCoupon = async () => {
         const url = `shop/remove-coupon?coupon_code=${couponCode}`;
         try {
-            setLoading(true);
+            // setLoading(true);
             const formData = new FormData();
             formData.append('coupon_code', couponCode);
 
@@ -118,8 +115,6 @@ const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
             }
         } catch (err) {
             console.error('Error in the Deleting the coupon:', err);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -212,7 +207,7 @@ const ApplyCoupon: FC<Props> = ({ itemBill, navigation }): JSX.Element => {
                         <CustomText
                             size={18}
                             weight="600"
-                            text={`₹${localItemBill?.totals?.grand_total}`}
+                            text={`₹${localItemBill?.totals?.grand_total || 0}`}
                         />
                     </View>
                 </View>
@@ -231,12 +226,12 @@ const styles = StyleSheet.create({
     cover: {
         width: screenWidth,
         backgroundColor: Colors.white,
-        borderRadius: 40,
-        marginTop: 20,
+        borderRadius: moderateScale(40),
+        marginTop: moderateScale(0),
         alignSelf: 'center',
-        paddingTop: moderateScale(20),
+        paddingTop: moderateScale(10),
         padding: moderateScale(10),
-        flex: 1.5,
+        flex: 4,
     },
     sectionTitle: {
         fontSize: 14,

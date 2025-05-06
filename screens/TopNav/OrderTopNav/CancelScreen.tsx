@@ -6,41 +6,33 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback,  useState } from 'react';
 import { FC } from 'react';
 import {
   StyleSheet,
-  Text,
-  View,
-  Image,
   FlatList,
-  ActivityIndicator,
-  Pressable,
   Alert,
   RefreshControl,
-  TouchableOpacity,
 } from 'react-native';
 import {
   CommonActions,
-  useFocusEffect,
-  useNavigation,
+  useFocusEffect
 } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomText from '../../../components/Customs/CustomText';
 import { moderateScale, screenWidth } from '../../../components/Matrix/Matrix';
-import { globalStyle } from '../../../utils/GlobalStyle';
 import Container from '../../../components/Container';
 import OrderCard from '../../../components/Cards/OrderCard';
 import { orderStatus } from '../../../redux/Slice/OrderSlice';
+import Colors from '../../../utils/Colors';
 
 interface Props { }
 
 const CancelScreen: FC<Props> = ({ navigation }: any) => {
-  const [couponCode, setCouponCode] = useState('');
-  const [applied, setApplied] = useState(false);
   const { data } = useSelector((state: any) => state.order);
   const dispatch = useDispatch();
   const { user } = useSelector((state: any) => state.user);
+  const [refreshing, setRefreshing] = useState(false);
 
   const { canceled } = data;
 
@@ -48,37 +40,31 @@ const CancelScreen: FC<Props> = ({ navigation }: any) => {
     return await dispatch(orderStatus(user?.email));
   };
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    OrderStatus().then(() => setRefreshing(false));
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       OrderStatus();
     }, []),
   );
 
-  const applyCoupon = () => {
-    if (couponCode.trim() === '') {
-      Alert.alert('Error', 'Please enter a valid coupon code.');
-    } else {
-      setApplied(true);
-      Alert.alert('Success', `Coupon "${couponCode}" applied!`);
-    }
-  };
-
-  const sentFun = () => {
-    navigation.dispatch(
-      CommonActions.navigate({
-        name: 'Description',
-        // params: {
-        //   franchiseid: id,
-        // },
-      }),
-    );
-  };
-
   return (
     <Container>
       {canceled.length > 0 ? (
         <FlatList
           data={canceled}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={Colors.orange}
+              colors={[Colors.orange]}
+              progressBackgroundColor="#fff"
+            />
+          }
           showsVerticalScrollIndicator={false}
           keyExtractor={item => item?.order_id}
           renderItem={({ item }) => {

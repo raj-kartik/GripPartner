@@ -21,8 +21,6 @@ const Settings = () => {
     const navigation = useNavigation();
     const [isLogout, setIsLogout] = useState(false);
 
-    console.log("==== user ====", user);
-
     const settingArray = [
         {
             id: 1,
@@ -32,8 +30,8 @@ const Settings = () => {
         {
             id: 4,
             label: 'Studio Profile',
-            // route: "UpdateStudioProfile"
-            route: "LocationTracker"
+            route: "UpdateStudioProfile"
+            // route: "LocationTracker"
         },
         {
             id: 2,
@@ -53,7 +51,7 @@ const Settings = () => {
             <ScrollView showsVerticalScrollIndicator={false} style={{ width: screenWidth, alignSelf: 'center' }} >
                 <View style={[styles.profileContainer]} >
                     <View style={[globalStyle.center, { width: moderateScale(170), height: moderateScale(170), backgroundColor: "#f7f7f7", borderRadius: moderateScale(200) }]} >
-                        <Images.Logo width={moderateScale(150)} height={moderateScale(150)} />
+                        <Images.Logo fill="#000" width={moderateScale(150)} height={moderateScale(150)} />
                     </View>
                     <CustomText text={user?.first_name ? user?.first_name.trim() : "No Name"} weight='600' size={20} customStyle={{ textAlign: "center", marginTop: moderateScale(10) }} />
                 </View>

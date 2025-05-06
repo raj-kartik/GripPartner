@@ -7,6 +7,7 @@ import {
   View,
   Image,
   Pressable,
+  RefreshControl,
 } from 'react-native';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import Container from '../../components/Container';
@@ -115,6 +116,7 @@ const Section = React.memo(({ index, banner, products, loading }: any) => {
 });
 
 const Products = ({ navigation }: any) => {
+  const [refreshing, setRefreshing] = useState(false);
   const [bannerMap, setBannerMap] = useState<any>({});
   const [productMap, setProductMap] = useState<any>({});
   const [loadingMap, setLoadingMap] = useState<any>({});
@@ -172,12 +174,37 @@ const Products = ({ navigation }: any) => {
     [bannerMap, productMap, loadingMap]
   );
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+
+    // Clear the existing maps
+    setBannerMap({});
+    setProductMap({});
+    setLoadingMap({});
+
+    // Refetch data for all sections
+    try {
+      const fetchAllSections = categoryEndpoints.map((_, index) => fetchSectionData(index));
+      await Promise.all(fetchAllSections);
+    } catch (err) {
+      console.error('Error refreshing all sections', err);
+    }
+
+    setRefreshing(false);
+  }, []);
+
+
   return (
     <Container>
       <ShopHeader1 navigation={navigation} />
       <FlatList
         data={categoryEndpoints}
         keyExtractor={(_, index) => index.toString()}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         ListFooterComponent={<View style={{ marginBottom: moderateScale(100) }} />}
         renderItem={renderItem}
         onViewableItemsChanged={onViewableItemsChanged.current}

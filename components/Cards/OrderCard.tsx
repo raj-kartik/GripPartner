@@ -17,9 +17,12 @@ import Images from '../../utils/Images';
 const OrderCard = ({ item, handleNavigation, btnName = 'Track Order' }: any) => {
   const navigation = useNavigation();
 
+  // console.log("==== item in order card ====", item);
+  
   return (
     <Pressable
       onPress={handleNavigation}
+      key={item?.order_id}
       style={[styles.container, globalStyle.flex]}>
       {item?.image ? (
         <Image source={{ uri: item?.image }} />

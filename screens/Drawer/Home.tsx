@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, View, Image } from 'react-native'
+import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, View, Image, RefreshControl } from 'react-native'
 import React, { FC, use, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -54,7 +54,7 @@ const Home = ({ navigation }: any) => {
   const [barContent, setbarContent] = useState('Course');
   const [barTypeContent, setbarTypeContent] = useState('Clicks');
   const { user } = useSelector((state: any) => state?.user);
-
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     CourseGraph();
@@ -62,44 +62,44 @@ const Home = ({ navigation }: any) => {
 
   useFocusEffect(
     useCallback(() => {
-      const fetchRetreatCourse = async () => {
-        await dispatch(getCourse(user?.id));
-        await dispatch(getRetreat(user?.id));
-        await dispatch(fetchLocation({}));
-        await dispatch(getWalletBalance(user?.id));
-        await BannerList();
-        await dispatch(addToCart());
-      }
-
       CourseListFeature();
-
-      const ShopList = async () => {
-        try {
-          setLoading(true);
-          // const response: any = await getMethod('home-shop-product-list');
-          const response: any = await makeApiRequest({
-            baseUrl: BASE_URL,
-            url: "home-shop-product-list",
-            method: "GET"
-          });
-
-
-          if (response.response.length > 0) {
-            // console.log('--- home-shop-list ----', response.data.response);
-            setShop(response.response);
-          }
-
-          setLoading(false);
-        } catch (error:any) {
-          setLoading(false);
-          console.log('error in home tsx',error);
-        }
-      };
-
       ShopList();
       fetchRetreatCourse();
     }, [])
   );
+
+  const fetchRetreatCourse = async () => {
+    await dispatch(getCourse(user?.id));
+    await dispatch(getRetreat(user?.id));
+    await dispatch(fetchLocation({}));
+    await dispatch(getWalletBalance(user?.id));
+    await BannerList();
+    await dispatch(addToCart());
+  }
+  const ShopList = async () => {
+    try {
+      setLoading(true);
+      // const response: any = await getMethod('home-shop-product-list');
+      const response: any = await makeApiRequest({
+        baseUrl: BASE_URL,
+        url: "home-shop-product-list",
+        method: "GET"
+      });
+
+
+      if (response.response.length > 0) {
+        // console.log('--- home-shop-list ----', response.data.response);
+        setShop(response.response);
+      }
+
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      console.log('error in home tsx', error);
+    }
+  };
+
+  // CourseListFeature();
 
   useEffect(() => {
     if (!banner || banner.length === 0) {
@@ -120,20 +120,6 @@ const Home = ({ navigation }: any) => {
 
     return () => clearInterval(interval);
   }, [banner]);
-
-  const renderDots = () => {
-    return (
-      <View style={styles.dotContainer}>
-        {banner.map((_, index) => (
-          <View
-            key={index}
-            style={[styles.dotRef, currentIndex === index && styles.activeDot]}
-          />
-        ))}
-      </View>
-    );
-  };
-
 
   const BannerList = async () => {
     try {
@@ -174,36 +160,23 @@ const Home = ({ navigation }: any) => {
     }
   };
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      CourseListFeature();
+      ShopList();
+      fetchRetreatCourse();
+      CourseGraph();
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
-  // console.log("==== user id ====", user?.id);
+
+  // console.log("==== user id ====", user);
+
 
   if (loading)
     return <ActivityIndicator size="large" style={{ flex: 1, backgroundColor: "#fff" }} color="#000" />
-
-
-  const renderBanner = ({ item }: any) => {
-    return (
-      <Pressable
-        style={{
-          width: screenWidth * 0.9,
-          height: screenWidth * 0.5,
-          marginRight: moderateScale(5),
-          borderRadius: moderateScale(10),
-        }}>
-        <Image
-          source={{ uri: item?.image_url }}
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: moderateScale(10),
-          }}
-        />
-      </Pressable>
-    );
-  };
-
-
-
 
   const CourseGraph = async () => {
     try {
@@ -250,10 +223,15 @@ const Home = ({ navigation }: any) => {
   return (
     <Container>
       <HomeHeader1 handlePress={() => navigation.openDrawer()} />
+
+      {/* <Images.Logo width={100} height={100} stroke="#000" style={{ backgroundColor: "red" }} /> */}
       {
-        user?.is_registred ? <ScrollView
+        !user?.is_registred ? <ScrollView
           style={{ marginTop: moderateScale(20), paddingBottom: moderateScale(100) }}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
 
           <LineChart
@@ -288,30 +266,6 @@ const Home = ({ navigation }: any) => {
               borderRadius: 16,
             }}
           />
-
-          {/* {
-            banner && <View style={{ marginBottom: moderateScale(20) }}>
-              <FlatList
-                ref={flatListRef}
-                horizontal
-                pagingEnabled
-                style={{ marginBottom: moderateScale(15) }}
-                data={banner}
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(item: any) => item?.id}
-                renderItem={renderBanner}
-                onMomentumScrollEnd={event => {
-                  // Update current index on manual scroll
-                  const index = Math.round(
-                    event.nativeEvent.contentOffset.x / (screenWidth * 0.9),
-                  );
-                  setCurrentIndex(index);
-                }}
-              />
-              {renderDots()}
-            </View>
-          } */}
-
 
           {course && course.length > 0 && (
             <View style={{ marginBottom: moderateScale(20), marginTop: moderateScale(10) }}>

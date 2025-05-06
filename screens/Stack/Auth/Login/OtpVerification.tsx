@@ -22,6 +22,7 @@ import {
     startOtpListener,
     useOtpVerify,
 } from 'react-native-otp-verify';
+import CustomOtpInput from '../../../../components/Customs/CustomOtp'
 
 
 const OtpVerification = (props: any) => {
@@ -29,13 +30,11 @@ const OtpVerification = (props: any) => {
     // const params = useRoute();
     const { loading, auth, error } = useSelector((state: any) => state.user);
     const navigation = useNavigation();
-
-
     const dispatch = useDispatch();
-
     const [otp, setOtp] = useState('');
     const [isResendDisabled, setIsResendDisabled] = useState(false);
     const [countdown, setCountdown] = useState(60); // Countdown timer set to 60 seconds
+    const [verifyLoading, setVerifyLoading] = useState(false);
 
     const { stopListener } = useOtpVerify({ numberOfDigits: 6 });
     useEffect(() => {
@@ -68,6 +67,7 @@ const OtpVerification = (props: any) => {
         }
 
         try {
+            setVerifyLoading(true);
             // Dispatch the verifyOtp thunk with the mobile number and OTP
             await dispatch(
                 verifyOtp({
@@ -99,6 +99,9 @@ const OtpVerification = (props: any) => {
                 });
         } catch (err) {
             console.error('Error in the Mobile OTP verification:', err);
+        }
+        finally {
+            setVerifyLoading(false);
         }
     };
 
@@ -145,6 +148,7 @@ const OtpVerification = (props: any) => {
         }
     };
 
+
     // Update countdown every second while it’s greater than 0
     useEffect(() => {
         if (countdown > 0) {
@@ -157,6 +161,16 @@ const OtpVerification = (props: any) => {
             setIsResendDisabled(false); // Re-enable the resend button when countdown reaches 0
         }
     }, [countdown]);
+
+    useEffect(() => {
+        if (otp.length === 6) {
+            const timer = setTimeout(() => {
+                handleVerification();
+            }, 1000);
+            return () => clearTimeout(timer); // Clean up if otp changes before timeout completes
+        }
+    }, [otp]);
+
 
     return (
         <View style={{ position: "relative", zIndex: 10, flex: 1 }} >
@@ -175,7 +189,11 @@ const OtpVerification = (props: any) => {
                         <CustomText customStyle={{ marginLeft: moderateScale(10) }} text='OTP Verification' weight='600' size={22} color='#fff' />
                     </View>
                     <CustomText color='#ddd' customStyle={{ marginBottom: moderateScale(10) }} weight='500' size={17} text={`We have sent a verification code to  +91-${mobile}`} />
-                    <CustomInput keyboardType='numeric' text={""} maxLength={6} value={otp} handleChangeText={(text: string) => { setOtp(text) }} />
+
+                    {/* custom OTP */}
+                    <CustomOtpInput code={otp} setCode={setOtp} />
+
+                    {/* <CustomInput keyboardType='numeric' text={""} maxLength={6} value={otp} handleChangeText={(text: string) => { setOtp(text) }} /> */}
                     <View style={{ alignItems: "flex-end", marginTop: moderateScale(15) }} >
                         <Pressable onPress={handleResendOTP} disabled={isResendDisabled} >
                             <CustomText color='#ccc' text={isResendDisabled ? `Resend OTP in ${countdown}s` : 'Resend OTP'} weight='500' />
@@ -183,7 +201,7 @@ const OtpVerification = (props: any) => {
                     </View>
                 </View>
                 <View style={{ flex: .15, alignItems: "center" }} >
-                    <CustomButton disabled={otp.length !== 6} bg={Colors.gray_font} title='Continue' onPress={handleVerification} customStyle={{ marginTop: moderateScale(10) }} />
+                    <CustomButton loading={verifyLoading} disabled={otp.length !== 6} bg={Colors.gray_font} title='Continue' onPress={handleVerification} customStyle={{ marginTop: moderateScale(10) }} />
                     <Pressable style={{ marginTop: moderateScale(10) }} onPress={() => { navigation.goBack() }} >
                         <CustomText text='Back to login' color='#ccc' weight='400' />
                     </Pressable>

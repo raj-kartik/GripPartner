@@ -68,9 +68,9 @@ const UpdateProfile = () => {
 
     const { user } = useSelector((state: any) => state?.user);
 
-    console.log("=== user in the profile ====", user);
+    // console.log("=== user in the profile ====", user);
 
-    const name = user?.first_name.trim().split(" ");
+    const name = user?.first_name ? user?.first_name.trim().split(" ") : "";
     console.log("=== name ===", name);
 
 

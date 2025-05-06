@@ -3,15 +3,12 @@
 /* eslint-disable quotes */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable prettier/prettier */
-import React, { JSX, useCallback, useState } from 'react';
+import React, { JSX, useCallback } from 'react';
 import { FC } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Image,
-  Pressable,
   RefreshControl,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,12 +16,8 @@ import {
 } from 'react-native';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import Container from '../../../../components/Container';
-import AccountCourseCard from '../../../../components/Cards/AccountCourseCard';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
-import makeApiRequest from '../../../../utils/ApiService';
-import { BASE_URL } from '../../../../utils/api';
-import { MenuProvider } from 'react-native-popup-menu';
 import { moderateScale, screenHeight, screenWidth } from '../../../../components/Matrix/Matrix';
 import CustomText from '../../../../components/Customs/CustomText';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
@@ -32,37 +25,30 @@ import Colors from '../../../../utils/Colors';
 import { globalStyle } from '../../../../utils/GlobalStyle';
 import { getRetreat } from '../../../../redux/Slice/RetreatSlice';
 
-// import {
-//   responsiveFontSize,
-//   responsiveHeight,
-//   responsiveWidth,
-// } from 'react-native-responsive-dimensions';
-// import {Icon} from 'react-native-elements';
-// import {Avatar} from '@rneui/themed';
-
-// import {getMethod, getStorageData} from '../../../../utils/helper';
-// import Container from '../../../Component/Container';
-// import CustomHeader1 from '../../../Component/Custom/CustomHeader1';
-// import RetreatAccountCard1 from '../../../Component/Cards/AccoutScreen/User/RetreatAccountCard1';
-// import AccountCourseCard from '../../../Component/Cards/AccoutScreen/User/Course/AccountCourseCard';
-
 interface Props { }
 const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
 
   const dispatch = useDispatch();
   const { retreat } = useSelector((state: any) => state?.retreat);
   const { user } = useSelector((state: any) => state?.user);
+  const [refreshing, setRefreshing] = React.useState(false);
 
 
   useFocusEffect(useCallback(() => {
-    const fetchRetreat = async () => {
-      await dispatch(getRetreat(user?.id));
-    }
 
     fetchRetreat();
   }, []));
 
+  const fetchRetreat = async () => {
+    await dispatch(getRetreat(user?.id));
+  }
   // console.log("=== retreat on own retreat ===",retreat);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchRetreat().then(() => setRefreshing(false));
+  }, []);
+
 
   return (
     <Container>
@@ -73,6 +59,15 @@ const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
         retreat && retreat.length > 0 && (
           <FlatList
             data={retreat}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={'#000'}
+                colors={['#000']}
+                progressBackgroundColor="#fff"
+              />
+            }
             keyExtractor={(item: any) => item?.id?.toString()}
             renderItem={({ item }) => {
               // console.log("==== item in the own retreat ===", item);
