@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import Toast from 'react-native-toast-message';
@@ -12,8 +12,8 @@ import CustomToast from './components/Customs/CustomToast';
 const App = () => {
   useOneSignal();
 
-  const routeNameRef: any = useRef<string | undefined>();
-  const navigationRef: any = useRef<string | undefined>();
+  const routeNameRef: any = useRef<string | undefined>(null);
+  const navigationRef: any = useRef<string | undefined>(null);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

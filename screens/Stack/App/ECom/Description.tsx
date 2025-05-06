@@ -271,7 +271,7 @@ const Description = ({ navigation, route }: any) => {
                     <CustomText
                       size={18}
                       weight="600"
-                      text={quantity}
+                      text={quantity.toString()}
                       color="#000"
                     />
                   </View>

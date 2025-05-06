@@ -12,7 +12,7 @@ const CustomToastUI = ({
     text1 = 'Hello',
     text2 = 'World',
     onHide,
-}) => {
+}:any) => {
     const [animation, setAnimation] = useState('bounceInDown');
 
     useEffect(() => {

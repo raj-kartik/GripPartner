@@ -6,7 +6,7 @@ let toastFn: any = null;
 const ToastManager = () => {
   const [toastOptions, setToastOptions] = useState<any>(null);
 
-  const show = useCallback((options) => {
+  const show = useCallback((options:any) => {
     setToastOptions({ ...options, key: Date.now() });
   }, []);
 
