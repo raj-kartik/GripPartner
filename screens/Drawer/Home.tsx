@@ -230,7 +230,7 @@ const Home = ({ navigation }: any) => {
 
       {/* <Images.Logo width={100} height={100} stroke="#000" style={{ backgroundColor: "red" }} /> */}
       {
-        !user?.is_registred ? <ScrollView
+        user?.is_registred ? <ScrollView
           style={{ marginTop: moderateScale(20), paddingBottom: moderateScale(100) }}
           showsVerticalScrollIndicator={false}
           refreshControl={
