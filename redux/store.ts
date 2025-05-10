@@ -8,9 +8,10 @@ import UserReducer from './Slice/UserSlice/UserSlice';
 import OrderReducer from './Slice/OrderSlice';
 import FeatureReducer from './Slice/FeatureSlice';
 import CouponReducer from './Slice/CouponSlice';
-import NotificationReducer from './Slice/NotificationSlice'
-import BankReducer from './Slice/BankSlice'
-import cartReducer from './Slice/AddToCartSlice'
+import NotificationReducer from './Slice/NotificationSlice';
+import BankReducer from './Slice/BankSlice';
+import cartReducer from './Slice/AddToCartSlice';
+import studioReducer from './Slice/StudioSlice';
 const store = configureStore({
   reducer: {
     location: LocationReducer,
@@ -21,10 +22,11 @@ const store = configureStore({
     user: UserReducer,
     order: OrderReducer,
     feature: FeatureReducer,
-    coupon:CouponReducer,
-    notification:NotificationReducer,
-    bank:BankReducer,
-    cart:cartReducer
+    coupon: CouponReducer,
+    notification: NotificationReducer,
+    bank: BankReducer,
+    cart: cartReducer,
+    studio: studioReducer,
   },
 });
 

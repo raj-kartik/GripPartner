@@ -55,6 +55,10 @@ import AddBookingScreen from '../../TopNav/RetreatTopNav/RetreatFollowUps/AddBoo
 import AadharCardKyc from './KYC/AadharCardKyc'
 import LocationTracker from './LocationTracker'
 import KycVerification from '../KycVerification'
+import StudioSuccess from '../../../components/Cards/Success/StudioSuccess'
+import Studios from './AccountScreen/Studio/Studios'
+import StudioDetail from './AccountScreen/Studio/StudioDetail'
+import StudioEdit from './AccountScreen/Studio/StudioEdit'
 // import LocationTracker from './LocationTracker'
 
 // changes noething has made
@@ -104,11 +108,15 @@ const AppStack = () => {
                 <Stack.Screen name='KycVerification' component={KycVerification} />
                 <Stack.Screen name='PaymentScan' component={PaymentScan} />
                 <Stack.Screen name='AddBookingScreen' component={AddBookingScreen} />
+                <Stack.Screen name='Studios' component={Studios} />
+                <Stack.Screen name='StudioSuccess' component={StudioSuccess} />
 
                 <Stack.Screen name='AddSubscription' component={AddSubscription} />
                 <Stack.Screen name='ProductList' component={ProductList} />
                 <Stack.Screen name='AadharCardKyc' component={AadharCardKyc} />
                 <Stack.Screen name='LocationTracker' component={LocationTracker} />
+                <Stack.Screen name='StudioDetail' component={StudioDetail} />
+                <Stack.Screen name='StudioEdit' component={StudioEdit} />
 
                 {/* course top navigation */}
                 <Stack.Screen name='CourseTopNav' component={CourseTopNav} />

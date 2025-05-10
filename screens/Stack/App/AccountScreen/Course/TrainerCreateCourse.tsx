@@ -30,9 +30,10 @@ import CustomIcon from '../../../../../components/Customs/CustomIcon';
 import CustomModal from '../../../../../components/Customs/CustomModal';
 import makeApiRequest from '../../../../../utils/ApiService';
 import { BASE_URL, POST_ADD_COURSE } from '../../../../../utils/api';
-import CustomToast  from '../../../../../components/Customs/CustomToast';
+import CustomToast from '../../../../../components/Customs/CustomToast';
 import DocumentPickerComponent from '../../../../../components/DocumentPicker';
 import Colors from '../../../../../utils/Colors';
+import SelectStudio from '../../../../../components/Modal/SelectStudio';
 
 const isTimeBefore = (startTime: string, endTime: string) => {
   if (!startTime || !endTime) return false;
@@ -389,6 +390,7 @@ const TrainerCreateCourse = (props: any) => {
           title: existCourse ? existCourse?.name : '',
           description: existCourse ? existCourse?.description : '',
           fees: existCourse ? existCourse?.price : '',
+          studio: existCourse?.studio_id || '',
           training_level: Array.isArray(existCourse?.training_level)
             ? existCourse.training_level
             : existCourse?.training_level
@@ -494,6 +496,15 @@ const TrainerCreateCourse = (props: any) => {
                 {errors.description && touched.description && (
                   <Text style={{ color: 'red' }}>{errors.description}</Text>
                 )}
+
+                {/* studio */}
+                <View style={{ marginTop: moderateScale(10) }} >
+                  <CustomText text='Studio' weight='500' size={16} customStyle={{ marginBottom: moderateScale(2) }} />
+                  <SelectStudio selectedStudios={values?.studio} handleSelectStudio={(item: any) => {
+                    console.log("==== selected studio ====", item);
+                    setFieldValue('studio', item);
+                  }} />
+                </View>
 
                 <FieldArray
                   name="batch"

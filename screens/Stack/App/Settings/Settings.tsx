@@ -31,7 +31,7 @@ const Settings = () => {
             id: 4,
             label: 'Studio Profile',
             route: "UpdateStudioProfile"
-            // route: "LocationTracker"
+            // route: "KycVerification"
         },
         {
             id: 2,

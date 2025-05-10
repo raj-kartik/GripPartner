@@ -27,6 +27,11 @@ import { globalStyle } from '../../../../utils/GlobalStyle';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
 import DocumentPickerComponent from '../../../../components/DocumentPicker';
 import { fetchLocationUtility } from '../../../../utils/UtilityFuncations';
+import axios from 'axios';
+import { BASE_URL, POST_ADD_STUDIO_FORM } from '../../../../utils/api';
+import CustomToast from '../../../../components/Customs/CustomToast';
+import { Text } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 interface StudioFormValues {
   name: string;
@@ -161,6 +166,59 @@ const overallSchema = yup.object().shape({
     .min(1, '*at least one studio is required'),
 });
 
+const buildFormData = (initialValues: any, user_id: string) => {
+  const formData = new FormData();
+
+  // Flat fields
+  formData.append('user_id', user_id);
+  formData.append('aadhar_number', initialValues.aadharCardNumber);
+  formData.append('pan_number', initialValues.panCardNumber);
+
+  // Aadhar & PAN files
+  // if (initialValues.aadharCard) {
+  //   formData.append('aadharCard', {
+  //     uri: initialValues.aadharCard.uri,
+  //     name: `${user_id}_aadhar.jpg`,
+  //     type: initialValues.aadharCard.type || 'image/jpeg',
+  //   });
+  // }
+
+  // if (initialValues.panCard) {
+  //   formData.append('panCard', {
+  //     uri: initialValues.panCard.uri,
+  //     name: `${user_id}_pan.jpg`,
+  //     type: initialValues.panCard.type || 'image/jpeg',
+  //   });
+  // }
+
+  // Studios (nested fields)
+  initialValues.studio.forEach((studio: any, index: number) => {
+    formData.append(`studios[${index}][studio_name]`, studio.name);
+    formData.append(`studios[${index}][studio_type]`, studio.studioType);
+    formData.append(`studios[${index}][location]`, studio.location);
+    formData.append(`studios[${index}][state]`, studio.state);
+    formData.append(`studios[${index}][pincode]`, studio.pincode);
+    formData.append(`studios[${index}][email]`, studio.email);
+    formData.append(`studios[${index}][capacity]`, studio.capacity);
+    formData.append(`studios[${index}][opening_time]`, studio.openingTime);
+    formData.append(`studios[${index}][closing_time]`, studio.closingTime);
+    formData.append(`studios[${index}][contact_number]`, studio.contactNumber);
+
+    // Studio photos array
+    studio.studioPic.forEach((pic: any, picIndex: number) => {
+      formData.append(`studio_photos[${index}][]`, {
+        uri: pic.uri,
+        name: pic.name || `studio_${index}_photo_${picIndex}.jpg`,
+        type: pic.type || 'image/jpeg',
+      });
+    });
+
+  });
+
+  return formData;
+};
+
+
 const UpdateStudioProfile: React.FC = () => {
   const { user } = useSelector((state: any) => state?.user);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -168,6 +226,8 @@ const UpdateStudioProfile: React.FC = () => {
   const [endModal, setEndModal] = useState(false);
   const [placeText, setPlaceText] = useState('');
   const [place, setPlace] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+  const navigation:any = useNavigation();
 
   const studioTypeArray = [
     {
@@ -201,6 +261,40 @@ const UpdateStudioProfile: React.FC = () => {
     },
   ];
 
+  const handleSubmitStudio = async (values: StudioFormValues) => {
+    // return;
+    try {
+      setLoading(true);
+      const formData = buildFormData(values, user?.id); // user?.id = user_id
+      // console.log('---- Submitted values formdata:', formData);
+      const response = await axios.post(`${BASE_URL}${POST_ADD_STUDIO_FORM}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // optional; axios will auto set this
+        },
+      });
+
+      console.log('----- Upload success -----', response);
+
+      if (response?.data[0]?.success == true) {
+        CustomToast({
+          type: "success",
+          text1: response?.data?.message || "Studio profile updated successfully",
+          text2: "You can add more studios later",
+        });
+        navigation.navigate('StudioSuccess');
+      }
+
+      // ✅ handle success UI here
+    } catch (error) {
+      console.error('Upload error:', error);
+      // ✅ handle error UI here
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+
   useEffect(() => {
     const fetchPlace = async () => {
       try {
@@ -224,8 +318,9 @@ const UpdateStudioProfile: React.FC = () => {
         initialValues={initialValues}
         validationSchema={overallSchema}
         onSubmit={(values: StudioFormValues) => {
-          console.log('Submitted values:', values);
-        }}>
+          handleSubmitStudio(values);
+        }}
+      >
         {({
           handleChange,
           handleBlur,
@@ -236,6 +331,9 @@ const UpdateStudioProfile: React.FC = () => {
           touched,
         }: any) => {
 
+          useEffect(() => {
+            console.log("----- errrors of the studio type ----", errors);
+          }, [errors])
           // console.log("----- values of the studio type ----", values?.studio);
 
           return (
@@ -352,7 +450,7 @@ const UpdateStudioProfile: React.FC = () => {
                           </View>
 
                           <View>
-                            <CustomInput maxLength={50} text='Studio Name' handleChangeText={handleChange(
+                            <CustomInput autoCapitalize='words' maxLength={50} text='Studio Name' handleChangeText={handleChange(
                               `studio[${index}].name`,
                             )} value={values.studio[index]?.name} />
                           </View>
@@ -611,8 +709,7 @@ const UpdateStudioProfile: React.FC = () => {
                               horizontal
                             >
                               {
-                                values?.studio[index]?.studioPic.length > 1 && values?.studio[index]?.studioPic.map((item: any) => {
-                                  // console.log("---- item in the image ----", item);
+                                values?.studio[index]?.studioPic && values?.studio[index]?.studioPic.length > 1 && values?.studio[index]?.studioPic.map((item: any) => {
                                   return (
                                     <View
                                       style={{
@@ -663,6 +760,7 @@ const UpdateStudioProfile: React.FC = () => {
                       handleChangeText={handleChange(field.name)}
                       value={values[field.name]}
                       maxLength={field?.maxLengths}
+                      autoCapitalize={field.name === 'panCardNumber' ? 'characters' : 'none'}
                       keyboardType={field?.keyType || 'default'}
                     />
                     {errors[field.name] && touched[field.name] && (
@@ -678,6 +776,8 @@ const UpdateStudioProfile: React.FC = () => {
                 {/* Submit */}
                 <CustomButton
                   onPress={handleSubmit}
+                  loading={loading}
+                  disabled={loading}
                   title="Submit"
                   customStyle={{ marginTop: moderateScale(20) }}
                 />

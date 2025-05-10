@@ -20,6 +20,11 @@ import Review from '../assets/svg/review.svg';
 import Transaction from '../assets/svg/transaction.svg';
 import OTP from '../assets/images/otp.jpg'
 
+
+// gif
+import GifCart from '../assets/gif/cart.gif';
+import GifHome from '../assets/gif/home.gif';
+
 const Images = {
   Logo,
   LogoW,

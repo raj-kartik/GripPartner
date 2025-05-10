@@ -5,7 +5,8 @@ import CustomHeader2 from '../../../components/Customs/Header/CustomHeader2'
 import makeApiRequest from '../../../utils/ApiService'
 import { GET_POLICY } from '../../../utils/api'
 import CustomText from '../../../components/Customs/CustomText'
-import { moderateScale } from '../../../components/Matrix/Matrix'
+import { moderateScale, screenWidth } from '../../../components/Matrix/Matrix'
+import RenderHTML from 'react-native-render-html';
 
 const Policy = () => {
 
@@ -22,7 +23,7 @@ const Policy = () => {
                 if (response?.status === "success") {
                     setTerms(response?.policy)
                 }
-                console.log("=== response in the privacy policy ====", response);
+                console.log("=== response in the privacy policy ====", response?.policy);
 
             }
             catch (err: any) {
@@ -38,7 +39,7 @@ const Policy = () => {
         <Container>
             <CustomHeader2 title="Privacy Policy" />
             <ScrollView style={{marginTop:moderateScale(10)}} showsVerticalScrollIndicator={false} >
-                <CustomText text={terms || ""} />
+                <RenderHTML contentWidth={screenWidth} source={{ html: terms || "" }} />
             </ScrollView>
         </Container>
     )
