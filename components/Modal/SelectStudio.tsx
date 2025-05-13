@@ -4,14 +4,17 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { moderateScale } from '../Matrix/Matrix';
 import Colors from '../../utils/Colors';
 import CustomText from '../Customs/CustomText';
+import { useSelector } from 'react-redux';
 
 const SelectStudio = ({ handleSelectStudio, selectedStudios }: any) => {
-    const studioArray = [
-        { label: "Studio 1", value: "Studio 1" },
-        { label: "Studio 2", value: "Studio 2" },
-        { label: "Studio 3", value: "Studio 3" },
-        { label: "Studio 4", value: "Studio 4" },
-    ];
+    const { studio } = useSelector((state: any) => state.studio);
+
+    // console.log("---- studio ----", studio);
+
+    const studioArray = studio.map((item: any) => (
+        { label: item?.studio_name, value: item?.studio_name, id: item?.id, type: item?.studio_type }
+        // { label: item?.studio_name, value: item?.studio_name, id: item?.id }
+    ));
 
     return (
         <View style={styles.container}>
@@ -27,7 +30,7 @@ const SelectStudio = ({ handleSelectStudio, selectedStudios }: any) => {
                 valueField="value"
                 search={false}
                 onChange={(item) => {
-                    handleSelectStudio(item.value);
+                    handleSelectStudio(item);
                 }}
             />
         </View>

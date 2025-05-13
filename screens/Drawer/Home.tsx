@@ -30,6 +30,7 @@ import Colors from '../../utils/Colors';
 import IsKycCard from '../../components/Cards/IsKycCard';
 import { getWalletBalance } from '../../redux/Slice/WalletSlice';
 import { addToCart } from '../../redux/Slice/AddToCartSlice';
+import { getStudioList } from '@redux/Slice/StudioSlice';
 
 const getCurrentYearMonth = () => {
   const date = new Date();
@@ -77,6 +78,7 @@ const Home = ({ navigation }: any) => {
     await dispatch(getRetreat(user?.id));
     await dispatch(fetchLocation({}));
     await dispatch(getWalletBalance(user?.id));
+     await dispatch(getStudioList(user?.id));
     await BannerList();
     await dispatch(addToCart());
   }
@@ -226,7 +228,7 @@ const Home = ({ navigation }: any) => {
 
   return (
     <Container>
-      <HomeHeader1 handlePress={() => navigation.openDrawer()} />
+      <HomeHeader1/>
 
       {/* <Images.Logo width={100} height={100} stroke="#000" style={{ backgroundColor: "red" }} /> */}
       {

@@ -19,16 +19,7 @@ const StudioCard = ({ item, onDelete }: any) => {
     const swipeableRef = React.useRef<any>(null); // <- added
 
     const rightSwipeArray = [
-        {
-            text: 'Delete',
-            backgroundColor: Colors.red,
-            color: '#fff',
-            icon: <CustomIcon type='MaterialCommunityIcons' name='delete-empty' color='#fff' size={30} />,
-            onPress: () => {
-                setDeleteModal(true);
-                swipeableRef.current?.close(); // <- close swipe
-            }
-        },
+
         {
             text: 'Edit',
             backgroundColor: Colors.button,
@@ -40,6 +31,17 @@ const StudioCard = ({ item, onDelete }: any) => {
                 })
             }
         },
+        {
+            text: 'Delete',
+            backgroundColor: Colors.red,
+            color: '#fff',
+            icon: <CustomIcon type='MaterialCommunityIcons' name='delete-empty' color='#fff' size={30} />,
+            onPress: () => {
+                setDeleteModal(true);
+                swipeableRef.current?.close(); // <- close swipe
+            }
+        },
+
     ]
 
     const onRightSwipe = () => (

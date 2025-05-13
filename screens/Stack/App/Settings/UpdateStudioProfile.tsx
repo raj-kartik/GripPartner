@@ -67,27 +67,7 @@ interface StudioFormValues {
   closingTime: string;
 }
 
-const initialValues: any = {
-  aadharCard: null,
-  aadharCardNumber: '',
-  panCard: null,
-  panCardNumber: '',
-  studio: [
-    {
-      name: '',
-      studioType: '',
-      studioPic: [],
-      location: '',
-      state: '',
-      pincode: '',
-      email: '',
-      capacity: '',
-      openingTime: '',
-      closingTime: '',
-      contactNumber: '',
-    },
-  ],
-};
+
 
 const maxLengths: Record<keyof StudioFormValues, number> = {
   name: 50,
@@ -112,6 +92,12 @@ const studioItemSchema = yup.object().shape({
     .required('*required')
     .min(2, '*too short')
     .max(50, '*too long'),
+  description: yup
+    .string()
+    .trim()
+    // .required('*required')
+    .min(2, '*too short')
+    .max(500, '*too long'),
   studioType: yup
     .string()
     .trim()
@@ -194,6 +180,7 @@ const buildFormData = (initialValues: any, user_id: string) => {
   // Studios (nested fields)
   initialValues.studio.forEach((studio: any, index: number) => {
     formData.append(`studios[${index}][studio_name]`, studio.name);
+    formData.append(`studios[${index}][studio_description]`, studio.description);
     formData.append(`studios[${index}][studio_type]`, studio.studioType);
     formData.append(`studios[${index}][location]`, studio.location);
     formData.append(`studios[${index}][state]`, studio.state);
@@ -227,7 +214,34 @@ const UpdateStudioProfile: React.FC = () => {
   const [placeText, setPlaceText] = useState('');
   const [place, setPlace] = useState<any>([]);
   const [loading, setLoading] = useState(false);
-  const navigation:any = useNavigation();
+  const navigation: any = useNavigation();
+
+  const initialValues: any = {
+    aadharCard: null,
+    aadharCardNumber: user?.aadhar_number || '',
+    panCard: null,
+    panCardNumber: '',
+    studio: [
+      {
+        name: '',
+        studioType: '',
+        studioPic: [],
+        location: '',
+        state: '',
+        pincode: '',
+        email: user?.email || '',
+        capacity: '',
+        openingTime: '',
+        closingTime: '',
+        contactNumber: user?.phone_number || '',
+        description: ''
+      },
+    ],
+  };
+
+
+  console.log("--- user in the studio profile ----", user);
+
 
   const studioTypeArray = [
     {
@@ -453,6 +467,28 @@ const UpdateStudioProfile: React.FC = () => {
                             <CustomInput autoCapitalize='words' maxLength={50} text='Studio Name' handleChangeText={handleChange(
                               `studio[${index}].name`,
                             )} value={values.studio[index]?.name} />
+                            {errors.studio?.[index]?.name &&
+                              touched.studio?.[index]?.name && (
+                                <CustomText
+                                  color="red"
+                                  customStyle={{ marginTop: moderateScale(5) }}
+                                  text={errors.studio[index].name}
+                                />
+                              )}
+                          </View>
+
+                          <View>
+                            <CustomInput autoCapitalize='words' multiline={true} numOfLine={10} numberOfLines={10} maxLength={500} text='Studio Description' handleChangeText={handleChange(
+                              `studio[${index}].description`,
+                            )} value={values.studio[index]?.description} />
+                            {errors.studio?.[index]?.description &&
+                              touched.studio?.[index]?.description && (
+                                <CustomText
+                                  color="red"
+                                  customStyle={{ marginTop: moderateScale(5) }}
+                                  text={errors.studio[index].description}
+                                />
+                              )}
                           </View>
 
 
@@ -699,7 +735,7 @@ const UpdateStudioProfile: React.FC = () => {
                               docType={["image/*"]}
                               customStyle={{ marginTop: moderateScale(5) }}
                               onPickDocument={documents => {
-                                // console.log("---- documents in the studio form ----", documents);
+                                console.log("---- documents in the studio form ----", documents);
                                 setFieldValue(`studio[${index}].studioPic`, documents);
                               }}
                             />
@@ -709,7 +745,7 @@ const UpdateStudioProfile: React.FC = () => {
                               horizontal
                             >
                               {
-                                values?.studio[index]?.studioPic && values?.studio[index]?.studioPic.length > 1 && values?.studio[index]?.studioPic.map((item: any) => {
+                                values?.studio[index]?.studioPic && values?.studio[index]?.studioPic.length > 0 && values?.studio[index]?.studioPic.map((item: any) => {
                                   return (
                                     <View
                                       style={{
@@ -757,6 +793,7 @@ const UpdateStudioProfile: React.FC = () => {
                     style={{ marginBottom: moderateScale(10) }}>
                     <CustomInput
                       text={field.label}
+                      editable={field?.label === 'Aadhaar Card Number' ? false : true}
                       handleChangeText={handleChange(field.name)}
                       value={values[field.name]}
                       maxLength={field?.maxLengths}

@@ -17,9 +17,9 @@ const HomeHeader1 = ({ handlePress }: any) => {
     return (
         <View style={[globalStyle.betweenCenter, styles.container]} >
             <View style={[globalStyle.row]} >
-                <Pressable onPress={handlePress} style={[globalStyle.row]} >
+                <View style={[globalStyle.row]} >
                     <Images.Logo width={moderateScale(60)} height={moderateScale(60)} />
-                </Pressable>
+                </View>
                 {
                     shortAddress && state && pincode && <CustomText weight='500' customStyle={{ marginLeft: moderateScale(10), width: "70%" }} text={`${shortAddress},${state}-${pincode}`} />
                 }

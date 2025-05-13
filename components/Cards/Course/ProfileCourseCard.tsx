@@ -27,7 +27,7 @@ const ProfileCourseCard = ({ item }: any) => {
             {/* over view */}
             <View style={{ flex: 0.4 }}>
                 <Image source={{ uri: item.select_image }} style={styles.image} />
-                <View style={{
+                <View style={[globalStyle.row, {
                     position: "absolute",
                     bottom: moderateScale(5),
                     right: moderateScale(10),
@@ -37,13 +37,13 @@ const ProfileCourseCard = ({ item }: any) => {
                     padding: moderateScale(3),
                     borderRadius: moderateScale(5),
                     elevation: 3
-                }} >
+                }]} >
                     <CustomIcon type='AntDesign' name='star' color={Colors.orange} />
                     <CustomText text={parseFloat(item?.fullstar).toFixed(1)} color='#000' weight='500' />
                     <CustomText
                         text={`(${parseFloat(item?.totalreview).toFixed(0)})`}
                         weight="700"
-                        customStyle={{ marginTop: moderateScale(3) }}
+                        customStyle={{ marginLeft: moderateScale(3) }}
                     />
                 </View>
             </View>

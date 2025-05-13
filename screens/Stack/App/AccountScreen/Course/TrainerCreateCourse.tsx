@@ -6,6 +6,7 @@ import {
   Text,
   View,
   Pressable,
+  Image,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
@@ -90,11 +91,13 @@ const CourseSchema = Yup.object().shape({
     value => value && value.length > 0,
   ),
 
-  yoga_style: Yup.array().test(
-    'notEmpty',
-    '*required',
-    value => value && value.length > 0,
-  ),
+  studioType: Yup.string().required('*Yoga Style is required'),
+  yoga_style: Yup.array().when('studioType', {
+    is: 'Yoga',
+    then: schema => schema.min(1, '*required').required('*required'),
+    otherwise: schema => schema.notRequired(),
+  }),
+
 
   meta_title: Yup.string().min(2, 'Too Short').max(50, 'Too Long'),
   meta_keywords: Yup.string().min(2, 'Too Short').max(50, 'Too Long'),
@@ -162,12 +165,12 @@ const CourseSchema = Yup.object().shape({
 
 const TrainerCreateCourse = (props: any) => {
 
-  console.log("==== props ====", props?.route?.params);
+  // console.log("==== props ====", props?.route?.params);
 
   const existCourse = props.route?.params?.course || {};
-  const [loading, setLoading] = useState(false);
+  const [studioObject, setStudioObject] = useState<any>(null)
   // const [isUpdateCourse,setIsUpdateCourse] = useState(false);
-  console.log('==== existCourse in trainer new course ===', existCourse);
+  // console.log('==== existCourse in trainer new course ===', existCourse);
 
   const { user } = useSelector((state: any) => state.user);
   const id = user?.id;
@@ -290,6 +293,11 @@ const TrainerCreateCourse = (props: any) => {
   ];
 
   const handleSubmit = async (values: any) => {
+
+
+    // console.log("--- values on submit ----", values);
+
+
     const formData = new FormData();
 
     // user id
@@ -323,6 +331,7 @@ const TrainerCreateCourse = (props: any) => {
     formData.append('meta_keywords', values.meta_keywords || '');
 
     formData.append('meta_description', values.meta_description || '');
+    formData.append('studio_id', values.studio || '');
     values.batch.forEach((slot: any, index: any) => {
       formData.append(`slot[${index}][start_time]`, slot.startTime);
       formData.append(`slot[${index}][end_time]`, slot.endTime);
@@ -342,7 +351,7 @@ const TrainerCreateCourse = (props: any) => {
         name: values.file.name || 'file',
       });
     }
-    console.log('===== form data result =====', formData);
+    // console.log('===== form data result =====', formData);
     // return;
 
     try {
@@ -365,16 +374,8 @@ const TrainerCreateCourse = (props: any) => {
         navigation.goBack();
       }
     } catch (error: any) {
-      if (error.response) {
-        console.error('Server Error Response:', error.response.data);
-      } else if (error.request) {
-        console.error(
-          'No response received from server. Request details:',
-          error.request,
-        );
-      } else {
-        console.error('Unexpected Axios Error:', error.message);
-      }
+      console.log("---- error in the creating coruse ----", error);
+
     }
   };
 
@@ -390,7 +391,8 @@ const TrainerCreateCourse = (props: any) => {
           title: existCourse ? existCourse?.name : '',
           description: existCourse ? existCourse?.description : '',
           fees: existCourse ? existCourse?.price : '',
-          studio: existCourse?.studio_id || '',
+          studio: existCourse?.studio_id,
+          studioType: '',
           training_level: Array.isArray(existCourse?.training_level)
             ? existCourse.training_level
             : existCourse?.training_level
@@ -418,7 +420,7 @@ const TrainerCreateCourse = (props: any) => {
           meta_title: existCourse ? existCourse?.meta_title : '',
           meta_keywords: existCourse ? existCourse?.meta_keywords : '',
           meta_description: existCourse ? existCourse?.meta_description : '',
-          file: null,
+          file: existCourse ? existCourse?.select_image : null,
           batch: [
             {
               startTime: '',
@@ -430,6 +432,7 @@ const TrainerCreateCourse = (props: any) => {
           ],
         }}
         onSubmit={(values: any) => {
+          // console.log("---- on clicking ----");
 
           handleSubmit(values);
         }}
@@ -456,17 +459,12 @@ const TrainerCreateCourse = (props: any) => {
             setTimeModal(true); // Open the modal only for the selected batch
           };
 
-          // let {training_level} = values;
+          // console.log("--- values of file ----", values?.file);
 
           useEffect(() => {
-            if (values && !user?.is_registred) {
-              CustomToast({
-                type: "info",
-                text1: "Your KYC is pending!",
-                text2: "You can create after verification"
-              })
-            }
-          }, [!user?.is_registred, values])
+          }, [errors])
+          // console.log("---erros in the create course ----", errors);
+
 
           return (
             <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -475,6 +473,7 @@ const TrainerCreateCourse = (props: any) => {
                 <CustomInput
                   text="Title"
                   value={values.title}
+                  autoCapitalize='words'
                   handleChangeText={handleChange('title')}
                   placeholder="Enter Title"
                   customStyle={{ width: '98%', alignSelf: 'center' }}
@@ -500,9 +499,12 @@ const TrainerCreateCourse = (props: any) => {
                 {/* studio */}
                 <View style={{ marginTop: moderateScale(10) }} >
                   <CustomText text='Studio' weight='500' size={16} customStyle={{ marginBottom: moderateScale(2) }} />
-                  <SelectStudio selectedStudios={values?.studio} handleSelectStudio={(item: any) => {
-                    console.log("==== selected studio ====", item);
-                    setFieldValue('studio', item);
+                  <SelectStudio selectedStudios={studioObject} handleSelectStudio={(item: any) => {
+
+                    // console.log("---selected item in the studio ----",item);
+                    setStudioObject(item)
+                    setFieldValue('studio', item?.id);
+                    setFieldValue('studioType', item?.type);
                   }} />
                 </View>
 
@@ -886,36 +888,49 @@ const TrainerCreateCourse = (props: any) => {
                 />
 
                 {/* yoga_style */}
-                <CustomText
-                  text="Yoga Style"
-                  weight="500"
-                  customStyle={{ marginTop: moderateScale(10) }}
-                />
-                <MultiSelect
-                  selectedStyle={styles.selectedStyle}
-                  style={styles.dropdown}
-                  placeholderStyle={styles.placeholderStyle}
-                  selectedTextStyle={styles.selectedTextStyle}
-                  inputSearchStyle={styles.inputSearchStyle}
-                  // iconStyle={{width:20,height:30}}
-                  data={yogaStyle}
-                  search
-                  labelField="label"
-                  valueField="value"
-                  value={values.yoga_style}
-                  placeholder="Select Yoga Style"
-                  searchPlaceholder="Search..."
-                  onChange={(item: any) => {
-                    setFieldValue('yoga_style', item);
-                  }}
-                  renderRightIcon={() => (
-                    <CustomIcon
-                      type="AntDesign"
-                      name="downcircleo"
-                      color={Colors.gray_font}
-                    />
-                  )}
-                />
+                {
+                  values?.studioType === "Yoga" && (
+                    <>
+                      <CustomText
+                        text="Yoga Style"
+                        weight="500"
+                        customStyle={{ marginTop: moderateScale(10) }}
+                      />
+                      <MultiSelect
+                        selectedStyle={styles.selectedStyle}
+                        style={styles.dropdown}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        // iconStyle={{width:20,height:30}}
+                        data={yogaStyle}
+                        search
+                        labelField="label"
+                        valueField="value"
+                        value={values.yoga_style}
+                        placeholder="Select Yoga Style"
+                        searchPlaceholder="Search..."
+                        onChange={(item: any) => {
+                          setFieldValue('yoga_style', item);
+                        }}
+                        renderRightIcon={() => (
+                          <CustomIcon
+                            type="AntDesign"
+                            name="downcircleo"
+                            color={Colors.gray_font}
+                          />
+                        )}
+                      />
+
+                      {
+                        errors?.yoga_style && touched?.yoga_style && (
+                          <CustomText color='#ff0000' text={errors?.yoga_style} />
+                        )
+                      }
+                    </>
+                  )
+                }
+
 
                 {/* choose_file */}
                 <View style={{ marginTop: moderateScale(10) }}>
@@ -923,16 +938,17 @@ const TrainerCreateCourse = (props: any) => {
                   <DocumentPickerComponent
                     customStyle={{ marginTop: moderateScale(5) }}
                     onPickDocument={documents => {
-                      console.log('documents: ', documents[0]);
+                      // console.log('documents: ', documents[0]);
                       setFieldValue('file', documents[0]);
                     }}
                   />
-                  <CustomText
-                    weight="600"
-                    color={Colors.activeRadio}
-                    size={16}
-                    text={values?.file?.name ? 'Uploaded' : ''}
-                  />
+
+                  {
+                    values?.file && <Image
+                      source={{ uri: values?.file?.uri ? values?.file?.uri : values?.file }}
+                      style={{ width: "100%", height: moderateScale(200), borderRadius: moderateScale(10) }}
+                    />
+                  }
                   {errors.file && touched.file && (
                     <Text style={{ color: 'red' }}>{errors.file}</Text>
                   )}

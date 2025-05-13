@@ -23,6 +23,7 @@ export const GET_SPECIAL_BANNER = 'shop/home-banner-after-special-product';
 export const POST_ADD_STUDIO_FORM ="add-studio"
 export const GET_STUDIO_LIST ="studio-list"
 export const POST_DELETE_STUDIO = "delete-studio"
+export const POST_UPDATE_STUDIO = "update-studio"
 
 // LOGIN_VIDEO
 export const LOGIN_VIDEO = 'home-video';

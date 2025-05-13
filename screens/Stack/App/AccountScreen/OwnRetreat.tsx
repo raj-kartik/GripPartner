@@ -24,6 +24,7 @@ import CustomIcon from '../../../../components/Customs/CustomIcon';
 import Colors from '../../../../utils/Colors';
 import { globalStyle } from '../../../../utils/GlobalStyle';
 import { getRetreat } from '../../../../redux/Slice/RetreatSlice';
+import Images from '@utils/Images';
 
 interface Props { }
 const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
@@ -56,7 +57,7 @@ const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
         navigation.navigate('CreateRetreat');
       }} />
       {
-        retreat && retreat.length > 0 && (
+        retreat && retreat.length > 0 ? (
           <FlatList
             data={retreat}
             refreshControl={
@@ -243,6 +244,11 @@ const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
               );
             }}
           />
+        ) : (
+          <View style={[globalStyle.center, { flex: 1 }]} >
+            <Images.Logo width={moderateScale(150)} height={moderateScale(150)} />
+            <CustomText text='No Data Available' weight='500' size={18} />
+          </View>
         )
       }
 
