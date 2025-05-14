@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@digiotech/react-native": "^2.0.4",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-clipboard/clipboard": "github:react-native-clipboard/clipboard",
     "@react-native-community/checkbox": "^0.5.17",
@@ -28,6 +29,7 @@
     "axios": "^1.8.4",
     "date-fns": "^4.1.0",
     "formik": "^2.4.6",
+    "install": "^0.13.0",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "react": "19.0.0",
