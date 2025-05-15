@@ -8,7 +8,7 @@ import {
     Text,
     View,
 } from 'react-native';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import CustomText from '@components/Customs/CustomText';
 import Container from '@components/Container';
 import CustomHeader2 from '@components/Customs/Header/CustomHeader2';
@@ -18,10 +18,49 @@ import { globalStyle } from '@utils/GlobalStyle';
 import Colors from '@utils/Colors';
 import CustomIcon from '@components/Customs/CustomIcon';
 import SubHeader from '@components/Customs/Header/SubHeader1';
+import makeApiRequest from '@utils/ApiService';
+import { BASE_URL, GET_STUDIO_DETAILS } from '@utils/api';
+import CustomToast from '@components/Customs/CustomToast';
+import { useFocusEffect } from '@react-navigation/native';
 
 const StudioDetail = (props: any) => {
-    console.log('item in the studio detail', props?.route?.params?.item);
-    const { item } = props?.route?.params;
+    const { item: studio } = props?.route?.params;
+
+    const [data, setData] = useState<any>(null)
+
+    useFocusEffect(useCallback(() => {
+        const fetchStudioDetails = async () => {
+            try {
+                const response: any = await makeApiRequest({
+                    method: "POST",
+                    url: GET_STUDIO_DETAILS,
+                    baseUrl: BASE_URL,
+                    data: {
+                        studio_id: studio?.id
+                    }
+                });
+
+                if (response?.success) {
+                    setData(response?.data);
+                }
+                else {
+                    CustomToast({
+                        type: "error",
+                        text1: "Invalid Studio Credientials",
+                        text2: ""
+                    });
+                }
+
+                console.log("--- response in the studio details ---", response?.data);
+
+            }
+            catch (err: any) {
+                console.log("---error in the studio details ----", err);
+            }
+        };
+
+        fetchStudioDetails();
+    }, []));
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff", }} >
@@ -35,9 +74,9 @@ const StudioDetail = (props: any) => {
                     <View
                         style={styles.imageDesign}
                     />
-                    {item?.image ? (
+                    {studio.image ? (
                         <Image
-                            source={{ uri: item?.image }}
+                            source={{ uri: studio.image }}
                             style={{
                                 height: moderateScale(140),
                                 width: moderateScale(140),
@@ -69,14 +108,14 @@ const StudioDetail = (props: any) => {
                                 right: -moderateScale(20),
                             },
                         ]}>
-                        <CustomText text={item?.studio_type} weight="500" />
+                        <CustomText text={studio.studio_type} weight="500" />
                     </View>
                 </View>
 
                 {/* contact + email */}
-                <View style={{ alignSelf: 'center',paddingHorizontal:moderateScale(10) }}>
+                <View style={{ alignSelf: 'center', paddingHorizontal: moderateScale(10) }}>
                     <CustomText
-                        text={item?.studio_name}
+                        text={studio.studio_name}
                         size={22}
                         weight="600"
                         customStyle={{ textAlign: 'center', marginTop: moderateScale(5) }}
@@ -93,8 +132,8 @@ const StudioDetail = (props: any) => {
                         ]}>
                         <Pressable
                             onPress={() => {
-                                if (item?.contact_number) {
-                                    Linking.openURL(`tel:${item.contact_number}`);
+                                if (studio.contact_number) {
+                                    Linking.openURL(`tel:${studio?.contact_number}`);
                                 }
                             }}
                             style={[
@@ -109,7 +148,7 @@ const StudioDetail = (props: any) => {
                             <CustomIcon type="Feather" name="phone" color={Colors.orange} />
                             <CustomText
                                 customStyle={{ marginLeft: moderateScale(5) }}
-                                text={`+91-${item?.contact_number}`}
+                                text={`+91-${studio.contact_number}`}
                                 size={15}
                                 weight="500"
                                 color={Colors.gray_font}
@@ -118,8 +157,8 @@ const StudioDetail = (props: any) => {
 
                         <Pressable
                             onPress={() => {
-                                if (item?.email) {
-                                    Linking.openURL(`mailto:${item.email}`);
+                                if (studio.email) {
+                                    Linking.openURL(`mailto:${studio?.email}`);
                                 }
                             }}
                             style={[
@@ -134,7 +173,7 @@ const StudioDetail = (props: any) => {
                             <CustomIcon type="Feather" name="mail" color={Colors.orange} />
                             <CustomText
                                 customStyle={{ marginLeft: moderateScale(5) }}
-                                text={item?.email}
+                                text={studio.email}
                                 size={15}
                                 weight="500"
                                 color={Colors.gray_font}
@@ -153,14 +192,14 @@ const StudioDetail = (props: any) => {
                             name="location-sharp"
                             color={Colors.orange}
                         />
-                        <CustomText text={item?.location} size={18} weight="500" />
+                        <CustomText text={studio.location} size={18} weight="500" />
                     </View>
                 </View>
 
                 <View
                     style={[
                         globalStyle.betweenCenter,
-                        { marginTop: moderateScale(10), justifyContent: 'space-evenly',paddingHorizontal:moderateScale(10) },
+                        { marginTop: moderateScale(10), justifyContent: 'space-evenly', paddingHorizontal: moderateScale(10) },
                     ]}>
                     {/* opens at */}
                     <View style={[globalStyle.center, styles.timingContainer, { marginHorizontal: moderateScale(5) }]}>
@@ -172,7 +211,7 @@ const StudioDetail = (props: any) => {
                         />
                         <View style={{ marginLeft: moderateScale(5) }}>
                             <CustomText text="Opens at" weight="500" color={Colors.gray} />
-                            <CustomText text={item?.opening_time.slice(0, 5)} weight="600" />
+                            <CustomText text={studio.opening_time.slice(0, 5)} weight="600" />
                         </View>
                     </View>
 
@@ -193,13 +232,13 @@ const StudioDetail = (props: any) => {
                         />
                         <View style={{ marginLeft: moderateScale(5) }}>
                             <CustomText text="Opens at" weight="500" color={Colors.gray} />
-                            <CustomText text={item?.closing_time.slice(0, 5)} weight="600" />
+                            <CustomText text={studio.closing_time.slice(0, 5)} weight="600" />
                         </View>
                     </View>
                 </View>
 
                 {/* courses */}
-                <View style={{ marginTop: moderateScale(10),paddingHorizontal:moderateScale(10) }}>
+                <View style={{ marginTop: moderateScale(10), paddingHorizontal: moderateScale(10) }}>
                     <SubHeader title="Courses" isMore={true} />
                 </View>
             </ScrollView>

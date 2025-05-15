@@ -13,6 +13,7 @@ module.exports = {
           '@constants': './components/constants',
           '@hooks': './components/Hooks',
           '@cards': './components/Cards',
+          '@skull': './components/Skeleton',
           '@redux': './redux',
         },
       },

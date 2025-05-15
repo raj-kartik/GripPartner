@@ -27,12 +27,12 @@ const Settings = () => {
             label: 'Edit Profile',
             route: "UpdateProfile"
         },
-        {
-            id: 4,
-            label: 'Studio Profile',
-            route: "UpdateStudioProfile"
-            // route: "KycVerification"
-        },
+        // {
+        //     id: 4,
+        //     label: 'Studio Profile',
+        //     route: "UpdateStudioProfile"
+        //     // route: "KycVerification"
+        // },
         {
             id: 2,
             label: 'Privacy Policy',

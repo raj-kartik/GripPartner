@@ -1,4 +1,4 @@
-import { FlatList, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Container from '../../../../../components/Container'
 import CustomHeader2 from '../../../../../components/Customs/Header/CustomHeader2'
@@ -21,17 +21,17 @@ import { BASE_URL, GOOGLE_LOCATION_KEY } from '../../../../../utils/api'
 import makeApiRequest from '../../../../../utils/ApiService'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
-import CustomToast  from '../../../../../components/Customs/CustomToast'
+import CustomToast from '../../../../../components/Customs/CustomToast'
 import { useNavigation } from '@react-navigation/native'
 
 const retreatSchema = yup.object().shape({
     title: yup.string().min(3, '*too short').max(50, '*too long').required('*required'),
-    hotel: yup.string().min(3, '*too short').max(50, '*too long').required('*required'),
+    hotel: yup.string().min(3, '*too short').required('*required'),
     rooms: yup.array()
         .of(yup.string().min(1, '*room name required'))
         .min(1, '*At least one room is required')
         .required('*required'),
-    location: yup.string().min(3, '*too short').max(50, '*too long'),
+    location: yup.string().min(3, '*too short'),
     overview: yup.string().min(3, '*too short').max(200, '*too long'),
     details: yup.string().min(3, '*too short').max(500, '*too long').required('*required'),
     groupSize: yup.number().positive().integer().required('*required'),
@@ -80,8 +80,8 @@ const CreateRetreat = (props: any) => {
 
 
     const handleDocumentsPicked = (docs: any) => {
-        console.log('Picked documents:', docs[0]);
-        setDocuments(docs[0]);
+        console.log('-----Picked documents:', docs);
+        setDocuments(docs);
     };
 
     const roomArray = [
@@ -135,39 +135,42 @@ const CreateRetreat = (props: any) => {
                         numOfDays: exist?.no_of_days || '',
                         numOfNights: exist?.no_of_nights || '',
                         price: exist?.price || '',
-                        img: null,
+                        // img: null,
                         startDate: exist["start Date"] || '',
                         endDate: exist["end Date"] || '',
                         rooms: ''
                     }}
                     validationSchema={retreatSchema}
                     onSubmit={async (values) => {
-                        setLoading(true)
-                        const formdata = new FormData;
-                        formdata.append('user_id', user?.id.toString());
-                        formdata.append('group_size', values?.groupSize);
-                        formdata.append('status', '1');
-                        formdata.append('No_of_nights', values?.numOfNights);
-                        formdata.append('No_of_days', values?.numOfDays);
-                        formdata.append('retreat_title', values?.title);
-                        formdata.append('retreat_overview', values?.overview);
-                        formdata.append('retreat_location', values?.location);
-                        formdata.append('start_date', values?.startDate);
-                        formdata.append('end_date', values?.endDate);
-                        formdata.append('program_details', values?.details);
-                        formdata.append('accommodation_hotel', values?.hotel);
-                        formdata.append('room', values?.rooms);
-                        formdata.append('price', values?.price);
-                        if (documents) {
-                            formdata.append('upload_image', {
-                                uri: documents?.uri,
-                                type: documents?.type,
-                                name: documents?.name,
-                            });
-                        }
+
+                        console.log("---- values in teh create retreat ----", { ...values, userId: user?.id });
+
 
                         try {
 
+                            setLoading(true)
+                            const formdata = new FormData;
+                            formdata.append('user_id', user?.id.toString());
+                            formdata.append('group_size', values?.groupSize);
+                            formdata.append('status', '1');
+                            formdata.append('No_of_nights', values?.numOfNights);
+                            formdata.append('No_of_days', values?.numOfDays);
+                            formdata.append('retreat_title', values?.title);
+                            formdata.append('retreat_overview', values?.overview);
+                            formdata.append('retreat_location', values?.location);
+                            formdata.append('start_date', values?.startDate);
+                            formdata.append('end_date', values?.endDate);
+                            formdata.append('program_details', values?.details);
+                            formdata.append('accommodation_hotel', values?.hotel);
+                            formdata.append('room', values?.rooms);
+                            formdata.append('price', values?.price);
+                            if (documents) {
+                                formdata.append('upload_image', {
+                                    uri: documents?.uri,
+                                    type: documents?.type,
+                                    name: documents?.name,
+                                });
+                            }
                             const endpoint = exist?.id ? `https://fitwithgrip.com/api/user-update-retreat?id=${exist?.id}` : 'https://fitwithgrip.com/trainer/user-add-retreat'
                             const response: any = await axios.post(endpoint, formdata, {
                                 headers: {
@@ -194,6 +197,11 @@ const CreateRetreat = (props: any) => {
                         }
                         catch (err: any) {
                             console.error("Error in the create retreat:", err);
+                            CustomToast({
+                                type: "error",
+                                text1: "Something went wrong",
+                                text2: "Please Try Later"
+                            })
                         }
                         finally {
                             setLoading(false)
@@ -212,6 +220,9 @@ const CreateRetreat = (props: any) => {
                                 })
                             }
                         }, [!user?.is_registred, values])
+
+                        console.log("---- documents -----", documents);
+
 
 
                         return (
@@ -238,9 +249,9 @@ const CreateRetreat = (props: any) => {
 
 
                                     <View>
-                                        <CustomInput value={values?.accommodation_hotel || placeText} text="Accommodation Hotel" handleChangeText={(text: string) => {
+                                        <CustomInput value={placeText} text="Accommodation Hotel" handleChangeText={(text: string) => {
                                             setPlaceText(text);
-                                            setFieldValue('accommodation_hotel', '');
+                                            handleChange('hotel', '');
                                         }} />
                                         {errors?.hotel && touched?.hotel && (
                                             <CustomText
@@ -268,10 +279,10 @@ const CreateRetreat = (props: any) => {
                                                         <TouchableOpacity
                                                             onPress={() => {
                                                                 setFieldValue(
-                                                                    `accommodation_hotel`,
+                                                                    `hotel`,
                                                                     item?.description,
                                                                 );
-                                                                setPlaceText('');
+                                                                setPlaceText(item?.description);
                                                                 setPlace([]);
                                                             }}
                                                             style={{
@@ -599,9 +610,21 @@ const CreateRetreat = (props: any) => {
                                             instruction="Accepted formats: JPEG, PNG, PDF. Max size 2MB"
                                         />
                                         {
-                                            documents.length > 0 && <View>
-                                                <CustomText text={`${documents?.name} uploaded`} weight='500' />
-                                            </View>
+                                            documents.length > 0 && (
+                                                <FlatList
+                                                    data={documents}
+                                                    horizontal
+                                                    showsHorizontalScrollIndicator={false}
+                                                    contentContainerStyle={{ columnGap: moderateScale(10) }}
+                                                    keyExtractor={item => item?.uri}
+                                                    renderItem={({ item }: any) => (
+                                                        <Image
+                                                            source={{ uri: item?.uri }}
+                                                            style={{ width: moderateScale(100), height: moderateScale(100), borderRadius: moderateScale(5) }}
+                                                        />
+                                                    )}
+                                                />
+                                            )
                                         }
                                     </View>
                                 </ScrollView>

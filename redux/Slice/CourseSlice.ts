@@ -3,6 +3,11 @@ import makeApiRequest from '../../utils/ApiService';
 import axios from 'axios';
 import {BASE_URL} from '../../utils/api';
 
+interface CoursePayload {
+  id: number;
+  studio_id: number;
+}
+
 const initialState: any = {
   loading: false,
   course: null,
@@ -11,20 +16,28 @@ const initialState: any = {
 
 export const getCourse = createAsyncThunk(
   'course/getCourse',
-  async (id, ThunkAPI) => {
+  async ({id, studio_id}: CoursePayload, ThunkAPI) => {
+    console.log('--- studio_id in the course list ----', studio_id);
 
-    // console.log("--- id in the course list ----",id);
-    
-    const response: any = await makeApiRequest({
-      method: 'POST',
-      url: `user-course-list?id=${id}`,
-      baseUrl:BASE_URL
-    });
+    try {
+      const response: any = await makeApiRequest({
+        method: 'POST',
+        url: `user-course-list?id=${id}`,
+        baseUrl: BASE_URL,
+        data: {
+          studio_id: studio_id || null,
+        },
+      });
 
-    // console.log("--- response in home course ---",response);
-    
-    if (response?.courses) {
-      return response?.courses;
+      console.log('----- response.courses =======', response.courses);
+
+      if (response?.courses) {
+        return response.courses;
+      } else {
+        return ThunkAPI.rejectWithValue('No courses found');
+      }
+    } catch (error: any) {
+      return ThunkAPI.rejectWithValue(error.message || 'Something went wrong');
     }
   },
 );

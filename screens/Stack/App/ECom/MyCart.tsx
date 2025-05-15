@@ -20,7 +20,7 @@ import {
 } from '../../../../utils/api';
 import { throttle, times } from 'lodash';
 import axios from 'axios';
-import CustomToast  from '../../../../components/Customs/CustomToast';
+import CustomToast from '../../../../components/Customs/CustomToast';
 import CustomButton from '../../../../components/Customs/CustomButton';
 import CustomText from '../../../../components/Customs/CustomText';
 import Images from '../../../../utils/Images';
@@ -34,6 +34,7 @@ import {
 import { globalStyle } from '../../../../utils/GlobalStyle';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
 import ApplyCoupon from '../../../../components/ApplyCoupon';
+import CartSkeleton from '@components/Skeleton/CartSkeleton';
 
 const MyCart = () => {
   const [loading, setLoading] = useState(false);
@@ -175,12 +176,17 @@ const MyCart = () => {
   return (
     <Container>
       <CustomHeader2 title="My Cart" />
-      
+
       {
         loading ? (
-          <ActivityIndicator style={{ flex: 5 }} size="large" color="#000" />
+          <View
+            style={{ flex: 1 }}
+          >
+            <CartSkeleton />
+          </View>
+          // <ActivityIndicator style={{ flex: .8 }} size="large" color="#000" />
         ) : (
-          <View style={{flex:5}} >
+          <View style={{ flex: 5 }} >
             <ScrollView
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
@@ -228,21 +234,21 @@ const MyCart = () => {
                           <CustomIcon type="AntDesign" name="closecircleo" />
                         </Pressable>
                       </View>
-                        {item?.image ? (
-                          <View style={[styles.image, { width: moderateScale(100), height: '100%' }]}>
-                            <Image
-                              source={{ uri: item?.image }}
-                              style={[
-                                styles.image,
-                                { width: moderateScale(100), height: '100%', flex: 1 },
-                              ]}
-                            />
-                          </View>
-                        ) : (
-                          <View style={[styles.image, { width: moderateScale(100), height: '100%' }]}>
-                            <Images.Logo />
-                          </View>
-                        )}
+                      {item?.image ? (
+                        <View style={[styles.image, { width: moderateScale(100), height: '100%' }]}>
+                          <Image
+                            source={{ uri: item?.image }}
+                            style={[
+                              styles.image,
+                              { width: moderateScale(100), height: '100%', flex: 1 },
+                            ]}
+                          />
+                        </View>
+                      ) : (
+                        <View style={[styles.image, { width: moderateScale(100), height: '100%' }]}>
+                          <Images.Logo />
+                        </View>
+                      )}
 
                       <View style={{ marginLeft: moderateScale(10) }}>
                         <CustomText

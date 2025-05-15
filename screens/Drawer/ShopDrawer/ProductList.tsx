@@ -5,8 +5,10 @@ import axios from 'axios';
 import { DEFAULT_URL, POST_PRODUCT_LIST } from '../../../utils/api';
 import Container from '../../../components/Container';
 import CustomHeader2 from '../../../components/Customs/Header/CustomHeader2';
-import { screenHeight, screenWidth } from '../../../components/Matrix/Matrix';
+import { moderateScale, screenHeight, screenWidth } from '../../../components/Matrix/Matrix';
 import SpecialCard from '../../../components/Cards/SpecialCard';
+import LinearGradient from 'react-native-linear-gradient';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 
 interface Props {
     navigation: any,
@@ -84,9 +86,57 @@ export const ProductList: FC<Props> = ({ navigation, route }) => {
         <Container>
             <CustomHeader2 title="Product List" />
             {loading ? (
-                <ActivityIndicator style={{
-                    flex: 1, backgroundColor: "#ffffff"
-                }} size={25} color="black" />
+                <FlatList
+                    data={[1, 2, 3, 4, 5, 6]}
+                    keyExtractor={item => item}
+                    numColumns={2}
+                    renderItem={({ item }) => (
+                        <View
+                            style={styles.cardContainer}
+                        >
+
+                            <ShimmerPlaceholder
+                                style={{
+                                    width: "100%",
+                                    height: "60%"
+                                    // height: moderateScale(120),
+                                }}
+                                LinearGradient={LinearGradient}
+                                shimmerStyle={{
+                                    alignSelf: 'center',
+                                    borderRadius: moderateScale(5),
+                                    marginTop: moderateScale(0),
+                                }}
+                                shimmerColors={['#E1E9EE', '#F2F8FC', '#E1E9EE']}
+                                duration={1500}
+                            />
+
+                            <ShimmerPlaceholder
+                                style={{ marginHorizontal: 10, width: "100%", height: 30 }}
+                                LinearGradient={LinearGradient}
+                                shimmerStyle={{
+                                    alignSelf: 'center',
+                                    marginTop: moderateScale(5),
+                                    borderRadius: moderateScale(3),
+                                }}
+                                shimmerColors={['#E1E9EE', '#F2F8FC', '#E1E9EE']}
+                                duration={1500}
+                            />
+
+                            <ShimmerPlaceholder
+                                style={{ margin: moderateScale(10), marginHorizontal: 10, width: "100%", height: 30 }}
+                                LinearGradient={LinearGradient}
+                                shimmerStyle={{
+                                    alignSelf: 'center',
+                                    marginTop: moderateScale(5),
+                                    borderRadius: moderateScale(3),
+                                }}
+                                shimmerColors={['#E1E9EE', '#F2F8FC', '#E1E9EE']}
+                                duration={1500}
+                            />
+                        </View>
+                    )}
+                />
             ) : (
                 <FlatList
                     data={product}
@@ -169,5 +219,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 14,
         textDecorationLine: 'line-through',
+    },
+    cardContainer: {
+        width: screenWidth * 0.415,
+        height: moderateScale(200),
+        borderRadius: moderateScale(10),
+        backgroundColor: 'white',
+        elevation: 5,
+        margin: moderateScale(10),
+        padding: moderateScale(5),
     },
 });

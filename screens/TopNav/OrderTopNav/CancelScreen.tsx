@@ -6,7 +6,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 
-import React, { useCallback,  useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FC } from 'react';
 import {
   StyleSheet,
@@ -25,11 +25,12 @@ import Container from '../../../components/Container';
 import OrderCard from '../../../components/Cards/OrderCard';
 import { orderStatus } from '../../../redux/Slice/OrderSlice';
 import Colors from '../../../utils/Colors';
+import OrderSkeleton from '@components/Skeleton/OrderSkeleton';
 
 interface Props { }
 
 const CancelScreen: FC<Props> = ({ navigation }: any) => {
-  const { data } = useSelector((state: any) => state.order);
+  const { data, loading } = useSelector((state: any) => state.order);
   const dispatch = useDispatch();
   const { user } = useSelector((state: any) => state.user);
   const [refreshing, setRefreshing] = useState(false);
@@ -53,42 +54,58 @@ const CancelScreen: FC<Props> = ({ navigation }: any) => {
 
   return (
     <Container>
-      {canceled.length > 0 ? (
-        <FlatList
-          data={canceled}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={Colors.orange}
-              colors={[Colors.orange]}
-              progressBackgroundColor="#fff"
-            />
-          }
-          showsVerticalScrollIndicator={false}
-          keyExtractor={item => item?.order_id}
-          renderItem={({ item }) => {
-            // console.log('=== item in the cancel list ===', item);
 
-            return (
-              <OrderCard
-                item={item}
-                handleNavigation={() => {
-                  navigation.navigate('OrderDetails', { id: item?.order_id });
+      {
+        loading ? (
+          <FlatList
+            data={[1, 2, 3, 4, 5, 6]}
+            keyExtractor={item => item}
+            renderItem={() => (
+              <OrderSkeleton />
+            )}
+          />
+        ) : (
+          <>
+            {canceled.length > 0 ? (
+              <FlatList
+                data={canceled}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    tintColor={Colors.orange}
+                    colors={[Colors.orange]}
+                    progressBackgroundColor="#fff"
+                  />
+                }
+                showsVerticalScrollIndicator={false}
+                keyExtractor={item => item?.order_id}
+                renderItem={({ item }) => {
+                  // console.log('=== item in the cancel list ===', item);
+
+                  return (
+                    <OrderCard
+                      item={item}
+                      handleNavigation={() => {
+                        navigation.navigate('OrderDetails', { id: item?.order_id });
+                      }}
+                      btnName="Cancelled"
+                    />
+                  );
                 }}
-                btnName="Cancelled"
               />
-            );
-          }}
-        />
-      ) : (
-        <CustomText
-          text="No Data Available"
-          weight="700"
-          size={20}
-          customStyle={{ flex: 1, alignSelf: 'center' }}
-        />
-      )}
+            ) : (
+              <CustomText
+                text="No Data Available"
+                weight="700"
+                size={20}
+                customStyle={{ flex: 1, alignSelf: 'center' }}
+              />
+            )}
+          </>
+        )
+      }
+
     </Container>
   );
 };

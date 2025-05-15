@@ -31,6 +31,7 @@ import OrderCard from '../../../components/Cards/OrderCard';
 import CustomText from '../../../components/Customs/CustomText';
 import Images from '../../../utils/Images';
 import { globalStyle } from '../../../utils/GlobalStyle';
+import OrderSkeleton from '@components/Skeleton/OrderSkeleton';
 
 interface Props {
     navigation: any
@@ -39,9 +40,12 @@ interface Props {
 const ActiveScreen: FC<Props> = ({ navigation }) => {
     const dispatch = useDispatch();
     const { user } = useSelector((state: any) => state.user);
-    const { data } = useSelector((state: any) => state.order);
+    const { data, loading } = useSelector((state: any) => state.order);
     const [refreshing, setRefreshing] = useState(false);
     const { pending } = data;
+
+    // console.log("--- active screen ----",active);
+
 
     const OrderStatus = async () => {
         return await dispatch(orderStatus(user?.email));
@@ -60,43 +64,58 @@ const ActiveScreen: FC<Props> = ({ navigation }) => {
 
     return (
         <View style={{ backgroundColor: "#fff", paddingTop: moderateScale(10), flex: 1 }} >
-            {pending.length > 0 ? (
-                <FlatList
-                    data={pending}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                            colors={['#000']}
-                            tintColor="#000"
-                        />
-                    }
-                    showsVerticalScrollIndicator={false}
-                    keyExtractor={item => item?.order_id}
-                    renderItem={({ item }) => (
-                        <OrderCard
-                            item={item}
-                            handleNavigation={() => {
-                                navigation.navigate('OrderDetails', {
-                                    id: item?.order_id,
-                                    type: 'active',
-                                    invoice: item?.invoices,
-                                });
-                            }}
-                        />
-                    )}
-                />
-            ) : (
-                <View style={[globalStyle.center,{flex:1}]} >
-                    <Images.Logo/>
-                    <CustomText
-                        text="No Data Available"
-                        weight="700"
-                        size={20}
-                        customStyle={{ flex: 1, alignSelf: 'center' }}
+
+            {
+                loading ? (
+                    <FlatList
+                        data={[1, 2, 3, 4, 5, 6]}
+                        keyExtractor={item => item}
+                        renderItem={() => (
+                            <OrderSkeleton />
+                        )}
                     />
-                </View>
-            )}
+                ) : (
+                    <>
+                        {pending.length > 0 ? (
+                            <FlatList
+                                data={pending}
+                                refreshControl={
+                                    <RefreshControl
+                                        refreshing={refreshing}
+                                        onRefresh={onRefresh}
+                                        colors={['#000']}
+                                        tintColor="#000"
+                                    />
+                                }
+                                showsVerticalScrollIndicator={false}
+                                keyExtractor={item => item?.order_id}
+                                renderItem={({ item }) => (
+                                    <OrderCard
+                                        item={item}
+                                        handleNavigation={() => {
+                                            navigation.navigate('OrderDetails', {
+                                                id: item?.order_id,
+                                                type: 'active',
+                                                invoice: item?.invoices,
+                                            });
+                                        }}
+                                    />
+                                )}
+                            />
+                        ) : (
+                            <View style={[globalStyle.center, { flex: 1 }]} >
+                                <Images.Logo />
+                                <CustomText
+                                    text="No Data Available"
+                                    weight="700"
+                                    size={20}
+                                    customStyle={{ flex: 1, alignSelf: 'center' }}
+                                />
+                            </View>
+                        )}
+                    </>
+                )
+            }
         </View>
     );
 };

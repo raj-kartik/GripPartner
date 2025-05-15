@@ -13,11 +13,12 @@ import { globalStyle } from '../../../../utils/GlobalStyle';
 import CustomIcon from '@components/Customs/CustomIcon';
 import Colors from '@utils/Colors';
 import StudioModal from '@components/Modal/StudioModal';
+import CourseSkeleton from '@components/Skeleton/CourseSkeleton';
 
 const OwnCourse = () => {
   const dispatch = useDispatch();
   const { user }: any = useSelector((state: any) => state?.user);
-  const { course }: any = useSelector((state: any) => state?.course);
+  const { course, loading }: any = useSelector((state: any) => state?.course);
   const [studioModal, setStudioModal] = useState(false);
   const [studio, setStudio] = useState<any>(null);
   const [studioText, setStudioText] = useState<string>('');
@@ -25,7 +26,7 @@ const OwnCourse = () => {
   const [refreshing, setRefreshing] = React.useState(false);
   const [filteredCourses, setFilteredCourses] = useState(course || []);
 
-  console.log("----- filteredCourses -----", filteredCourses);
+  // console.log("----- course -----", course);
 
   //   useEffect(() => {
   //   if (studio && !studioText) {
@@ -58,12 +59,17 @@ const OwnCourse = () => {
   );
 
   const fetchCourses = async () => {
-    await dispatch(getCourse(user?.id));
+    await dispatch(getCourse({ id: user?.id, studio_id: studio?.id }));
   };
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchCourses().then(() => setRefreshing(false));
   }, []);
+
+  // if (loading)
+  //   return (
+  //     <CourseSkeleton />)
 
   return (
     <Container>
@@ -76,7 +82,7 @@ const OwnCourse = () => {
         );
       }} />
 
-      <KeyboardAvoidingView style={{flex:1}} >
+      <KeyboardAvoidingView style={{ flex: 1 }} >
         <View style={[globalStyle.row, styles.inputView]} >
           <View style={[globalStyle.row, { flex: 1 }]} >
             <CustomIcon
@@ -109,29 +115,46 @@ const OwnCourse = () => {
           selectStudio={studio}
           handleStudio={(selectStudio: any) => {
             setStudio(selectStudio);
+            fetchCourses();
           }}
         />
 
-        <View style={{ flex: 1 }} >
-          {filteredCourses && filteredCourses.length > 0 ? <FlatList
-            data={filteredCourses}
-            keyboardShouldPersistTaps="handled"
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                tintColor={'#000'}
-                colors={['#000']}
-                progressBackgroundColor="#fff"
-              />
-            }
-            renderItem={({ item }) => { return <ProfileCourseCard item={item} /> }}
-            showsVerticalScrollIndicator={false}
-          /> : <View style={[globalStyle.center, { flex: 1 }]} >
-            <Images.Logo width={moderateScale(100)} height={moderateScale(100)} />
-            <CustomText text='No Course Found' weight='500' size={18} />
-          </View>}
-        </View>
+        {
+          loading ?
+            <FlatList
+              data={[1, 2, 3]}
+              keyExtractor={(item, index) => item}
+              renderItem={({ item }: any) => {
+                return <CourseSkeleton />
+              }}
+            />
+            : (
+              <View style={{ flex: 1 }} >
+
+                {filteredCourses && filteredCourses.length > 0 ? <FlatList
+                  data={filteredCourses}
+                  keyboardShouldPersistTaps="handled"
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                      tintColor={'#000'}
+                      colors={['#000']}
+                      progressBackgroundColor="#fff"
+                    />
+                  }
+                  renderItem={({ item }) => { return <ProfileCourseCard item={item} /> }}
+                  showsVerticalScrollIndicator={false}
+                /> : <View style={[globalStyle.center, { flex: 1 }]} >
+                  <Images.Logo width={moderateScale(100)} height={moderateScale(100)} />
+                  <CustomText text='No Course Found' weight='500' size={18} />
+                </View>}
+              </View>
+            )
+        }
+
+
+
       </KeyboardAvoidingView>
     </Container>
   );

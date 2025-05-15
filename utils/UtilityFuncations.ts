@@ -119,7 +119,7 @@ export const fetchLocationUtility = async (place: string) => {
       `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${place}&key=${locationApi}`,
     );
 
-    console.log('---- response in the location tracker ----', response?.data?.predictions);
+    // console.log('---- response in the location tracker ----', response?.data?.predictions);
     
     if (response?.status === 200) {
       return response?.data?.predictions;

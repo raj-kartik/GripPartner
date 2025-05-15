@@ -102,7 +102,7 @@ const CreateCoupons = () => {
         useCallback(() => {
             const fetchUser = async () => {
                 // await dispatch(userDetail());
-                await dispatch(getCourse(user?.id));
+                await dispatch(getCourse({ id: user?.id, studio_id: "" }));
                 await dispatch(getRetreat(user?.id));
             };
 

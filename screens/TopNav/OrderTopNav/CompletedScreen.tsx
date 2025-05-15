@@ -49,6 +49,7 @@ import makeApiRequest from '../../../utils/ApiService';
 import { DEFAULT_URL, GET_STORE_SHOP } from '../../../utils/api';
 import StoreOrderCard from '../../../components/Cards/StoreOrderCard';
 import Images from '../../../utils/Images';
+import OrderSkeleton from '@components/Skeleton/OrderSkeleton';
 
 interface Props { }
 
@@ -181,40 +182,56 @@ const CompletedScreen: FC<Props> = ({ navigation }: any) => {
           />
         </TouchableOpacity>
       </View>
-      {typeOrder === 'Online' && completed.length > 0 ? (
-        <FlatList
-          data={completed}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={item => item?.order_id}
-          renderItem={({ item }) => {
-            console.log('=== item in the completed ===', item);
 
-            return (
-              <OrderCard
-                item={item}
-                handleNavigation={() => {
-                  navigation.navigate('CompletedOrderDetails', {
-                    id: item?.order_id,
-                    invoiceId: item?.invoices[0]?.invoice_id,
-                  });
+      {
+        loading ? (
+          <FlatList
+            data={[1, 2, 3, 4, 5, 6]}
+            keyExtractor={item => item}
+            renderItem={() => (
+              <OrderSkeleton />
+            )}
+          />
+        ) : (
+          <>
+            {typeOrder === 'Online' && completed.length > 0 ? (
+              <FlatList
+                data={completed}
+                showsVerticalScrollIndicator={false}
+                keyExtractor={item => item?.order_id}
+                renderItem={({ item }) => {
+                  console.log('=== item in the completed ===', item);
+
+                  return (
+                    <OrderCard
+                      item={item}
+                      handleNavigation={() => {
+                        navigation.navigate('CompletedOrderDetails', {
+                          id: item?.order_id,
+                          invoiceId: item?.invoices[0]?.invoice_id,
+                        });
+                      }}
+                      btnName="Completed"
+                    />
+                  );
                 }}
-                btnName="Completed"
               />
-            );
-          }}
-        />
-      ) : typeOrder === 'In-Store' && storeData && storeData.length > 0 ? (
-        <FlatList
-          data={storeData}
-          keyExtractor={(item: any) => item?.id}
-          renderItem={({ item }) => <StoreOrderCard item={item} />}
-        />
-      ) : (
-        <View style={[globalStyle.center, { flex: 1 }]}>
-          <Images.Logo width={100} height={100} />
-          <CustomText text="No data Available" weight="500" size={18} />
-        </View>
-      )}
+            ) : typeOrder === 'In-Store' && storeData && storeData.length > 0 ? (
+              <FlatList
+                data={storeData}
+                keyExtractor={(item: any) => item?.id}
+                renderItem={({ item }) => <StoreOrderCard item={item} />}
+              />
+            ) : (
+              <View style={[globalStyle.center, { flex: 1 }]}>
+                <Images.Logo width={100} height={100} />
+                <CustomText text="No data Available" weight="500" size={18} />
+              </View>
+            )}
+          </>
+        )
+      }
+
     </View>
   );
 };

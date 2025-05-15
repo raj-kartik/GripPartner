@@ -13,21 +13,24 @@ import CustomText from '../../../../components/Customs/CustomText'
 import CustomButton from '../../../../components/Customs/CustomButton'
 import { POST_CHANGE_TRAINER_COUPON_STATUS } from '../../../../utils/api'
 import makeApiRequest from '../../../../utils/ApiService'
-import CustomToast  from '../../../../components/Customs/CustomToast'
+import CustomToast from '../../../../components/Customs/CustomToast'
 import { getCouponTrainer } from '../../../../redux/Slice/CouponSlice'
 import CouponCard from '../../../../components/Cards/CouponCard'
 import Colors from '../../../../utils/Colors'
+import CouponSkeleton from '@components/Skeleton/CouponSkeleton'
+import Images from '@utils/Images'
 
 const Coupons = () => {
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { user } = useSelector((state: any) => state?.user);
-  const { coupon } = useSelector((state: any) => state?.coupon);
+  const { coupon, loading } = useSelector((state: any) => state?.coupon);
+  const couponData = useSelector((state: any) => state?.coupon);
   const [isActiveModal, setIsActiveModal] = useState<boolean>(false);
   const [selectedCoupon, setSelectedCoupon] = useState<any>(null);
 
-  // console.log("=== coupon in trainer coupon ===", selectedCoupon);
+  // console.log("=== coupon in trainer coupon ===", couponData);
 
 
 
@@ -69,19 +72,51 @@ const Coupons = () => {
 
   return (
     <Container>
-      <CustomHeader2 handleMore={()=>{navigation.navigate('CreateCoupons')}} title="Created Coupons" isMore={true} iconType="MaterialIcons" iconName="add" />
+      <CustomHeader2 handleMore={() => { navigation.navigate('CreateCoupons') }} title="Created Coupons" isMore={true} iconType="MaterialIcons" iconName="add" />
+
 
       {/* all coupons listing */}
-      <FlatList data={coupon} keyExtractor={item => item?.id}
-        renderItem={({ item }: any) => {
-          return (
-            <CouponCard item={item} handlePress={() => {
-              setIsActiveModal(true);
-              setSelectedCoupon(item)
-            }} />
-          )
-        }}
-      />
+
+      {
+        loading ? (
+          <FlatList
+            data={[1, 2, 3, 4, 5, 6]}
+            keyExtractor={item => item}
+            renderItem={() => (
+              <CouponSkeleton />
+            )}
+          />
+        ) : (
+
+          <>
+            {
+              coupon && coupon.length > 0 ? (
+                <FlatList data={coupon} keyExtractor={item => item?.id}
+                  renderItem={({ item }: any) => {
+                    return (
+                      <CouponCard item={item} handlePress={() => {
+                        setIsActiveModal(true);
+                        setSelectedCoupon(item)
+                      }} />
+                    )
+                  }}
+                />
+              ) : (
+                <View>
+                  <Images.Logo
+                    width={moderateScale(150)}
+                    height={moderateScale(150)}
+                  />
+                  <CustomText text='No Data Available' weight='500' />
+                </View>
+              )
+            }
+          </>
+
+        )
+      }
+
+
 
 
       {

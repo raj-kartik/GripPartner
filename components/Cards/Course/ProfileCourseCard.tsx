@@ -64,7 +64,7 @@ const ProfileCourseCard = ({ item }: any) => {
             <View style={{ flex: 0.6 }}>
                 <View style={{ marginTop: moderateScale(5) }}>
                     <CustomText text={item?.name} size={20} weight="700" customStyle={{ marginBottom: moderateScale(1) }} />
-                    <CustomText text={item?.trainer} color={Colors.gray_font} weight="500" />
+                    <CustomText text={item?.studio_name || "No Studio Joined"} color={Colors.gray_font} weight="500" />
                 </View>
 
                 {item["slot and time"] ? (

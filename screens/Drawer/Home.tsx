@@ -31,6 +31,11 @@ import IsKycCard from '../../components/Cards/IsKycCard';
 import { getWalletBalance } from '../../redux/Slice/WalletSlice';
 import { addToCart } from '../../redux/Slice/AddToCartSlice';
 import { getStudioList } from '@redux/Slice/StudioSlice';
+import CourseSkeleton from '@components/Skeleton/CourseSkeleton';
+import RetreatSkeleton from '@components/Skeleton/RetreatSkeleton';
+import ShopSkeleton from '@components/Skeleton/ShopSkeleton';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import LinearGradient from 'react-native-linear-gradient';
 
 const getCurrentYearMonth = () => {
   const date = new Date();
@@ -42,8 +47,8 @@ const getCurrentYearMonth = () => {
 const Home = ({ navigation }: any) => {
   const [token, setToken] = useState();
   const dispatch = useDispatch();
-  const { course } = useSelector((state: any) => state?.course);
-  const { retreat } = useSelector((state: any) => state?.retreat);
+  const { course, loading: courseLoading } = useSelector((state: any) => state?.course);
+  const { retreat, loading: retreatloading } = useSelector((state: any) => state?.retreat);
   const [loading, setLoading] = useState(false);
   const [shop, setShop] = useState<[]>([]);
   const { location } = useSelector((state: any) => state?.location)
@@ -59,7 +64,7 @@ const Home = ({ navigation }: any) => {
 
 
   // console.log("--- user in the home page ---", user);
-  
+
 
   useEffect(() => {
     CourseGraph();
@@ -74,11 +79,11 @@ const Home = ({ navigation }: any) => {
   );
 
   const fetchRetreatCourse = async () => {
-    await dispatch(getCourse(user?.id));
+    await dispatch(getCourse({ id: user?.id, studio_id: "" }));
     await dispatch(getRetreat(user?.id));
     await dispatch(fetchLocation({}));
     await dispatch(getWalletBalance(user?.id));
-     await dispatch(getStudioList(user?.id));
+    await dispatch(getStudioList(user?.id));
     await BannerList();
     await dispatch(addToCart());
   }
@@ -181,8 +186,8 @@ const Home = ({ navigation }: any) => {
   // console.log("==== user id ====", user);
 
 
-  if (loading)
-    return <ActivityIndicator size="large" style={{ flex: 1, backgroundColor: "#fff" }} color="#000" />
+  // if (loading)
+  //   return <ActivityIndicator size="large" style={{ flex: 1, backgroundColor: "#fff" }} color="#000" />
 
   const CourseGraph = async () => {
     try {
@@ -228,7 +233,7 @@ const Home = ({ navigation }: any) => {
 
   return (
     <Container>
-      <HomeHeader1/>
+      <HomeHeader1 />
 
       {/* <Images.Logo width={100} height={100} stroke="#000" style={{ backgroundColor: "red" }} /> */}
       {
@@ -240,105 +245,157 @@ const Home = ({ navigation }: any) => {
           }
         >
 
-          <LineChart
-            data={{
-              labels: dates && dates.length > 0 ? dates : [getCurrentYearMonth()], // Default label if dates is empty
-              datasets: [
-                {
-                  data: graphData && graphData.length > 0 ? graphData : [0], // Default data if graphData is empty
-                },
-              ],
-            }}
-            width={screenWidth * 0.95}
-            height={moderateScale(200)}
-            yAxisInterval={1}
-            chartConfig={{
-              backgroundColor: '#e26a00',
-              backgroundGradientTo: '#ffa726',
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
-              propsForDots: {
-                r: '6',
-                strokeWidth: '2',
-                stroke: '#ffa726',
-              },
-            }}
-            style={{
-              marginVertical: 8,
-              borderRadius: 16,
-            }}
-          />
-
-          {course && course.length > 0 && (
-            <View style={{ marginBottom: moderateScale(20), marginTop: moderateScale(10) }}>
-              <SubHeader
-                title="My Courses"
-                handlePress={() => {
-                  // console.log('--click in the courses ---');
-                  navigation.navigate('OwnCourse');
+          {
+            !graphData ? (
+              <ShimmerPlaceholder LinearGradient={LinearGradient} shimmerStyle={{ borderRadius: 10 }}
+                shimmerColors={['#E1E9EE', '#F2F8FC', '#E1E9EE']}
+                duration={1500} style={{ width: screenWidth * .95, height: moderateScale(200), }} />
+            ) : (
+              <LineChart
+                data={{
+                  labels: dates && dates.length > 0 ? dates : [getCurrentYearMonth()], // Default label if dates is empty
+                  datasets: [
+                    {
+                      data: graphData && graphData.length > 0 ? graphData : [0], // Default data if graphData is empty
+                    },
+                  ],
                 }}
-                isMore={true}
-              />
-              <FlatList
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                data={course.slice(0, 3)}
-                keyExtractor={(item: any) => item?.id}
-                renderItem={({ item }) => {
-                  return <CourseCard1 item={item} navigation={navigation} />;
+                width={screenWidth * 0.95}
+                height={moderateScale(200)}
+                yAxisInterval={1}
+                chartConfig={{
+                  backgroundColor: '#e26a00',
+                  backgroundGradientTo: '#ffa726',
+                  decimalPlaces: 0,
+                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  style: {
+                    borderRadius: 16,
+                  },
+                  propsForDots: {
+                    r: '6',
+                    strokeWidth: '2',
+                    stroke: '#ffa726',
+                  },
+                }}
+                style={{
+                  marginVertical: 8,
+                  borderRadius: 16,
                 }}
               />
-            </View>
-          )}
+            )
+          }
 
-          {retreat && retreat.length > 0 && (
-            <View style={{ marginBottom: moderateScale(20) }}>
-              <SubHeader
-                title="Own Retreats"
-                handlePress={() => {
-                  // console.log('--click in the courses ---');
-                  navigation.navigate('OwnRetreat');
-                }}
-                isMore={true}
-              />
-              <FlatList
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                data={retreat.slice(0, 3)}
-                keyExtractor={(item: any) => item?.id}
-                renderItem={({ item }) => {
-                  // console.log("==== item in the retreat ====", item);
 
-                  return <RetreatCard1 item={item} navigation={navigation} />;
-                }}
-              />
-            </View>
-          )}
+          {
+            courseLoading ? <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={[1, 2, 3]}
+              keyExtractor={(item, index) => item}
+              renderItem={({ item }: any) => {
+                return <CourseSkeleton />
+              }}
+            /> : (
+              <>
+                {course && course.length > 0 && (
+                  <View style={{ marginBottom: moderateScale(20), marginTop: moderateScale(10) }}>
+                    <SubHeader
+                      title="My Courses"
+                      handlePress={() => {
+                        // console.log('--click in the courses ---');
+                        navigation.navigate('OwnCourse');
+                      }}
+                      isMore={true}
+                    />
+                    <FlatList
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      data={course.slice(0, 3)}
+                      keyExtractor={(item: any) => item?.id}
+                      renderItem={({ item }) => {
+                        return <CourseCard1 item={item} navigation={navigation} />;
+                      }}
+                    />
+                  </View>
+                )}</>
+            )
+          }
 
-          {shop && shop.length > 0 && (
-            <View style={{ marginBottom: moderateScale(20) }}>
-              <SubHeader
-                title="Shop Now"
-                handlePress={() => {
-                  console.log('--- click in teh retreat');
-                  navigation.navigate('ECom');
-                }}
-                isMore={true}
-              />
+          {
+            retreatloading ? <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={[1, 2, 3]}
+              keyExtractor={(item, index) => item}
+              renderItem={({ item }: any) => {
+                return <RetreatSkeleton />
+              }}
+            /> : (
+              <>
+                {retreat && retreat.length > 0 && (
+                  <View style={{ marginBottom: moderateScale(20) }}>
+                    <SubHeader
+                      title="Own Retreats"
+                      handlePress={() => {
+                        // console.log('--click in the courses ---');
+                        navigation.navigate('OwnRetreat');
+                      }}
+                      isMore={true}
+                    />
+                    <FlatList
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      data={retreat.slice(0, 3)}
+                      keyExtractor={(item: any) => item?.id}
+                      renderItem={({ item }) => {
+                        // console.log("==== item in the retreat ====", item);
 
-              <FlatList
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                data={shop.slice(0, 3)}
-                keyExtractor={(item: any) => item?.id}
-                renderItem={({ item }) => <ShopCard1 item={item} />}
-              />
-            </View>
-          )}
+                        return <RetreatCard1 item={item} navigation={navigation} />;
+                      }}
+                    />
+                  </View>
+                )}</>
+            )
+          }
+
+
+          {
+            loading ? <FlatList
+              data={[1, 2, 3]}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => item}
+              renderItem={({ item }: any) => {
+                return <ShopSkeleton />
+              }}
+            /> : (
+              <>
+                {shop && shop.length > 0 && (
+                  <View style={{ marginBottom: moderateScale(20) }}>
+                    <SubHeader
+                      title="Shop Now"
+                      handlePress={() => {
+                        console.log('--- click in teh retreat');
+                        navigation.navigate('ECom');
+                      }}
+                      isMore={true}
+                    />
+
+                    <FlatList
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      data={shop.slice(0, 3)}
+                      keyExtractor={(item: any) => item?.id}
+                      renderItem={({ item }) => <ShopCard1 item={item} />}
+                    />
+                  </View>
+                )}
+              </>
+            )
+          }
+
+
 
 
           <View style={{ marginBottom: moderateScale(70) }} />

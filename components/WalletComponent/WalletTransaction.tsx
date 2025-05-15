@@ -9,6 +9,7 @@ import Images from '../../utils/Images';
 import { globalStyle } from '../../utils/GlobalStyle';
 import CustomText from '../Customs/CustomText';
 import moment from 'moment';
+import WalletSkeleton from '@components/Skeleton/WalletSkeleton';
 
 const WalletTransaction = () => {
   const [loading, setLoading] = useState(false);
@@ -55,78 +56,93 @@ const WalletTransaction = () => {
 
   return (
     <View style={{ marginTop: moderateScale(5), flex: 1 }}>
-      {transaction && transaction.length > 0 ? (
-        <FlatList
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={Colors.orange}
-              colors={[Colors.orange]}
-              progressBackgroundColor="#fff"
-            />
-          }
-          data={transaction}
-          style={{ flex: 1 }}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item: any) => item?.id}
-          renderItem={({ item }: any) => (
-            <View
-              style={[
-                globalStyle.betweenCenter,
-                styles.transactionContainer,
-                { backgroundColor: '#fff' },
-              ]}>
-              <View style={{ flex: 0.8 }}>
-                <CustomText
-                  text={item?.name || 'Wallet Transaction'}
-                  size={20}
-                  weight="600"
-                  color={item?.type === 'debit' ? Colors.red : Colors.success}
-                />
-                {/* <CustomText text={item?.date.slice(0,10)} color='#000' size={14} weight='500' /> */}
-                <CustomText text={moment(item?.date).format('MMMM Do YYYY, h:mm a')} size={14} weight='500' />
-                <CustomText
-                  // color={item?.type === 'debit' ? Colors.red : Colors.success}
-                  color={Colors.gray_font}
-                  text={`₹${item?.amount}`}
-                  size={16}
-                  weight="600"
-                  customStyle={{ marginTop: moderateScale(3) }}
-                />
-              </View>
-              <View style={[globalStyle.center, { flex: 0.2 }]}>
-                {item?.type === 'debit' ? (
-                  <View>
-                    <Images.Logo />
-                    <Images.Redcoin
-                      width={moderateScale(50)}
-                      stroke="#ff0000"
-                      height={moderateScale(50)}
-                    />
-                  </View>
-                ) : (
-                  <View>
-                    {/* <Images.Logo width={10} height={50} fill="#000" stroke="#000" /> */}
-                    <Images.Coins
-                      width={moderateScale(50)}
-                      height={moderateScale(50)}
-                    />
+      {
+        loading ? (
+          <FlatList
+            data={[1, 2, 3, 4]}
+            keyExtractor={item => item}
+            renderItem={() => (
+              <WalletSkeleton />
+            )}
+          />
+        ) : (
+          <>
+            {transaction && transaction.length > 0 ? (
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    tintColor={Colors.orange}
+                    colors={[Colors.orange]}
+                    progressBackgroundColor="#fff"
+                  />
+                }
+                data={transaction}
+                style={{ flex: 1 }}
+                showsVerticalScrollIndicator={false}
+                keyExtractor={(item: any) => item?.id}
+                renderItem={({ item }: any) => (
+                  <View
+                    style={[
+                      globalStyle.betweenCenter,
+                      styles.transactionContainer,
+                      { backgroundColor: '#fff' },
+                    ]}>
+                    <View style={{ flex: 0.8 }}>
+                      <CustomText
+                        text={item?.name || 'Wallet Transaction'}
+                        size={20}
+                        weight="600"
+                        color={item?.type === 'debit' ? Colors.red : Colors.success}
+                      />
+                      {/* <CustomText text={item?.date.slice(0,10)} color='#000' size={14} weight='500' /> */}
+                      <CustomText text={moment(item?.date).format('MMMM Do YYYY, h:mm a')} size={14} weight='500' />
+                      <CustomText
+                        // color={item?.type === 'debit' ? Colors.red : Colors.success}
+                        color={Colors.gray_font}
+                        text={`₹${item?.amount}`}
+                        size={16}
+                        weight="600"
+                        customStyle={{ marginTop: moderateScale(3) }}
+                      />
+                    </View>
+                    <View style={[globalStyle.center, { flex: 0.2 }]}>
+                      {item?.type === 'debit' ? (
+                        <View>
+                          <Images.Logo />
+                          <Images.Redcoin
+                            width={moderateScale(50)}
+                            stroke="#ff0000"
+                            height={moderateScale(50)}
+                          />
+                        </View>
+                      ) : (
+                        <View>
+                          {/* <Images.Logo width={10} height={50} fill="#000" stroke="#000" /> */}
+                          <Images.Coins
+                            width={moderateScale(50)}
+                            height={moderateScale(50)}
+                          />
+                        </View>
+                      )}
+                    </View>
                   </View>
                 )}
-              </View>
-            </View>
-          )}
-        />
-      ) : (
-        <CustomText
-          text="No Transactions"
-          color={Colors.gray_font}
-          size={18}
-          weight="500"
-          customStyle={{ textAlign: 'center' }}
-        />
-      )}
+              />
+            ) : (
+              <CustomText
+                text="No Transactions"
+                color={Colors.gray_font}
+                size={18}
+                weight="500"
+                customStyle={{ textAlign: 'center' }}
+              />
+            )}
+
+          </>
+        )
+      }
     </View>
   );
 };

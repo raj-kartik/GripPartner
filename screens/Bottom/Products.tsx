@@ -36,6 +36,8 @@ import SubHeader from '../../components/Customs/Header/SubHeader1';
 import SpecialCard from '../../components/Cards/SpecialCard';
 import Colors from '../../utils/Colors';
 import { globalStyle } from '../../utils/GlobalStyle';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import LinearGradient from 'react-native-linear-gradient';
 
 const bannerEndpoints = [
   GET_YOGA_MAT_BANNER,
@@ -57,8 +59,85 @@ const Section = React.memo(({ index, banner, products, loading }: any) => {
   return (
     <View style={{ height: screenHeight }}>
       {loading ? (
-        // <ActivityIndicator size="large" style={{ marginTop: 20 }}  />
-        <View />
+        <View style={{ marginBottom: moderateScale(100), flex: 1 }} >
+
+          <ShimmerPlaceholder
+            style={{
+              width: screenWidth * .95,
+              height: moderateScale(300)
+            }}
+            LinearGradient={LinearGradient}
+            shimmerStyle={{ borderRadius: 10 }}
+            shimmerColors={['#E1E9EE', '#F2F8FC', '#E1E9EE']}
+            duration={1500}
+          />
+
+          <ShimmerPlaceholder
+            style={{
+              width: screenWidth * .95,
+              height: moderateScale(50),
+
+            }}
+            LinearGradient={LinearGradient}
+            shimmerStyle={{ borderRadius: moderateScale(10), marginTop: moderateScale(10) }}
+            shimmerColors={['#E1E9EE', '#F2F8FC', '#E1E9EE']}
+            duration={1500}
+          />
+
+          <FlatList
+            data={[1, 2, 3, 4, 5, 6]}
+            keyExtractor={item => item}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <View
+                style={styles.cardContainer}
+              >
+
+                <ShimmerPlaceholder
+                  style={{
+                    width: "100%",
+                    height: "60%"
+                    // height: moderateScale(120),
+                  }}
+                  LinearGradient={LinearGradient}
+                  shimmerStyle={{
+                    alignSelf: 'center',
+                    borderRadius: moderateScale(5),
+                    marginTop: moderateScale(0),
+                  }}
+                  shimmerColors={['#E1E9EE', '#F2F8FC', '#E1E9EE']}
+                  duration={1500}
+                />
+
+                <ShimmerPlaceholder
+                  style={{ marginHorizontal: 10, width: "100%", height: 30 }}
+                  LinearGradient={LinearGradient}
+                  shimmerStyle={{
+                    alignSelf: 'center',
+                    marginTop: moderateScale(5),
+                    borderRadius: moderateScale(3),
+                  }}
+                  shimmerColors={['#E1E9EE', '#F2F8FC', '#E1E9EE']}
+                  duration={1500}
+                />
+
+                <ShimmerPlaceholder
+                  style={{ margin: moderateScale(10), marginHorizontal: 10, width: "100%", height: 30 }}
+                  LinearGradient={LinearGradient}
+                  shimmerStyle={{
+                    alignSelf: 'center',
+                    marginTop: moderateScale(5),
+                    borderRadius: moderateScale(3),
+                  }}
+                  shimmerColors={['#E1E9EE', '#F2F8FC', '#E1E9EE']}
+                  duration={1500}
+                />
+              </View>
+            )}
+          />
+
+
+        </View>
       ) : (
         <>
           {banner && banner.length > 0 && (
@@ -237,4 +316,14 @@ const Products = ({ navigation }: any) => {
 
 export default Products;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  cardContainer: {
+    width: screenWidth * 0.415,
+    height: moderateScale(200),
+    borderRadius: moderateScale(10),
+    backgroundColor: 'white',
+    elevation: 5,
+    margin: moderateScale(10),
+    padding: moderateScale(5),
+  },
+});

@@ -10,7 +10,8 @@
       "@assets/*": ["assets/*"],
       "@constants/*": ["components/constants/*"],
       "@hooks/*": ["components/Hooks/*"],
-      "@cards/*": ["components/Cards/*"]
+      "@cards/*": ["components/Cards/*"],
+      "@skull/": ["components/Skeleton"]
     }
   }
 }
