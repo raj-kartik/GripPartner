@@ -36,6 +36,7 @@ import RetreatSkeleton from '@components/Skeleton/RetreatSkeleton';
 import ShopSkeleton from '@components/Skeleton/ShopSkeleton';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
+import { OneSignal } from 'react-native-onesignal';
 
 const getCurrentYearMonth = () => {
   const date = new Date();
@@ -64,6 +65,22 @@ const Home = ({ navigation }: any) => {
 
 
   // console.log("--- user in the home page ---", user);
+
+  useEffect(() => {
+    const playerId = async () => {
+      OneSignal.User.pushSubscription.addEventListener('change', (pushSubscription) => {
+        const playerId = pushSubscription.current.id;
+        if (playerId) {
+          console.log('OneSignal Player ID:', playerId);
+          // Use or store the playerId as needed
+        } else {
+          console.log('Player ID not yet available');
+        }
+      });
+    }
+
+    playerId();
+  })
 
 
   useEffect(() => {
@@ -237,7 +254,7 @@ const Home = ({ navigation }: any) => {
 
       {/* <Images.Logo width={100} height={100} stroke="#000" style={{ backgroundColor: "red" }} /> */}
       {
-        user?.is_registred ? <ScrollView
+        user?.is_kyc ? <ScrollView
           style={{ marginTop: moderateScale(20), paddingBottom: moderateScale(100) }}
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -292,6 +309,7 @@ const Home = ({ navigation }: any) => {
               horizontal
               showsHorizontalScrollIndicator={false}
               data={[1, 2, 3]}
+              contentContainerStyle={{ columnGap: moderateScale(10), marginLeft: moderateScale(5) }}
               keyExtractor={(item, index) => item}
               renderItem={({ item }: any) => {
                 return <CourseSkeleton />

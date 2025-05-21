@@ -38,6 +38,7 @@ import Colors from '../../utils/Colors';
 import { globalStyle } from '../../utils/GlobalStyle';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 
 const bannerEndpoints = [
   GET_YOGA_MAT_BANNER,
@@ -55,7 +56,24 @@ const categoryEndpoints = [
   GET_SPORTS_PRODUCT,
 ];
 
+
+
 const Section = React.memo(({ index, banner, products, loading }: any) => {
+
+
+  console.log("---- products -----",products);
+  
+  const navigation = useNavigation();
+  const sentFun = (id: any) => {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'ProductList',
+        params: {
+          categoryId: id,
+        },
+      }),
+    );
+  };
   return (
     <View style={{ height: screenHeight }}>
       {loading ? (
@@ -166,7 +184,11 @@ const Section = React.memo(({ index, banner, products, loading }: any) => {
             <View style={{ marginTop: moderateScale(10) }}>
               <View style={[globalStyle.betweenCenter]}>
                 <CustomText text={products?.name} weight="700" size={22} />
-                <Pressable>
+                <Pressable
+                  onPress={() => {
+                    sentFun(products?.category);
+                  }}
+                >
                   <CustomText
                     size={14}
                     text="View all"
@@ -198,6 +220,17 @@ const Products = ({ navigation }: any) => {
   const [bannerMap, setBannerMap] = useState<any>({});
   const [productMap, setProductMap] = useState<any>({});
   const [loadingMap, setLoadingMap] = useState<any>({});
+
+  const sentFun = (id: number) => {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'ProductList',
+        params: {
+          categoryId: id,
+        },
+      }),
+    );
+  };
 
   const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 50 });
 

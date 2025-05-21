@@ -17,19 +17,23 @@ const initialState: any = {
 export const getCourse = createAsyncThunk(
   'course/getCourse',
   async ({id, studio_id}: CoursePayload, ThunkAPI) => {
-    console.log('--- studio_id in the course list ----', studio_id);
+    // console.log('--- studio_id in the course list ----', studio_id);
 
     try {
       const response: any = await makeApiRequest({
         method: 'POST',
-        url: `user-course-list?id=${id}`,
+        url: `user-course-list`,
         baseUrl: BASE_URL,
         data: {
+          id: id,
           studio_id: studio_id || null,
         },
       });
 
-      console.log('----- response.courses =======', response.courses);
+      // console.log(
+      //   '----- response.courses in filter data =======',
+      //   response.courses,
+      // );
 
       if (response?.courses) {
         return response.courses;

@@ -9,7 +9,7 @@ import Images from "../../utils/Images";
 
 const RetreatCard1 = ({ item, userId, width = screenWidth * .75 }: any) => {
   const navigation = useNavigation();
-  console.log("====== item in the retreat card =====", item);
+  // console.log("====== item in the retreat card =====", item);
 
   const SentToRetreat = (item: any, id: any) => {
     console.log(item, 'vff');
@@ -127,47 +127,46 @@ const RetreatCard1 = ({ item, userId, width = screenWidth * .75 }: any) => {
         {/* <CustomText text='Location' /> */}
         <View style={[globalStyle.flex, { marginTop: moderateScale(10) }]}>
           <CustomIcon type="Ionicons" size={18} name="location-sharp" />
-          <CustomText text={item?.retreat_location} weight="500" size={13} />
+          <CustomText text={item?.retreat_location} weight="500" size={15} />
         </View>
 
-        <View
-          style={[globalStyle.row, { marginTop: moderateScale(0), flex: 0.5 }]}>
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 5,
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              marginRight: moderateScale(10),
-            }}>
-            {/* <Icon name="groups" size={22} color={'black'} /> */}
+        <View style={[globalStyle.row, { marginTop: moderateScale(5) }]} >
+          <CustomIcon type="Feather" name="user" />
+          <CustomText
+            family="Roboto-Regular"
+            size={15}
+            weight="500"
+            text={`${item?.group_size} person`}
+            customStyle={{ marginLeft: moderateScale(2) }}
+          />
+        </View>
+
+        <View style={[globalStyle.row]} >
+          <View style={[globalStyle.row, { marginTop: moderateScale(5) }]} >
+            <CustomIcon type="Feather" name="sun" />
             <CustomText
               family="Roboto-Regular"
-              size={14}
-              text={`${item?.group_size} Person`}
+              weight="500"
+              size={15}
+              text={`${item?.no_of_days} days`}
+              customStyle={{ marginLeft: moderateScale(2) }}
             />
           </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 5,
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-            }}>
-            {/* <Icon
-                name="calendar"
-                type="font-awesome"
-                size={16}
-                color={'black'}
-              /> */}
+          <View style={[globalStyle.row, { marginLeft: moderateScale(5) }]} >
+            <CustomIcon type="Feather" name="moon" />
             <CustomText
               family="Roboto-Regular"
-              size={14}
-              text={`${item?.no_of_days} Days`}
+              weight="500"
+              size={15}
+              text={`${item?.no_of_nights} nights`}
+              customStyle={{ marginLeft: moderateScale(2) }}
             />
           </View>
+
         </View>
+
+
         <CustomText
           size={14}
           weight="500"

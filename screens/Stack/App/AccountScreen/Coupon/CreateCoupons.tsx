@@ -25,7 +25,7 @@ import { globalStyle } from '../../../../../utils/GlobalStyle';
 import CustomIcon from '../../../../../components/Customs/CustomIcon';
 import makeApiRequest from '../../../../../utils/ApiService';
 import { POST_ADD_COUPON } from '../../../../../utils/api';
-import CustomToast  from '../../../../../components/Customs/CustomToast';
+import CustomToast from '../../../../../components/Customs/CustomToast';
 import CustomHeader2 from '../../../../../components/Customs/Header/CustomHeader2';
 import Colors from '../../../../../utils/Colors';
 import CalendarPicker from 'react-native-calendar-picker';
@@ -174,8 +174,8 @@ const CreateCoupons = () => {
                                 }
                             });
 
-                            console.log("==== response in the coupon create ====",response);
-                            
+                            console.log("==== response in the coupon create ====", response);
+
                             if (response?.status === 'success') {
                                 navigation.navigate('CouponSuccess');
                             }
@@ -569,7 +569,7 @@ const CreateCoupons = () => {
                                                     onChange={() => {
 
                                                         console.log("---- hello ----");
-                                                        
+
                                                         // setFieldValue('isSelectAll', !values.isSelectAll);
                                                     }}
                                                 />
@@ -761,7 +761,19 @@ const CreateCoupons = () => {
                                     )} */}
                                 </View>
                             </ScrollView>
-                            <CustomButton title="Save" onPress={handleSubmit} />
+                            <CustomButton title="Save" onPress={
+                                () => {
+                                    if(user?.is_registred){
+                                        handleSubmit();
+                                    }
+                                    else{
+                                        CustomToast({
+                                            type:"info",
+                                            text1:"Your KYC is pending, Please Let is Verify first",
+                                            text2:""
+                                        })
+                                    }
+                                }} />
                         </KeyboardAvoidingView>
                     );
                 }}

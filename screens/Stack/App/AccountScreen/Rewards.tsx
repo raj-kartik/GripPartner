@@ -1,4 +1,4 @@
-import { Alert, Platform, StyleSheet, Share, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { Alert, Platform, StyleSheet, Share, Text, ToastAndroid, TouchableOpacity, View, StatusBar } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import Container from '../../../../components/Container';
 import { useDispatch, useSelector } from 'react-redux'
@@ -91,7 +91,10 @@ const Rewards = () => {
     // console.log("==== referral ====", data);
 
     return (
-        <Container status="#000" isTopPadding={false} >
+        <View style={{ flex: 1, backgroundColor: "#fff" }} >
+            <StatusBar
+                backgroundColor="#000"
+            />
             <CustomHeader2 title="Reward" bg="#000" color="#fff" customStyle={{ paddingHorizontal: moderateScale(10), margin: 0, width: screenWidth, alignSelf: "center" }} />
             <View style={[globalStyle.center, styles.profile]} >
                 <View style={[globalStyle.center, styles.profileView]} >
@@ -131,7 +134,7 @@ const Rewards = () => {
                 </View>
 
             </View>
-        </Container>
+        </View>
     )
 }
 

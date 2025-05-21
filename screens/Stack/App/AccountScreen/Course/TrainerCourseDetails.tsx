@@ -24,6 +24,11 @@ const TrainerCourseDetails = (props: any) => {
     const [first, setFirst] = useState(null);
     const [last, setLast] = useState(null);
     const { course_id } = props.route?.params;
+
+
+    console.log("---- data in the course details ----", data);
+
+
     useFocusEffect(
         useCallback(() => {
             CourseListDetail();
@@ -40,7 +45,7 @@ const TrainerCourseDetails = (props: any) => {
                 url: TRAINER_COURSE_DETAILS(course_id)
             });
 
-            console.log("==== reponse in the course details ====", response);
+            // console.log("==== reponse in the course details ====", response);
 
             if (response) {
                 setData(response);
@@ -151,8 +156,9 @@ const TrainerCourseDetails = (props: any) => {
             />
 
             <View>
-                {detailInfo.map((item, index) =>
-                    item ? (
+                {detailInfo
+                    .filter(item => item && item.value !== '' && item.value !== null && item.value !== undefined)
+                    .map((item, index) => (
                         <View
                             key={index}
                             style={[
@@ -167,7 +173,8 @@ const TrainerCourseDetails = (props: any) => {
                                     borderRadius: moderateScale(8),
                                     width: '100%',
                                 },
-                            ]}>
+                            ]}
+                        >
                             <View
                                 style={[
                                     globalStyle.center,
@@ -178,25 +185,26 @@ const TrainerCourseDetails = (props: any) => {
                                         borderRadius: moderateScale(100),
                                         marginRight: moderateScale(5),
                                     },
-                                ]}>
+                                ]}
+                            >
                                 <CustomIcon
                                     color="#ff0000"
-                                    type={item?.iconType}
-                                    name={item?.iconName}
+                                    type={item.iconType}
+                                    name={item.iconName}
                                 />
                             </View>
                             <View style={{ flex: 1 }}>
                                 <CustomText
-                                    text={item?.label}
+                                    text={item.label}
                                     size={16}
                                     weight="600"
                                     color={Colors.gray_font}
                                 />
-                                <CustomText text={item?.value} size={13} weight="500" />
+                                <CustomText text={item.value} size={13} weight="500" />
                             </View>
                         </View>
-                    ) : null,
-                )}
+                    ))}
+
             </View>
 
             <View style={{ marginTop: moderateScale(10) }}>

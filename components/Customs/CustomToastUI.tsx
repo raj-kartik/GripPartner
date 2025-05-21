@@ -9,10 +9,10 @@ import CustomIcon from './CustomIcon';
 import CustomText from './CustomText';
 const CustomToastUI = ({
     type = 'success',
-    text1 = 'Hello',
-    text2 = 'World',
+    text1 = '',
+    text2 = '',
     onHide,
-}:any) => {
+}: any) => {
     const [animation, setAnimation] = useState('bounceInDown');
 
     useEffect(() => {
@@ -47,7 +47,7 @@ const CustomToastUI = ({
                     backgroundColor: type === 'success' ? Colors.orange_bg : type === 'error' ? "#fcc7c7" : type === 'warning' || type === 'info' ? "#c7e4fc" : "#f7f7f7",
                 },
             ]}>
-            <View style={{ marginRight: moderateScale(10) }}>
+            <View style={{ marginRight: moderateScale(3) }}>
                 {type === 'success' ? (
                     <Images.Logo
                         width={moderateScale(20)}
@@ -63,10 +63,10 @@ const CustomToastUI = ({
                     <CustomIcon
                         type="MaterialCommunityIcons"
                         name="alert-octagon"
-                        color="#FFA500"
+                        color={Colors.button}
                     />
                 ) : (
-                    type === 'info' && <CustomIcon type="Feather" name="info" />
+                    type == 'info' && <CustomIcon color={Colors.button} type="Feather" name="info" />
                 )}
             </View>
             <View>
@@ -102,5 +102,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         shadowOpacity: 0.2,
         padding: moderateScale(10),
+        paddingRight:moderateScale(20)
     },
 });

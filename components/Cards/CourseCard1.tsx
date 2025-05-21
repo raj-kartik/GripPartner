@@ -155,7 +155,7 @@ const CourseCard1: FC<Props> = ({ item, navigation }) => {
             customStyle={{ textAlignVertical: 'bottom' }}
             size={12}
           />
-          <CustomText text={`₹${item.price.toString()}`} weight="700" />
+          <CustomText text={`₹${item.price.toString()}`} customStyle={{ marginLeft: moderateScale(3) }} weight="700" />
         </View>
       ) : (
         <View

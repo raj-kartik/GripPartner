@@ -1,12 +1,13 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import makeApiRequest from '../../../../utils/ApiService';
 import { BASE_URL } from '../../../../utils/api';
 import Container from '../../../../components/Container';
-import { screenWidth } from '../../../../components/Matrix/Matrix';
+import { moderateScale, screenWidth } from '../../../../components/Matrix/Matrix';
 import SubscriptionCard from '../../../../components/Cards/SubscriptionCard';
+import SubsSkeleton from '@components/Skeleton/SubsSkeleton';
 
 const CourseSubs = () => {
   const [loading, setLoading] = useState(false);
@@ -47,7 +48,7 @@ const CourseSubs = () => {
     }
   };
 
-  const sendId = (id:number) => {
+  const sendId = (id: number) => {
     navigation.dispatch(
       CommonActions.navigate({
         name: 'CourseSubsDetails',
@@ -64,7 +65,15 @@ const CourseSubs = () => {
         style={{ flexGrow: 1, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}>
         {loading ? (
-          <ActivityIndicator size={20} color="black" />
+          <FlatList
+            data={[1, 2, 3, 4]}
+            style={{ paddingHorizontal: moderateScale(5), paddingTop: moderateScale(5) }}
+            contentContainerStyle={{ rowGap: moderateScale(10) }}
+            keyExtractor={(item: any) => item}
+            renderItem={() => (
+              <SubsSkeleton />
+            )}
+          />
         ) : subs.length > 0 ? (
           subs.map(item => {
 
@@ -84,7 +93,7 @@ export default CourseSubs
 
 const styles = StyleSheet.create({
   modalView: {
-    width: screenWidth*.8,
+    width: screenWidth * .8,
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
@@ -100,7 +109,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalText: {
-    width: screenWidth*.6,
+    width: screenWidth * .6,
     marginBottom: 15,
     textAlign: 'center',
     fontSize: 16,

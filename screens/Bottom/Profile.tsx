@@ -30,7 +30,7 @@ const Profile = () => {
     {
       id: 1,
       label: 'Course',
-      svg: Images.Course,
+      svg: Images.Yoga1,
       route: "OwnCourse",
     },
     // {
@@ -51,7 +51,7 @@ const Profile = () => {
       id: 4,
       label: 'Retreat',
       route: "OwnRetreat",
-      svg: Images.Retreat
+      svg: Images.Lotus
     },
     {
       id: 5,

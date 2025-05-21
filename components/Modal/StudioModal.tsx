@@ -6,8 +6,9 @@ import { globalStyle } from '@utils/GlobalStyle';
 import CustomText from '@components/Customs/CustomText';
 import { moderateScale, screenHeight, screenWidth } from '@components/Matrix/Matrix';
 import Colors from '@utils/Colors';
+import CustomButton from '@components/Customs/CustomButton';
 
-const StudioModal = ({ modal, setModal, handleStudio, selectStudio }: any) => {
+const StudioModal = ({ modal, setModal, handleStudio, selectStudio, isClear = false, handleClear }: any) => {
     const { studio } = useSelector((state: any) => state.studio);
 
     // console.log("---- selectStudio ----", selectStudio);
@@ -44,6 +45,18 @@ const StudioModal = ({ modal, setModal, handleStudio, selectStudio }: any) => {
                     )
                 }}
             />
+
+            {
+                isClear && (
+                    <CustomButton
+                        title='Clear'
+                        onPress={() => {
+                            handleClear();
+                            setModal(false);
+                        }}
+                    />
+                )
+            }
         </CustomModal>
     )
 }

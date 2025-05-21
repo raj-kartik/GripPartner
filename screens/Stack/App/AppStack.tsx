@@ -59,6 +59,8 @@ import StudioSuccess from '../../../components/Cards/Success/StudioSuccess'
 import Studios from './AccountScreen/Studio/Studios'
 import StudioDetail from './AccountScreen/Studio/StudioDetail'
 import StudioEdit from './AccountScreen/Studio/StudioEdit'
+import IsAddStudio from '../IsAddStudio'
+import PanVerification from '../PanCard/PanVerification'
 // import LocationTracker from './LocationTracker'
 
 // changes noething has made
@@ -105,7 +107,13 @@ const AppStack = () => {
                 <Stack.Screen name='Settings' component={Settings} />
                 <Stack.Screen name='UpdateProfile' component={UpdateProfile} />
                 <Stack.Screen name='UpdateStudioProfile' component={UpdateStudioProfile} />
+
+                {/* KYC Verificaiton */}
                 <Stack.Screen name='KycVerification' component={KycVerification} />
+                <Stack.Screen name='IsAddStudio' component={IsAddStudio} />
+
+
+
                 <Stack.Screen name='PaymentScan' component={PaymentScan} />
                 <Stack.Screen name='AddBookingScreen' component={AddBookingScreen} />
                 <Stack.Screen name='Studios' component={Studios} />
@@ -121,6 +129,10 @@ const AppStack = () => {
                 {/* course top navigation */}
                 <Stack.Screen name='CourseTopNav' component={CourseTopNav} />
                 <Stack.Screen name='RetreatTopNav' component={RetreatTopNav} />
+
+
+
+                <Stack.Screen name='PanVerification' component={PanVerification} />
 
 
 

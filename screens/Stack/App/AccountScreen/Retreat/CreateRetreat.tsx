@@ -49,7 +49,7 @@ const retreatSchema = yup.object().shape({
         }),
     numOfNights: yup.number().positive().integer().required('*required'),
     price: yup.number().positive().required('*required'),
-    // img: yup.mixed(),
+    img: yup.mixed().required("*required"),
     startDate: yup.date().required('*Start date is required'),
     endDate: yup.date()
         .required('*End date is required')
@@ -135,7 +135,7 @@ const CreateRetreat = (props: any) => {
                         numOfDays: exist?.no_of_days || '',
                         numOfNights: exist?.no_of_nights || '',
                         price: exist?.price || '',
-                        // img: null,
+                        img: documents,
                         startDate: exist["start Date"] || '',
                         endDate: exist["end Date"] || '',
                         rooms: ''
@@ -143,40 +143,49 @@ const CreateRetreat = (props: any) => {
                     validationSchema={retreatSchema}
                     onSubmit={async (values) => {
 
-                        console.log("---- values in teh create retreat ----", { ...values, userId: user?.id });
+                        const formdata = new FormData;
+                        formdata.append('user_id', user?.id.toString());
+                        formdata.append('group_size', values?.groupSize);
+                        formdata.append('status', '1');
+                        formdata.append('No_of_nights', values?.numOfNights);
+                        formdata.append('No_of_days', values?.numOfDays);
+                        formdata.append('retreat_title', values?.title);
+                        formdata.append('retreat_overview', values?.overview);
+                        formdata.append('retreat_location', values?.location);
+                        formdata.append('start_date', values?.startDate);
+                        formdata.append('end_date', values?.endDate);
+                        formdata.append('program_details', values?.details);
+                        formdata.append('accommodation_hotel', values?.hotel);
+                        formdata.append('room', values?.rooms);
+                        formdata.append('price', values?.price);
 
+
+                        if (documents && Array.isArray(documents)) {
+                            documents.forEach((doc, index) => {
+                                formdata.append('upload_image', {
+                                    uri: doc.uri,
+                                    type: doc.type,
+                                    name: doc.name,
+                                });
+                            });
+                        }
+
+                        // console.log("---- values in teh create retreat ----", formdata);
+                        // console.log("---- values in teh create documents ----", documents);
+
+                        // return;
 
                         try {
 
                             setLoading(true)
-                            const formdata = new FormData;
-                            formdata.append('user_id', user?.id.toString());
-                            formdata.append('group_size', values?.groupSize);
-                            formdata.append('status', '1');
-                            formdata.append('No_of_nights', values?.numOfNights);
-                            formdata.append('No_of_days', values?.numOfDays);
-                            formdata.append('retreat_title', values?.title);
-                            formdata.append('retreat_overview', values?.overview);
-                            formdata.append('retreat_location', values?.location);
-                            formdata.append('start_date', values?.startDate);
-                            formdata.append('end_date', values?.endDate);
-                            formdata.append('program_details', values?.details);
-                            formdata.append('accommodation_hotel', values?.hotel);
-                            formdata.append('room', values?.rooms);
-                            formdata.append('price', values?.price);
-                            if (documents) {
-                                formdata.append('upload_image', {
-                                    uri: documents?.uri,
-                                    type: documents?.type,
-                                    name: documents?.name,
-                                });
-                            }
                             const endpoint = exist?.id ? `https://fitwithgrip.com/api/user-update-retreat?id=${exist?.id}` : 'https://fitwithgrip.com/trainer/user-add-retreat'
                             const response: any = await axios.post(endpoint, formdata, {
                                 headers: {
                                     'Content-Type': 'multipart/form-data',
                                 },
                             })
+
+
 
                             if (response?.data?.status === 'success') {
                                 CustomToast({
@@ -221,7 +230,7 @@ const CreateRetreat = (props: any) => {
                             }
                         }, [!user?.is_registred, values])
 
-                        console.log("---- documents -----", documents);
+                        // console.log("---- documents -----", documents);
 
 
 
@@ -624,6 +633,11 @@ const CreateRetreat = (props: any) => {
                                                         />
                                                     )}
                                                 />
+                                            )
+                                        }
+                                        {
+                                            errors?.img && touched?.img &&(
+                                                <CustomText text={errors?.img} weight='500' size={12} color='#ff0000'  />
                                             )
                                         }
                                     </View>

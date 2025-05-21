@@ -233,10 +233,10 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
             },
           ]}>
           <CustomIcon
-            type="MaterialIcons"
+            type="Feather"
             color="#ff0000"
             // size={22}
-            name="calendar-today"
+            name="sun"
           />
         </View>
         <View style={{ marginLeft: moderateScale(5) }}>
@@ -269,10 +269,10 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
             },
           ]}>
           <CustomIcon
-            type="MaterialIcons"
+            type="Feather"
             color="#ff0000"
             // size={22}
-            name="calendar-today"
+            name="moon"
           />
         </View>
         <View style={{ marginLeft: moderateScale(5) }}>

@@ -19,8 +19,7 @@ export const getNotificaiton = createAsyncThunk(
   'notification/getNotificaiton',
   async ({id, notiType}: any) => {
     try {
-      const endpoint: string =
-        notiType == 'read' ? NOTIFICATION_READ_LIST(id) : NOTIFICATION_LIST(id);
+      const endpoint: string = notiType == 'read' ? NOTIFICATION_READ_LIST(id) : NOTIFICATION_LIST(id);
 
       const response: any = await makeApiRequest({
         baseUrl: BASE_URL,
@@ -29,7 +28,7 @@ export const getNotificaiton = createAsyncThunk(
       });
 
       // console.log('=== endpoint ===', endpoint);
-      // console.log('=== response ===', response);
+      // console.log('=== response notification ===', response);
 
       if (response?.success === true) {
         return {response: response?.data, type: notiType};

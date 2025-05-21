@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
@@ -8,6 +8,7 @@ import store from './redux/store';
 import { useOneSignal } from './components/Hooks/useOneSignal';
 import analytics from '@react-native-firebase/analytics';
 import CustomToast from './components/Customs/CustomToast';
+import { OneSignal } from 'react-native-onesignal';
 
 const App = () => {
   useOneSignal();

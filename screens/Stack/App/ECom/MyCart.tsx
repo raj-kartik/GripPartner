@@ -180,7 +180,7 @@ const MyCart = () => {
       {
         loading ? (
           <View
-            style={{ flex: 1 }}
+            style={{ flex: 5 }}
           >
             <CartSkeleton />
           </View>

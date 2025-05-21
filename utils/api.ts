@@ -18,13 +18,12 @@ export const POST_DELETE_ADD_TO_CART_ITEM = 'shop/delete-product-by-sku';
 export const POST_SEARCH = 'api/search';
 export const GET_SPECIAL_BANNER = 'shop/home-banner-after-special-product';
 
-
 // studio
-export const POST_ADD_STUDIO_FORM ="add-studio"
-export const GET_STUDIO_LIST ="studio-list"
-export const POST_DELETE_STUDIO = "delete-studio"
-export const POST_UPDATE_STUDIO = "update-studio"
-export const GET_STUDIO_DETAILS = "studio-detail"
+export const POST_ADD_STUDIO_FORM = 'add-studio';
+export const GET_STUDIO_LIST = 'studio-list';
+export const POST_DELETE_STUDIO = 'delete-studio';
+export const POST_UPDATE_STUDIO = 'update-studio';
+export const GET_STUDIO_DETAILS = 'studio-detail';
 
 // LOGIN_VIDEO
 export const LOGIN_VIDEO = 'home-video';
@@ -63,7 +62,8 @@ export const GOOGLE_LOCATION_KEY = 'AIzaSyAAMvO2UwddhG8a3Z-miopVUI1Q6VDWqZA';
 
 // PAYMENT
 export const PAYMENT_ID = 'GRIP0042095811400073';
-export const stagingUrl = 'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=123_1';
+export const stagingUrl =
+  'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=123_1';
 
 // USER
 export const GET_USER_DETAILS = 'user-detail';
@@ -151,4 +151,13 @@ export const RETREAT_BOOKING_HISTORY = (id: number) =>
   `retreat-booking-history?booking_id=${id}`;
 export const RETREAT_BOOING_END = 'retreat-booking-end';
 
-export const TRAINER_REGISTRATION = "trainer-registration"
+export const TRAINER_REGISTRATION = 'trainer-registration';
+
+// KYC
+export const POST_KYC_VALIDATE = 'adhar-validate';
+export const POST_VERIFY_AADHAAR_OTP = 'adhar-verify-otp';
+
+// PAN
+export const POST_PERSONAL_PAN_VERIFICATION = 'check-personal-pan';
+export const POST_STUDIO_PAN_VERIFICATION = 'company-pan-to-gst';
+export const POST_PAN_UPDATE = 'update-store-pan-gst';

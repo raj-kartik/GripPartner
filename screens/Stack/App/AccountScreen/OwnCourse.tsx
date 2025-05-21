@@ -6,14 +6,14 @@ import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/
 import { useDispatch, useSelector } from 'react-redux';
 import { getCourse } from '../../../../redux/Slice/CourseSlice';
 import ProfileCourseCard from '../../../../components/Cards/Course/ProfileCourseCard';
-import { moderateScale } from '../../../../components/Matrix/Matrix';
 import Images from '../../../../utils/Images';
 import CustomText from '../../../../components/Customs/CustomText';
-import { globalStyle } from '../../../../utils/GlobalStyle';
 import CustomIcon from '@components/Customs/CustomIcon';
 import Colors from '@utils/Colors';
 import StudioModal from '@components/Modal/StudioModal';
 import CourseSkeleton from '@components/Skeleton/CourseSkeleton';
+import { moderateScale } from '@components/Matrix/Matrix';
+import { globalStyle } from '@utils/GlobalStyle';
 
 const OwnCourse = () => {
   const dispatch = useDispatch();
@@ -24,15 +24,11 @@ const OwnCourse = () => {
   const [studioText, setStudioText] = useState<string>('');
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = React.useState(false);
-  const [filteredCourses, setFilteredCourses] = useState(course || []);
+  const [filteredCourses, setFilteredCourses] = useState(course);
+  const [isClear, setIsClear] = useState(false);
 
   // console.log("----- course -----", course);
-
-  //   useEffect(() => {
-  //   if (studio && !studioText) {
-  //     setStudioText(studio.studio_name || '');
-  //   }
-  // }, [studio]);
+  // console.log("----- filteredCourses -----", filteredCourses);
 
   const handleSearch = (text: string) => {
     setStudioText(text);
@@ -54,22 +50,23 @@ const OwnCourse = () => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchCourses();
+      fetchCourses('');
     }, []),
   );
 
-  const fetchCourses = async () => {
-    await dispatch(getCourse({ id: user?.id, studio_id: studio?.id }));
+  useEffect(() => {
+    setFilteredCourses(course)
+  }, [loading])
+
+
+  const fetchCourses = async (id = '') => {
+    await dispatch(getCourse({ id: user?.id, studio_id: id }));
   };
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchCourses().then(() => setRefreshing(false));
+    await fetchCourses('').then(() => setRefreshing(false));
   }, []);
-
-  // if (loading)
-  //   return (
-  //     <CourseSkeleton />)
 
   return (
     <Container>
@@ -111,11 +108,16 @@ const OwnCourse = () => {
 
         <StudioModal
           modal={studioModal}
+          isClear={true}
           setModal={setStudioModal}
           selectStudio={studio}
+          handleClear={() => {
+            fetchCourses('');
+          }}
           handleStudio={(selectStudio: any) => {
             setStudio(selectStudio);
-            fetchCourses();
+            setFilteredCourses([]);
+            fetchCourses(selectStudio?.id);
           }}
         />
 

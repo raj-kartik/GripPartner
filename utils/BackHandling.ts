@@ -1,28 +1,37 @@
-import {useEffect} from 'react';
-import {BackHandler} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useEffect } from 'react';
+import { BackHandler } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
 
-export const useBackHandler = (screen: any = 'DrawerNav') => {
-  const navigation = useNavigation();
+export const useBackHandler = (
+  screen: string = 'DrawerNav',
+  handleNav?: () => void
+) => {
+  const navigation = useNavigation<NavigationProp<any>>();
 
   useEffect(() => {
     const backAction = () => {
-      return true;
+      return true; // Prevent default hardware back action
     };
 
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction,
+      backAction
     );
 
-    // Navigate after 10 seconds
     const timer = setTimeout(() => {
-      navigation.navigate(screen);
+      if (handleNav) {
+        handleNav(); // Use custom nav handler if provided
+      } else {
+        navigation.navigate('DrawerNav', {
+          screen: 'HomeBlank',
+        });
+      }
     }, 7000);
 
     return () => {
-      backHandler.remove();
-      clearTimeout(timer); // Clear the timer to prevent memory leaks
+      backHandler.remove();  // Clean up back handler
+      clearTimeout(timer);   // Clean up timer
     };
-  }, [navigation]);
+  }, [handleNav, navigation]);
 };

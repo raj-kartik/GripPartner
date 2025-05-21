@@ -13,21 +13,27 @@ import {
 import Container from '../../../../components/Container';
 import CustomText from '../../../../components/Customs/CustomText';
 import CustomIcon from '../../../../components/Customs/CustomIcon';
-import { moderateScale} from '../../../../components/Matrix/Matrix';
+import { moderateScale } from '../../../../components/Matrix/Matrix';
 import * as Animatable from 'react-native-animatable';
 import { useBackHandler } from '../../../../utils/BackHandling';
+import { useNavigation } from '@react-navigation/native';
 
-const PaymentSuccessful= () => {
+const PaymentSuccessful = () => {
 
-  useBackHandler('DrawerNav');
+  const navigation = useNavigation();
+  useBackHandler(undefined, () => {
+    navigation.navigate('ShopDrawer', {
+      screens: "ECom"
+    })
+  });
 
   return (
     <Container>
-      <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+      <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
         <Animatable.View
           animation="pulse"
           iterationCount="infinite"
-          // direction="alternate"
+        // direction="alternate"
         >
           <CustomIcon
             type="Feather"
@@ -40,7 +46,7 @@ const PaymentSuccessful= () => {
           text="Order Confirmed"
           weight="700"
           size={20}
-          customStyle={{marginTop: moderateScale(10)}}
+          customStyle={{ marginTop: moderateScale(10) }}
         />
         <CustomText text="Your order has been confirmed" weight="500" />
       </View>

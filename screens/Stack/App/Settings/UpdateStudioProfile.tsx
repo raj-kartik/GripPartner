@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Container from '../../../../components/Container';
 import { useSelector } from 'react-redux';
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2';
@@ -138,14 +138,14 @@ const overallSchema = yup.object().shape({
   aadharCard: yup.mixed().notRequired(),
   aadharCardNumber: yup
     .string()
-    .matches(/^[0-9]{12}$/, '*must be a valid 12-digit Aadhaar number')
-    .required('*required'),
+    .matches(/^[0-9]{12}$/, '*must be a valid 12-digit Aadhaar number'),
+  // .required('*required'),
   panCard: yup.mixed().notRequired(),
   panCardNumber: yup
     .string()
     .transform(value => value?.toUpperCase())
-    .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, '*must be a valid PAN number')
-    .required('*required'),
+    .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, '*must be a valid PAN number'),
+  // .required('*required'),
   studio: yup
     .array()
     .of(studioItemSchema)
@@ -215,12 +215,13 @@ const UpdateStudioProfile: React.FC = () => {
   const [place, setPlace] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const navigation: any = useNavigation();
+  const scrollRef = useRef<ScrollView>(null);
 
   const initialValues: any = {
     aadharCard: null,
     aadharCardNumber: user?.aadhar_number || '',
     panCard: null,
-    panCardNumber: '',
+    panCardNumber: user?.pan || '',
     studio: [
       {
         name: '',
@@ -428,39 +429,70 @@ const UpdateStudioProfile: React.FC = () => {
                               text="Select Studio Type"
                               weight="500"
                             />
-                            <ScrollView
-                              horizontal
-                              showsHorizontalScrollIndicator={false}>
-                              {studioTypeArray.map((item: any) => (
-                                <Pressable
-                                  onPress={() => {
-                                    setFieldValue(`studio[${index}].studioType`, item?.label);
-                                  }}
-                                  style={[globalStyle.row, { marginTop: moderateScale(7), width: moderateScale(90), marginRight: moderateScale(5), height: moderateScale(40) }]}>
-                                  <View
-                                    style={[globalStyle.center, {
-                                      width: moderateScale(18),
-                                      height: moderateScale(18),
-                                      borderRadius: moderateScale(100),
-                                      marginRight: moderateScale(3),
-                                      borderWidth: 2,
-                                      borderColor: values.studio[index]?.studioType === item?.label ? Colors.success : Colors.gray,
-                                    }]}
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                              <Pressable onPress={() => scrollRef.current?.scrollTo({ x: 0, animated: true })}>
+                                <CustomIcon type='Ionicons' name="chevron-back" size={24} color="black" />
+                              </Pressable>
+
+                              <ScrollView
+                                ref={scrollRef}
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{ paddingHorizontal: moderateScale(10) }}
+                              >
+                                {studioTypeArray.map((item: any) => (
+                                  <Pressable
+                                    key={item?.label}
+                                    onPress={() => {
+                                      setFieldValue(`studio[${index}].studioType`, item?.label);
+                                    }}
+                                    style={[
+                                      globalStyle.row,
+                                      {
+                                        marginTop: moderateScale(7),
+                                        width: moderateScale(90),
+                                        marginRight: moderateScale(5),
+                                        height: moderateScale(40),
+                                      },
+                                    ]}
                                   >
                                     <View
-                                      style={{
-                                        width: moderateScale(10),
-                                        height: moderateScale(10),
-                                        borderRadius: moderateScale(100),
-                                        // marginRight: moderateScale(3),
-                                        backgroundColor: values.studio[index]?.studioType === item?.label ? Colors.success : "#fff",
-                                      }}
-                                    />
-                                  </View>
-                                  <CustomText text={item?.label} />
-                                </Pressable>
-                              ))}
-                            </ScrollView>
+                                      style={[
+                                        globalStyle.center,
+                                        {
+                                          width: moderateScale(18),
+                                          height: moderateScale(18),
+                                          borderRadius: moderateScale(100),
+                                          marginRight: moderateScale(3),
+                                          borderWidth: 2,
+                                          borderColor:
+                                            values.studio[index]?.studioType === item?.label
+                                              ? Colors.success
+                                              : Colors.gray,
+                                        },
+                                      ]}
+                                    >
+                                      <View
+                                        style={{
+                                          width: moderateScale(10),
+                                          height: moderateScale(10),
+                                          borderRadius: moderateScale(100),
+                                          backgroundColor:
+                                            values.studio[index]?.studioType === item?.label
+                                              ? Colors.success
+                                              : "#fff",
+                                        }}
+                                      />
+                                    </View>
+                                    <CustomText text={item?.label} />
+                                  </Pressable>
+                                ))}
+                              </ScrollView>
+
+                              <Pressable onPress={() => scrollRef.current?.scrollToEnd({ animated: true })}>
+                                <CustomIcon type='Ionicons' name="chevron-forward" size={24} color="black" />
+                              </Pressable>
+                            </View>
                           </View>
 
                           <View>

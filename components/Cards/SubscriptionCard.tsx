@@ -78,14 +78,20 @@ const SubscriptionCard = ({ item, handlePress }: any) => {
                         text={item?.Name || item?.name || 'No Name'}
                     />
                     <CustomText
-                        text={item?.course_name || item['course name'] || item?.course}
+                        text={
+                            (item?.course_name || item['course name'] || item?.course)?.length > 20
+                                ? (item?.course_name || item['course name'] || item?.course).substring(0, 20) + '...'
+                                : (item?.course_name || item['course name'] || item?.course)
+                        }
                         weight="500"
+                        size={14}
                     />
+
                     {/* <Text style={styles.course}>{item.course_name}</Text> */}
                 </View>
             </View>
 
-            <View style={{ flex: 0.35 }}>
+            <View style={{ flex: 0.3 }}>
                 <View style={[styles.row1, { marginBottom: moderateScale(5) }]}>
                     {/* <Icon name="update" size={20} color="black" /> */}
                     <CustomIcon type='Ionicons' name='link-outline' />

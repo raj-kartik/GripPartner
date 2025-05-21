@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -13,6 +13,7 @@ import Colors from '../../../../utils/Colors';
 import SubscriptionCard from '../../../../components/Cards/SubscriptionCard';
 import commonStyle from '../../../../utils/CommonStyleComponent';
 import Container from '../../../../components/Container';
+import SubsSkeleton from '@components/Skeleton/SubsSkeleton';
 
 const CourseLead = ({ route }: any) => {
   const { user } = useSelector((state: any) => state.user);
@@ -125,22 +126,40 @@ const CourseLead = ({ route }: any) => {
 
       </CustomModal>
 
-      <ScrollView
-        style={{ flexGrow: 1, paddingBottom: 20 }}
-        showsVerticalScrollIndicator={false}>
-        {filteredData.length > 0 ? (
-          filteredData.map(item => (
-            <SubscriptionCard
-              item={item}
-              handlePress={() => ListDetailFun(item)}
-            />
-          ))
+      {
+        loading ? (
+          <FlatList
+            data={[1, 2, 3, 4]}
+            style={{ paddingHorizontal: moderateScale(5), paddingTop: moderateScale(5) }}
+            contentContainerStyle={{ rowGap: moderateScale(10) }}
+            keyExtractor={(item: any) => item}
+            renderItem={() => (
+              <SubsSkeleton />
+            )}
+          />
         ) : (
-          <View style={[commonStyle.modalView]}>
-            <Text style={commonStyle.modalText}>Oops! No Lead Found</Text>
-          </View>
-        )}
-      </ScrollView>
+          <>
+            <ScrollView
+              style={{ flexGrow: 1, paddingBottom: 20 }}
+              showsVerticalScrollIndicator={false}>
+              {filteredData.length > 0 ? (
+                filteredData.map(item => (
+                  <SubscriptionCard
+                    item={item}
+                    handlePress={() => ListDetailFun(item)}
+                  />
+                ))
+              ) : (
+                <View style={[commonStyle.modalView]}>
+                  <Text style={commonStyle.modalText}>Oops! No Lead Found</Text>
+                </View>
+              )}
+            </ScrollView>
+          </>
+        )
+      }
+
+
 
     </Container>
   )

@@ -9,25 +9,37 @@ import CustomIcon from '../Customs/CustomIcon';
 import { moderateScale } from '../Matrix/Matrix';
 import Colors from '../../utils/Colors';
 import CustomText from '../Customs/CustomText';
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withTiming,
+} from 'react-native-reanimated';
 
 
 const CustomBottomTabBar = ({ state, descriptors, navigation, colors }: any) => {
-    // const navigation = useNavigation();
-    // console.log("==== route in the navigation =====", state);
+    const scaleValues = React.useRef(
+        state.routes.map((_, index) =>
+            useSharedValue(state.index === index ? 1 : 1)
+        )
+    ).current;
+
     return (
         <View style={styles.container}>
-            {state.routes.map((route: any, index: any) => {
-
-
+            {state.routes.map((route: any, index: number) => {
                 const { options } = descriptors[route.key];
-                const label =
-                    options.tabBarLabel !== undefined
-                        ? options.tabBarLabel
-                        : options.title !== undefined
-                            ? options.title
-                            : route.name;
-
+                const label = options.tabBarLabel ?? options.title ?? route.name;
                 const isFocused = state.index === index;
+
+                // Animate when isFocused changes
+                React.useEffect(() => {
+                    scaleValues[index].value = withTiming(isFocused ? 1.2 : 1, {
+                        duration: 500,
+                    });
+                }, [isFocused]);
+
+                const animatedStyle = useAnimatedStyle(() => ({
+                    transform: [{ scale: scaleValues[index].value }],
+                }));
 
                 const onPress = () => {
                     const event = navigation.emit({
@@ -42,12 +54,9 @@ const CustomBottomTabBar = ({ state, descriptors, navigation, colors }: any) => 
                 };
 
                 const onLongPress = () => {
-                    navigation.emit({
-                        type: 'tabLongPress',
-                        target: route.key,
-                    });
+                    navigation.emit({ type: 'tabLongPress', target: route.key });
                 };
-                
+
                 return (
                     <TouchableOpacity
                         key={index}
@@ -57,68 +66,41 @@ const CustomBottomTabBar = ({ state, descriptors, navigation, colors }: any) => 
                         testID={options.tabBarTestID}
                         onPress={
                             label === 'Connect'
-                                ? () => {
-                                    navigation.navigate('BottomTabs');
-                                }
+                                ? () => navigation.navigate('BottomTabs')
                                 : onPress
                         }
                         onLongPress={onLongPress}
                         style={{
                             ...styles.tabItem,
                             marginHorizontal: moderateScale(0),
-                            backgroundColor: isFocused ? Colors.orange : null,
+                            backgroundColor: isFocused ? colors?.orange : null,
                             borderRadius: isFocused ? moderateScale(20) : null,
                             padding: moderateScale(5),
                             flex: isFocused ? 1 : 0.5,
-                        }}>
-                        {isFocused ? (
-                            <>
-                                {
-                                    options?.type ? (
-                                        <View>
-                                            <CustomIcon type={options?.type} name={options?.icon} />
-                                            {/* {
-                                                options?.data === 0 && (
-                                                    <CustomText text='1' />
-                                                )
-                                            } */}
-                                        </View>
-                                    ) : (
-                                        <View>
-                                            <options.Active
-                                                width={moderateScale(21)}
-                                                height={moderateScale(21)}
-                                            // stroke="#000"
-                                            />
-                                        </View>
-                                    )
-                                }
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <Animated.View style={animatedStyle}>
+                            {options?.type ? (
+                                <CustomIcon type={options?.type} name={options?.icon} />
+                            ) : isFocused ? (
+                                <options.Active width={21} height={21} />
+                            ) : (
+                                <options.InActive width={21} height={21} />
+                            )}
+                        </Animated.View>
 
-                            </>
-                        ) : (
-                            <>
-                                {
-                                    options?.type ? (
-                                        <CustomIcon type={options?.type} name={options?.icon} />
-                                    ) : (
-                                        <options.InActive
-                                            width={moderateScale(21)}
-                                            height={moderateScale(21)}
-                                        />
-                                    )
-                                }
-
-                            </>
-
-                        )}
                         {isFocused && (
                             <CustomText
                                 text={` ${label}`}
                                 size={12}
                                 weight="700"
+
                                 customStyle={{
                                     fontFamily: 'Nexa-Heavy',
                                     color: '#000000',
+                                    marginLeft: moderateScale(3)
                                 }}
                             />
                         )}

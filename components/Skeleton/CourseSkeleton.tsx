@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import React from 'react';
-import { moderateScale, screenHeight } from '@components/Matrix/Matrix';
+import { moderateScale, screenHeight, screenWidth } from '@components/Matrix/Matrix';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -35,8 +35,8 @@ const styles = StyleSheet.create({
         marginTop: moderateScale(5),
         alignSelf: 'center',
         elevation: 5,
-        width: '98%',
-        height: screenHeight * 0.3,
+        width: screenWidth * .9,
+        height: screenHeight * 0.35,
         marginBottom: moderateScale(10),
         justifyContent: 'space-between'
     },

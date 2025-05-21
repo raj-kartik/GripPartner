@@ -23,11 +23,11 @@ const Notifications = () => {
   const { user } = useSelector((state: any) => state?.user);
   const dispatch = useDispatch();
 
-  const { notification, loading } = useSelector(
+  const { notification, loading, read, unread } = useSelector(
     (state: any) => state?.notification,
   );
 
-  // console.log("==== notification ====", notification);
+  console.log("==== notification ====", notification);
   // console.log("==== user ====", user);
 
 
@@ -62,14 +62,15 @@ const Notifications = () => {
   useFocusEffect(
     useCallback(() => {
       const timeout = setTimeout(() => {
-        // console.log("--- use focus effect ----");
+        console.log("--- use focus effect ----");
+
         if (user?.id) {
           getFunction(user.id);
         }
-      }, 60000);
+      }, 30000);
 
       return () => clearTimeout(timeout);
-    }, [user?.id, getFunction])
+    }, [])
   );
 
 
@@ -116,15 +117,21 @@ const Notifications = () => {
           <CustomText text="No Notification" weight="500" />
         </View>
       ) : (
-        notification.map((item: any) => {
-          // console.log("==== itme in the notification ====", item);
-          return (
-            <View key={item?.id} style={styles.notificationContainer} >
-              <CustomText text={item?.title} weight='600' size={18} />
-              <CustomText text={item?.message} />
+        <FlatList
+          data={selectType === "all" ? notification : selectType === "read" ? read : unread}
+          style={{ marginTop: moderateScale(10) }}
+          keyExtractor={(item: any) => item?.id}
+          renderItem={({ item }: any) => (
+            <View>
+              <Pressable style={styles.notificationContainer}>
+                <CustomText text={item?.title} size={18} weight='600' />
+                <CustomText text={item?.message} size={16} weight='400' />
+              </Pressable>
+              <View style={styles.separator} />
             </View>
-          )
-        })
+          )}
+
+        />
       )}
     </Container>
   );
@@ -142,5 +149,10 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(5),
     justifyContent: "center",
     padding: moderateScale(10)
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#E0E0E0',
+    marginVertical: 8, // spacing between items
   }
 });

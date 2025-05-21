@@ -1,4 +1,4 @@
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -11,6 +11,7 @@ import { moderateScale, screenHeight } from '../../../../components/Matrix/Matri
 import Colors from '../../../../utils/Colors';
 import Images from '../../../../utils/Images';
 import { globalStyle } from '../../../../utils/GlobalStyle';
+import SubsSkeleton from '@components/Skeleton/SubsSkeleton';
 
 const CourseStudent = () => {
 
@@ -57,51 +58,68 @@ const CourseStudent = () => {
 
   return (
     <Container>
-      <ScrollView
-        style={{ flexGrow: 1, paddingBottom: 20 }}
-        showsVerticalScrollIndicator={false}>
-        {student.length > 0 ? (
-          student.map((item: any, index) => {
-            console.log('--- item in the students dashboard ---', item);
 
-            return (
-              <View style={styles.row} key={item.id}>
-                <View style={styles.row1}>
-                  {
-                    item?.image ? (
-                      <Image
-                        style={{ width: moderateScale(70), height: moderateScale(70), borderRadius: moderateScale(100) }}
-                        source={{ uri: item?.image }} />
-                    ) : (
-                      <View style={[globalStyle.center, { width: moderateScale(70), height: moderateScale(70), borderRadius: moderateScale(200), backgroundColor: "#f7f7f7" }]} >
-                        <Images.Logo width={moderateScale(60)} height={moderateScale(60)} />
-                      </View>
-                    )
-                  }
-                  <View>
-                    <CustomText
-                      size={20}
-                      weight="700"
-                      // family="Roboto-Bold"
-                      text={item?.name || 'No Name'}
-                    />
-                    <CustomText
-                      // size={12}
-                      text={item?.course_name}
-                      weight="500"
-                      color={Colors.gray_font}
-                    />
-                  </View>
-                </View>
-              </View>
-            );
-          })
+      {
+        loading ? (
+          <FlatList
+            data={[1, 2, 3, 4]}
+            style={{ paddingHorizontal: moderateScale(5), paddingTop: moderateScale(5) }}
+            contentContainerStyle={{ rowGap: moderateScale(10) }}
+            keyExtractor={(item: any) => item}
+            renderItem={() => (
+              <SubsSkeleton />
+            )}
+          />
         ) : (
-          <View style={commonStyle.modalView}>
-            <Text style={commonStyle.modalText}>Oops! No Subscription found</Text>
-          </View>
-        )}
-      </ScrollView>
+          <ScrollView
+            style={{ flexGrow: 1, paddingBottom: 20 }}
+            showsVerticalScrollIndicator={false}>
+            {student.length > 0 ? (
+              student.map((item: any, index) => {
+                console.log('--- item in the students dashboard ---', item);
+
+                return (
+                  <View style={styles.row} key={item.id}>
+                    <View style={styles.row1}>
+                      {
+                        item?.image ? (
+                          <Image
+                            style={{ width: moderateScale(70), height: moderateScale(70), borderRadius: moderateScale(100) }}
+                            source={{ uri: item?.image }} />
+                        ) : (
+                          <View style={[globalStyle.center, { width: moderateScale(70), height: moderateScale(70), borderRadius: moderateScale(200), backgroundColor: "#f7f7f7" }]} >
+                            <Images.Logo width={moderateScale(60)} height={moderateScale(60)} />
+                          </View>
+                        )
+                      }
+                      <View>
+                        <CustomText
+                          size={20}
+                          weight="700"
+                          // family="Roboto-Bold"
+                          text={item?.name || 'No Name'}
+                        />
+                        <CustomText
+                          // size={12}
+                          text={item?.course_name}
+                          weight="500"
+                          color={Colors.gray_font}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                );
+              })
+            ) : (
+              <View style={commonStyle.modalView}>
+                <Text style={commonStyle.modalText}>Oops! No Subscription found</Text>
+              </View>
+            )}
+          </ScrollView>
+        )
+      }
+
+
     </Container>
   )
 }

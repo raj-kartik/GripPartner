@@ -192,7 +192,16 @@ const StudioDetail = (props: any) => {
                             name="location-sharp"
                             color={Colors.orange}
                         />
-                        <CustomText text={studio.location} size={18} weight="500" />
+                        <CustomText
+                            text={
+                                studio.pincode
+                                    ? `${studio.location} - ${studio.pincode}`
+                                    : studio.location
+                            }
+                            size={18}
+                            weight="500"
+                        />
+
                     </View>
                 </View>
 

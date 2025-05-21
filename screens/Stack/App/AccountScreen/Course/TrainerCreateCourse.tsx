@@ -169,6 +169,7 @@ const TrainerCreateCourse = (props: any) => {
 
   const existCourse = props.route?.params?.course || {};
   const [studioObject, setStudioObject] = useState<any>(null)
+  const [loading, setLoading] = useState(false);
   // const [isUpdateCourse,setIsUpdateCourse] = useState(false);
   // console.log('==== existCourse in trainer new course ===', existCourse);
 
@@ -355,7 +356,7 @@ const TrainerCreateCourse = (props: any) => {
     // return;
 
     try {
-
+      setLoading(true)
       const response = await axios.post(`https://fitwithgrip.com/trainer/${POST_ADD_COURSE}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -365,7 +366,7 @@ const TrainerCreateCourse = (props: any) => {
       console.log("==== response in the create course ====", response);
 
 
-      if (response?.status === 200) {
+      if (response?.status === 200 && response?.data?.success == true) {
         CustomToast({
           text1: 'Course added successfully!',
           type: 'success',
@@ -373,9 +374,22 @@ const TrainerCreateCourse = (props: any) => {
         });
         navigation.goBack();
       }
+      else {
+        CustomToast({
+          text1: 'Course added un-successfully!',
+          type: 'error',
+          text2: 'Please fill all the fields',
+        });
+
+      }
+
+
     } catch (error: any) {
       console.log("---- error in the creating coruse ----", error);
 
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -468,7 +482,7 @@ const TrainerCreateCourse = (props: any) => {
 
           return (
             <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-              <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
+              <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1, backgroundColor: '#fff' }}>
                 {/* title */}
                 <CustomInput
                   text="Title"
@@ -996,6 +1010,8 @@ const TrainerCreateCourse = (props: any) => {
                 <CustomButton
                   customStyle={{ marginVertical: moderateScale(10) }}
                   title={existCourse?.id ? 'Update' : 'Submit'}
+                  loading={loading}
+                  disabled={loading}
                   // disabled={!user?.is_registred || loading}
                   onPress={() => {
                     if (!user?.is_registred) {

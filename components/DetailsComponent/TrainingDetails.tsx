@@ -4,9 +4,9 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import React, {JSX} from 'react';
-import {FC} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, { JSX } from 'react';
+import { FC } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { globalStyle } from '../../utils/GlobalStyle';
 import CustomIcon from '../Customs/CustomIcon';
 import CustomText from '../Customs/CustomText';
@@ -25,7 +25,7 @@ import Colors from '../../utils/Colors';
 // import CustomIcon from '../../../Component/Custom/CustomIcon';
 // import CustomText from '../../../Component/Custom/CustomText';
 
-interface Props {}
+interface Props { }
 const TrainingDetails: FC<Props> = ({
   item,
   Coursedata,
@@ -61,12 +61,17 @@ const TrainingDetails: FC<Props> = ({
     },
   ];
 
+
+  // console.log("----- item?.yoga_style -----", item?.yoga_style);
+
+
   return (
     <View style={styles.container}>
-      <View style={{width: screenWidth*.95, alignSelf: 'center'}}>
+      <View style={{ width: screenWidth * .95, alignSelf: 'center' }}>
         <View>
-          {trainingLevels.map((item, index) =>
-            item ? (
+          {trainingLevels
+            .filter(item => item.value !== null && item.value !== undefined && item.value !== '') // ✅ Hide empty
+            .map((item, index) => (
               <View
                 key={index}
                 style={[
@@ -100,7 +105,7 @@ const TrainingDetails: FC<Props> = ({
                     name={item?.iconName}
                   />
                 </View>
-                <View style={{flex: 1}}>
+                <View style={{ flex: 1 }}>
                   <CustomText
                     text={item?.label}
                     size={16}
@@ -109,13 +114,11 @@ const TrainingDetails: FC<Props> = ({
                   />
                   <CustomText
                     text={item?.value}
-                    // color="rgba(255,0,0,1)"
                     weight="500"
                   />
                 </View>
               </View>
-            ) : null,
-          )}
+            ))}
         </View>
       </View>
     </View>
@@ -136,8 +139,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   textInput: {
-    width: screenWidth*.9,
-    minHeight: screenHeight*.07,
+    width: screenWidth * .9,
+    minHeight: screenHeight * .07,
     backgroundColor: 'white',
     opacity: 658,
     elevation: 3,
@@ -156,7 +159,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: 'black',
     fontFamily: 'Roboto-Regular',
-    fontSize:15,
+    fontSize: 15,
   },
   row: {
     // height: responsiveHeight(80),
@@ -168,8 +171,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   row_container: {
-    width: screenWidth*.4,
-    height: screenHeight*.16,
+    width: screenWidth * .4,
+    height: screenHeight * .16,
     // padding:20,
     opacity: 958,
     elevation: 5,
@@ -199,8 +202,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto-Black',
   },
   btn: {
-    width: screenWidth*.35,
-    height: screenHeight*.65,
+    width: screenWidth * .35,
+    height: screenHeight * .65,
     backgroundColor: 'white',
     elevation: 2,
     alignSelf: 'center',

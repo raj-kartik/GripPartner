@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -10,6 +10,7 @@ import { moderateScale, screenHeight } from '../../../../components/Matrix/Matri
 import CustomIcon from '../../../../components/Customs/CustomIcon';
 import commonStyle from '../../../../utils/CommonStyleComponent';
 import Colors from '../../../../utils/Colors';
+import SubsSkeleton from '@components/Skeleton/SubsSkeleton';
 
 const CourseFollowUps = () => {
   const [loading, setLoading] = useState(false);
@@ -49,8 +50,8 @@ const CourseFollowUps = () => {
         data: row
       })
 
-      console.log("==== response in the follow ups ====",response);
-      
+      console.log("==== response in the follow ups ====", response);
+
       if (response?.success === true) {
         setFollow(response?.followUp);
       }
@@ -67,7 +68,15 @@ const CourseFollowUps = () => {
         style={{ flexGrow: 1, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}>
         {loading ? (
-          <ActivityIndicator size={20} color="black" />
+          <FlatList
+            data={[1, 2, 3, 4]}
+            style={{ paddingHorizontal: moderateScale(5), paddingTop: moderateScale(5) }}
+            contentContainerStyle={{ rowGap: moderateScale(10) }}
+            keyExtractor={(item: any) => item}
+            renderItem={() => (
+              <SubsSkeleton />
+            )}
+          />
         ) : follow.length > 0 ? (
           follow.map((item: any) => (
             <Pressable style={styles.row} onPress={() => sentFun(item)}>

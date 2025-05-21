@@ -38,16 +38,19 @@ const styles = StyleSheet.create({
         marginBottom: moderateScale(15),
         marginVertical: moderateScale(3),
         marginLeft: moderateScale(5),
-      },
+        padding: moderateScale(10)
+    },
     shimmerBlockTop: {
         width: '100%',
-        height: '70%',
+        // height: '70%',
         marginBottom: 5,
         borderRadius: 10,
+        flex: .7
     },
     shimmerBlockBottom: {
         width: '100%',
-        height: '30%',
+        // height: '30%',
         borderRadius: 10,
+        flex: .3
     },
 });
