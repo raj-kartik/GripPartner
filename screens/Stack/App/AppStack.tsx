@@ -61,6 +61,9 @@ import StudioDetail from './AccountScreen/Studio/StudioDetail'
 import StudioEdit from './AccountScreen/Studio/StudioEdit'
 import IsAddStudio from '../IsAddStudio'
 import PanVerification from '../PanCard/PanVerification'
+import AddTrainer from './Settings/AddTrainer'
+import TrainerList from './Settings/TrainerList'
+import CompleteTrainer from './Complete/CompleteTrainer'
 // import LocationTracker from './LocationTracker'
 
 // changes noething has made
@@ -111,6 +114,9 @@ const AppStack = () => {
                 {/* KYC Verificaiton */}
                 <Stack.Screen name='KycVerification' component={KycVerification} />
                 <Stack.Screen name='IsAddStudio' component={IsAddStudio} />
+                <Stack.Screen name='AddTrainer' component={AddTrainer} />
+                <Stack.Screen name='TrainerList' component={TrainerList} />
+                <Stack.Screen name='CompleteTrainer' component={CompleteTrainer} />
 
 
 

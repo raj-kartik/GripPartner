@@ -18,8 +18,8 @@ const IsKycCard = () => {
             {/* <CustomButton  /> */}
             <Pressable
                 onPress={() => {
-                    navigation.navigate('PanVerification')
-                    // navigation.navigate('KycVerification')
+                    // navigation.navigate('PanVerification')
+                    navigation.navigate('KycVerification')
                 }}
             >
                 <CustomText text='Click to verify your KYC' weight='500' size={16} color={Colors.orange} customStyle={{ textDecorationLine: "underline", textDecorationColor: Colors.orange, textDecorationStyle: "solid" }} />

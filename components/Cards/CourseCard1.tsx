@@ -33,29 +33,36 @@ const CourseCard1: FC<Props> = ({ item, navigation }) => {
       {item?.select_image ? (
         <View style={styles.img}>
           <Image style={styles.img} source={{ uri: item?.select_image }} />
-          <View
-            style={[globalStyle.flex, {
-              alignItems: 'center',
-              position: 'absolute',
-              backgroundColor: '#fff',
-              borderRadius: moderateScale(5),
-              padding: moderateScale(5),
-              bottom: moderateScale(5),
-              right: moderateScale(10),
-              elevation: 3,
-            }]}>
-            <CustomIcon type="AntDesign" name="star" color={Colors.orange} />
-            <CustomText
-              text={parseFloat(item?.fullstar).toFixed(1)}
-              weight="700"
-              customStyle={{ marginTop: moderateScale(3) }}
-            />
-            <CustomText
-              text={` (${parseFloat(item?.totalreview).toFixed(0)})`}
-              weight="700"
-              customStyle={{ marginTop: moderateScale(3), alignSelf: "center", textAlign: "center", justifyContent: "center" }}
-            />
-          </View>
+
+          {
+            item?.fullstar && item?.totalreview && item?.fullstar > 0 && item?.totalreview > 0 && (
+              <View
+                style={[globalStyle.flex, {
+                  alignItems: 'center',
+                  position: 'absolute',
+                  backgroundColor: '#fff',
+                  borderRadius: moderateScale(5),
+                  padding: moderateScale(5),
+                  bottom: moderateScale(5),
+                  right: moderateScale(10),
+                  elevation: 3,
+                }]}>
+                <CustomIcon type="AntDesign" name="star" color={Colors.orange} />
+                <CustomText
+                  text={parseFloat(item?.fullstar).toFixed(1)}
+                  weight="700"
+                  customStyle={{ marginTop: moderateScale(3) }}
+                />
+                <CustomText
+                  text={` (${parseFloat(item?.totalreview).toFixed(0)})`}
+                  weight="700"
+                  customStyle={{ marginTop: moderateScale(3), alignSelf: "center", textAlign: "center", justifyContent: "center" }}
+                />
+              </View>
+            )
+
+          }
+
         </View>
       ) : (
         <View

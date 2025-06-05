@@ -48,7 +48,7 @@ const KycVerification = () => {
     },
   ]
 
-  console.log("---- user id -----", user?.id);
+  // console.log("---- user id -----", user?.id);
 
 
   const handleAadhaarValidate = async (values: any) => {
@@ -61,7 +61,8 @@ const KycVerification = () => {
         data: {
           requestId,
           otp: values?.otp,
-          user_id: user?.id
+          user_id: user?.id,
+          aadhaarNumber: values?.aadhaarCardNumber || aadhaar
         }
       });
 

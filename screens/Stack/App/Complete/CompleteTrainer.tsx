@@ -1,17 +1,17 @@
-import { useBackHandler } from '../../../utils/BackHandling';
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import Container from '../../Container';
-import CustomIcon from '../../Customs/CustomIcon';
-import CustomText from '../../Customs/CustomText';
-import { moderateScale } from '../../Matrix/Matrix';
 import * as Animatable from 'react-native-animatable';
+import Container from '@components/Container'
+import { useBackHandler } from '@utils/BackHandling';
+import { moderateScale } from '@components/Matrix/Matrix';
+import CustomText from '@components/Customs/CustomText';
+import CustomIcon from '@components/Customs/CustomIcon';
 
-const StudioSuccess = () => {
+const CompleteTrainer = () => {
     useBackHandler('BottomTabs');
-    return (
-        <Container>
-            <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+  return (
+    <Container>
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                 <Animatable.View
                     animation="pulse"
                     iterationCount="infinite"
@@ -25,17 +25,17 @@ const StudioSuccess = () => {
                     />
                 </Animatable.View>
                 <CustomText
-                    text="Studio Added Successfully"
+                    text="Trainer Added Successfully"
                     weight="700"
                     size={20}
                     customStyle={{ marginTop: moderateScale(10) }}
                 />
-                <CustomText text="You can add more studio in future" weight="500" />
+                <CustomText text="You can add more trainer in future" weight="500" />
             </View>
-        </Container>
-    )
+    </Container>
+  )
 }
 
-export default StudioSuccess
+export default CompleteTrainer
 
 const styles = StyleSheet.create({})

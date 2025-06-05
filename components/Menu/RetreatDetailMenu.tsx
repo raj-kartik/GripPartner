@@ -91,7 +91,7 @@ const RetreatDetailMenu = ({ isEnable = true, retreatid, handleEnable, retreatMe
                                 key={item.id}
                                 onSelect={() => {
                                     if (item?.route === 'isEnable') {
-                                        const isAble = isEnable ? 1 : 0
+                                        const isAble = isEnable ? 0 : 1
                                         handleEnable(isAble);
                                     }
                                     else if(item?.label==="Edit"){

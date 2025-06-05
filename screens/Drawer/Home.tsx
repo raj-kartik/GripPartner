@@ -37,6 +37,8 @@ import ShopSkeleton from '@components/Skeleton/ShopSkeleton';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import { OneSignal } from 'react-native-onesignal';
+import { userDetail } from '@redux/Slice/UserSlice/UserSlice';
+import { trainerList } from '@redux/Slice/TrainerSlice';
 
 const getCurrentYearMonth = () => {
   const date = new Date();
@@ -103,6 +105,8 @@ const Home = ({ navigation }: any) => {
     await dispatch(getStudioList(user?.id));
     await BannerList();
     await dispatch(addToCart());
+    await dispatch(trainerList(user?.id))
+    // await dispatch(userDetail());
   }
   const ShopList = async () => {
     try {
@@ -248,13 +252,20 @@ const Home = ({ navigation }: any) => {
     }
   };
 
+
+  // console.log("==== graph data ====", user);
+
+
   return (
     <Container>
-      <HomeHeader1 />
+      {
+        user?.is_registred && <HomeHeader1 />
+      }
+
 
       {/* <Images.Logo width={100} height={100} stroke="#000" style={{ backgroundColor: "red" }} /> */}
       {
-        user?.is_kyc ? <ScrollView
+        user?.is_registred ? <ScrollView
           style={{ marginTop: moderateScale(20), paddingBottom: moderateScale(100) }}
           showsVerticalScrollIndicator={false}
           refreshControl={

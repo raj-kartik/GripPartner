@@ -91,7 +91,7 @@ const CourseSchema = Yup.object().shape({
     value => value && value.length > 0,
   ),
 
-  studioType: Yup.string().required('*Yoga Style is required'),
+  studioType: Yup.string(),
   yoga_style: Yup.array().when('studioType', {
     is: 'Yoga',
     then: schema => schema.min(1, '*required').required('*required'),
@@ -295,12 +295,10 @@ const TrainerCreateCourse = (props: any) => {
 
   const handleSubmit = async (values: any) => {
 
-
-    // console.log("--- values on submit ----", values);
+    console.log("---- values in the create course for file ----", values?.file);
 
 
     const formData = new FormData();
-
     // user id
     formData.append('user_id', user?.id);
     // formdata.append('user_id', id);
@@ -450,7 +448,8 @@ const TrainerCreateCourse = (props: any) => {
 
           handleSubmit(values);
         }}
-        validationSchema={CourseSchema}>
+        validationSchema={CourseSchema}
+      >
         {({
           handleChange,
           handleBlur,
@@ -951,8 +950,8 @@ const TrainerCreateCourse = (props: any) => {
                   <CustomText text="Choose File" weight="500" size={14} />
                   <DocumentPickerComponent
                     customStyle={{ marginTop: moderateScale(5) }}
+                    docType={['image/jpeg', 'image/png', 'image/jpg']}
                     onPickDocument={documents => {
-                      // console.log('documents: ', documents[0]);
                       setFieldValue('file', documents[0]);
                     }}
                   />

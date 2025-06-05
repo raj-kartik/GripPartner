@@ -23,27 +23,13 @@ const dateFix = (str: string) => {
 };
 
 const SubscriptionCard = ({ item, handlePress }: any) => {
-    // console.log('--- item in the subscription cars ---', item);
+    // console.log('--- item in the subscription cards ---', item);
 
     const navigation = useNavigation();
-    // date
-    const date = dateFix(
-        item?.fee_date || item['Lead Date'] || item['suscription Start Date'],
-    );
 
-    // console.log('==== date =====', item);
+    const date = item["Last Payment Date"] || item?.fee_date || item['Lead Date'] || item['suscription Start Date'];
 
-    const sendId = (id: any) => {
-        navigation.dispatch(
-            CommonActions.navigate({
-                name: 'MarkFees',
-                params: {
-                    suscription_id: id,
-                },
-            }),
-        );
-    };
-
+    // console.log('==== date =====', item["Last Payment Date"]);
     return (
         <Pressable style={styles.row} onPress={handlePress}>
             <View style={[styles.row1, { flex: 0.65 }]}>
@@ -108,11 +94,7 @@ const SubscriptionCard = ({ item, handlePress }: any) => {
                     <CustomIcon type="Feather" name="calendar" size={20} color="#000" />
                     <CustomText
                         customStyle={{ marginLeft: moderateScale(5) }}
-                        text={
-                            item?.fee_date ||
-                            item['Lead Date'] ||
-                            item['suscription Start Date']
-                        }
+                        text={date}
                         weight="500"
                     />
                 </View>

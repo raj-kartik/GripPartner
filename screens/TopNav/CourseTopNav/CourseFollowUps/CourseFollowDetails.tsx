@@ -6,7 +6,7 @@ import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
 import makeApiRequest from '../../../../utils/ApiService'
 import { BASE_URL } from '../../../../utils/api'
 import { longFormatters } from 'date-fns'
-import { CommonActions, useFocusEffect } from '@react-navigation/native'
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native'
 import FollowUpCard from '../../../../components/Cards/FollowUpCard'
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu'
 import CustomIcon from '../../../../components/Customs/CustomIcon'
@@ -17,24 +17,22 @@ import Colors from '../../../../utils/Colors'
 import CustomModal from '../../../../components/Customs/CustomModal'
 import CustomButton from '../../../../components/Customs/CustomButton'
 import { leadChangeStatus } from '../../../../utils/UtilityFuncations'
+import FollowUpModal from '@components/Modal/FollowUpModal'
 
 interface Props {
   route: any;
   navigation: any
 }
 
-const CourseFollowDetails: FC<Props> = ({ route, navigation }) => {
+const CourseFollowDetails: FC<Props> = ({ route }) => {
 
   const { follow, lead_id } = route.params;
-
-
-  // console.log("=== course follow up details ===",follow);
-  // console.log("=== course lead id ===",lead_id);
-
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<any>([]);
   const [nextUpdate, setNextUpdate] = useState([]);
   const [update, setUpdate] = useState<any>([]);
+  const [followModal, setFollowModal] = useState(false);
+
+  const navigation = useNavigation();
 
   useFocusEffect(useCallback(() => {
     handleNextFollowUpHistory();
@@ -89,12 +87,15 @@ const CourseFollowDetails: FC<Props> = ({ route, navigation }) => {
 
 
   const confirmAction = async (num: number) => {
+    setLoading(true);
     const update = await leadChangeStatus('Course', lead_id, num);
 
     if (update) {
       handleNextFollowUpHistory();
       handleFollowHistory();
     }
+
+    setLoading(false);
   };
 
   return (
@@ -103,24 +104,34 @@ const CourseFollowDetails: FC<Props> = ({ route, navigation }) => {
       <MenuProvider>
         <View style={[globalStyle.between, { marginBottom: moderateScale(15), marginRight: moderateScale(15), marginTop: moderateScale(10) }]} >
           <View style={[globalStyle.row]} >
-            <Pressable>
+            <Pressable onPress={() => {
+              navigation.goBack();
+            }} >
               <CustomIcon type='AntDesign' name='arrowleft' size={30} />
             </Pressable>
             <CustomText customStyle={{ marginLeft: moderateScale(10) }} text='Follow Up Detail' weight='600' size={22} />
           </View>
-          <MenuPop
-            navigation={navigation}
-            lead_id={lead_id}
-            CloseFun={() => confirmAction(2)}
-            follow={follow}
-          />
+          <View style={[globalStyle.row]} >
+            <Pressable style={{ marginRight: moderateScale(10) }} onPress={() => {
+              setFollowModal(true)
+            }} >
+              <CustomIcon type='AntDesign' name='plus' size={30} />
+            </Pressable>
+            <MenuPop
+              navigation={navigation}
+              lead_id={lead_id}
+              CloseFun={() => confirmAction(2)}
+              follow={follow}
+            />
+          </View>
         </View>
         {
           loading ? (
-            <ActivityIndicator size="large" color="#000" />) : (
-            <View>
+            <ActivityIndicator size="large" color="#000" style={{ flex: 1 }} />
+          ) : (
+            <View style={{flex:1}} >
               <FollowUpCard follow={follow} />
-              <ScrollView showsVerticalScrollIndicator={false}>
+              <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false}>
                 <View style={styles.box}>
                   <View style={styles.textBg}>
                     <CustomText
@@ -223,6 +234,15 @@ const CourseFollowDetails: FC<Props> = ({ route, navigation }) => {
                     ))}
                   </ScrollView>
                 </View>
+
+                {
+                  followModal && (
+                    <FollowUpModal followModal={followModal} handleLoading={() => {
+                      handleNextFollowUpHistory();
+                      handleFollowHistory();
+                    }} onScreen={true} setFollowModal={setFollowModal} lead_id={lead_id} />
+                  )
+                }
               </ScrollView>
             </View>
           )
@@ -288,10 +308,12 @@ const MenuPop = ({ navigation, lead_id, CloseFun, follow }: any) => {
           <CustomText text='Change Lead Status' />
         </MenuOption> */}
 
-        <MenuOption onSelect={() => {
-          setIsModal(true);
-        }} >
-          <CustomText text='Close Lead' />
+        <MenuOption >
+          <Pressable onPress={() => {
+            setIsModal(true);
+          }} >
+            <CustomText text='Close Lead' />
+          </Pressable>
         </MenuOption>
       </MenuOptions>
 
@@ -312,6 +334,7 @@ const MenuPop = ({ navigation, lead_id, CloseFun, follow }: any) => {
             }} />
             <CustomButton customStyle={{ width: "45%" }} title='Yes' onPress={() => {
               CloseFun()
+              setIsModal(false);
             }} />
           </View>
         </View>

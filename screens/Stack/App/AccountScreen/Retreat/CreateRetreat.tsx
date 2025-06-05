@@ -85,16 +85,10 @@ const CreateRetreat = (props: any) => {
     };
 
     const roomArray = [
-        { label: 'Single Room', value: 'Single Room' },
-        { label: 'Double Rooms', value: 'Double Rooms' },
-        { label: 'Three Rooms', value: 'Three Rooms' },
-        { label: 'Four Rooms', value: 'Four Rooms' },
-        { label: 'Five Rooms', value: 'Five Rooms' },
-        { label: 'Six Rooms', value: 'Six Rooms' },
-        { label: 'Seven Rooms', value: 'Seven Rooms' },
-        { label: 'Eigth Rooms', value: 'Eigth Rooms' },
-        { label: 'Nine Rooms', value: 'Nine Rooms' },
-        { label: 'Ten Rooms', value: 'Ten Rooms' },
+        { label: 'Double Room(Private)', value: 'Double Room(Private)' },
+        { label: 'Double Room(Sharing)', value: 'Double Room(Sharing)' },
+        { label: 'Triple Room(Private)', value: 'Triple Room(Private)' },
+        { label: 'Triple Room(Sharing)', value: 'Triple Room(Sharing)' },
     ];
 
     const fetchAndSetPlace = async (text: string, setter: any) => {
@@ -614,7 +608,7 @@ const CreateRetreat = (props: any) => {
                                         <DocumentPickerComponent
                                             onPickDocument={handleDocumentsPicked}
                                             allowMultiple={true}
-                                            docType={['image/jpeg', 'image/png', 'application/pdf']} // optional file types
+                                            docType={['image/jpeg', 'image/png', 'image/jpg']}// optional file types
                                             customStyle={{ marginVertical: 20 }}
                                             instruction="Accepted formats: JPEG, PNG, PDF. Max size 2MB"
                                         />
@@ -636,8 +630,8 @@ const CreateRetreat = (props: any) => {
                                             )
                                         }
                                         {
-                                            errors?.img && touched?.img &&(
-                                                <CustomText text={errors?.img} weight='500' size={12} color='#ff0000'  />
+                                            errors?.img && touched?.img && (
+                                                <CustomText text={errors?.img} weight='500' size={12} color='#ff0000' />
                                             )
                                         }
                                     </View>

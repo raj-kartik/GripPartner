@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
     Animated,
     KeyboardAvoidingView,
@@ -22,12 +22,13 @@ import CustomIcon from '../../../../components/Customs/CustomIcon';
 import { moderateScale } from '../../../../components/Matrix/Matrix';
 import Colors from '../../../../utils/Colors';
 import { globalStyle } from '../../../../utils/GlobalStyle';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import makeApiRequest from '../../../../utils/ApiService';
 import { BASE_URL, TRAINER_REGISTRATION } from '../../../../utils/api';
 import { useDispatch } from 'react-redux';
-import { signUp } from '../../../../redux/Slice/UserSlice/UserSlice';
-import CustomToast  from '../../../../components/Customs/CustomToast';
+import { signUp, userDetail } from '../../../../redux/Slice/UserSlice/UserSlice';
+import CustomToast from '../../../../components/Customs/CustomToast';
+import { getHash } from 'react-native-otp-verify';
 
 // Define validation schema using Yup
 const trainerSchema = yup.object().shape({
@@ -40,23 +41,18 @@ const trainerSchema = yup.object().shape({
         .string()
         .required('Phone number is required')
         .matches(/^[0-9]{10}$/, 'Phone number must be 10 digits'),
-    aadharCardNumber: yup
-        .string()
-        .required('Aadhar card number is required')
-        .matches(/^[0-9]{12}$/, 'Aadhar card number must be 12 digits'),
 });
 
-// Define the steps of the form
-const steps = ['Name', 'E-mail', 'Phone Number', 'Aadhar Card Number'];
+const steps = ['Name', 'E-mail', 'Phone Number'];
 
 const SignUp = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const progressAnim = useRef(new Animated.Value(0)).current;
-    const navigation = useNavigation();
+    const [hash, setHash] = useState<string>('');
+    const navigation:any = useNavigation();
     const [loading, setLoading] = useState(false);
-    const dispatch = useDispatch();
+    const dispatch: any = useDispatch();
 
-    // Animate the progress bar when currentStep changes
     useEffect(() => {
         const progress = ((currentStep + 1) / steps.length) * 100;
         Animated.timing(progressAnim, {
@@ -66,7 +62,6 @@ const SignUp = () => {
         }).start();
     }, [currentStep]);
 
-    // Function to handle moving to the next step
     const handleNext = (errors: any, touched: any, setFieldTouched: any) => {
         const field = steps[currentStep];
         const fieldName = getFieldName(field);
@@ -78,14 +73,18 @@ const SignUp = () => {
         }
     };
 
-    // Function to handle moving to the previous step
+    const fetchGetHash = async () => {
+        getHash().then((hash: any) => {
+            setHash(hash[0]);
+        }).catch(console.log);
+    }
+
     const handlePrevious = () => {
         if (currentStep > 0) {
             setCurrentStep(prev => prev - 1);
         }
     };
 
-    // Helper function to map step labels to form field names
     const getFieldName = (label: string) => {
         switch (label) {
             case 'Name':
@@ -94,8 +93,6 @@ const SignUp = () => {
                 return 'email';
             case 'Phone Number':
                 return 'phone';
-            case 'Aadhar Card Number':
-                return 'aadharCardNumber';
             default:
                 return '';
         }
@@ -104,30 +101,54 @@ const SignUp = () => {
     const handleSubmit = async (values: any) => {
         try {
             setLoading(true);
-            await dispatch(signUp(values))
-                .unwrap() // Unwrap the promise to handle success/failure locally
-                .then(() => {
-                    CustomToast({
-                        type: 'success',
-                        text1: 'OTP Verified',
-                        text2: 'You are successfully logged in.',
-                    });
+            const response: any = await makeApiRequest({
+                baseUrl: BASE_URL,
+                url: TRAINER_REGISTRATION,
+                data: {
+                    name: values?.name,
+                    email: values?.email,
+                    phone_no: values?.phone,
+                    hash: hash,
+                    // aadhar_no: values.aadharCardNumber,
+                },
+                method: 'POST',
+            })
 
-                    const fetchUser = async () => {
-                        await dispatch(userDetail());
-                    };
-
-                    fetchUser();
-                    // navigation.navigate('Home'); // Navigate to Home on success
-                })
-                .catch((err: any) => {
-                    CustomToast({
-                        type: 'error',
-                        text1: 'OTP Verification Failed',
-                        text2: err,
-                    });
+            if (response?.success == true) {
+                CustomToast({
+                    type: 'success',
+                    text1: 'Sign Up Successful',
+                    text2: "Welcome! Let's get started.",
                 });
+                navigation.navigate('OtpVerification', {
+                    mobile: values?.phone,
+                });
+            }
 
+            console.log("---- response in the sign up ----", response);
+
+            // await dispatch(signUp({...values,hash:hash}))
+            //     .unwrap()
+            //     .then(() => {
+            //         navigation.navigate('OtpVerification',{
+            //             mobile: values.phone,
+            //         });
+            //         CustomToast({
+            //             type: 'success',
+            //             text1: 'Sign Up Successful',
+            //             text2: "Welcome! Let's get started.",
+            //         });
+            //     })
+            //     .catch((err: any) => {
+
+            //         console.log("--- error int singup page ----",err);
+
+            //         CustomToast({
+            //             type: 'error',
+            //             text1: 'Sign Up Failed',
+            //             text2: err,
+            //         });
+            //     });
         } catch (err: any) {
             console.log('==== err ====', err.message);
         } finally {
@@ -135,9 +156,18 @@ const SignUp = () => {
         }
     };
 
+
+    useFocusEffect(useCallback(() => {
+        fetchGetHash();
+    }, []))
+
+
+    // console.log("---- hash in the sign up ----", hash);
+
+
+
     return (
-        <View
-            style={{ flex: 1, backgroundColor: '#000', padding: moderateScale(10) }}>
+        <View style={{ flex: 1, backgroundColor: '#000', padding: moderateScale(10) }}>
             <Formik
                 onSubmit={values => {
                     handleSubmit(values);
@@ -146,7 +176,6 @@ const SignUp = () => {
                     name: '',
                     email: '',
                     phone: '',
-                    aadharCardNumber: '',
                 }}
                 validationSchema={trainerSchema}>
                 {({
@@ -167,7 +196,6 @@ const SignUp = () => {
                                 showsVerticalScrollIndicator={false}
                                 contentContainerStyle={{ padding: moderateScale(5), flexGrow: 1 }}
                                 keyboardShouldPersistTaps="handled">
-                                {/* Progress Bar */}
                                 <View style={styles.progressBarContainer}>
                                     <Animated.View
                                         style={[
@@ -182,7 +210,6 @@ const SignUp = () => {
                                     />
                                 </View>
 
-                                {/* Step Title */}
                                 <CustomText
                                     text={field}
                                     weight="800"
@@ -191,7 +218,6 @@ const SignUp = () => {
                                     size={30}
                                 />
 
-                                {/* Dynamic Input */}
                                 <View style={{ marginTop: moderateScale(20) }}>
                                     {field === 'Name' && (
                                         <>
@@ -242,28 +268,8 @@ const SignUp = () => {
                                             ) : null}
                                         </>
                                     )}
-                                    {field === 'Aadhar Card Number' && (
-                                        <>
-                                            <CustomInput
-                                                value={values.aadharCardNumber}
-                                                color="#fff"
-                                                autoCaptital="none"
-                                                autoFocus={true}
-                                                placeholder="eg: 123456789012"
-                                                keyboardType="numeric"
-                                                maxLength={12}
-                                                handleChangeText={handleChange('aadharCardNumber')}
-                                            />
-                                            {errors.aadharCardNumber && touched.aadharCardNumber ? (
-                                                <Text style={styles.errorText}>
-                                                    {errors.aadharCardNumber}
-                                                </Text>
-                                            ) : null}
-                                        </>
-                                    )}
                                 </View>
 
-                                {/* Navigation Buttons */}
                                 <View
                                     style={{
                                         marginTop: moderateScale(20),
@@ -343,6 +349,7 @@ const SignUp = () => {
         </View>
     );
 };
+
 
 export default SignUp;
 

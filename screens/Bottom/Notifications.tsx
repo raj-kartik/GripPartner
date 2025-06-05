@@ -18,6 +18,7 @@ import CustomText from '../../components/Customs/CustomText';
 import { moderateScale } from '../../components/Matrix/Matrix';
 import { globalStyle } from '../../utils/GlobalStyle';
 import { useFocusEffect } from '@react-navigation/native';
+import IsKycCard from '@components/Cards/IsKycCard';
 
 const Notifications = () => {
   const { user } = useSelector((state: any) => state?.user);
@@ -28,6 +29,15 @@ const Notifications = () => {
   );
 
   console.log("==== notification ====", notification);
+
+  if (!user?.is_registred) {
+    return (
+      <Container>
+        {/* <CustomHeader1 title="Scanner" /> */}
+        <IsKycCard />
+      </Container>
+    );
+  }
   // console.log("==== user ====", user);
 
 

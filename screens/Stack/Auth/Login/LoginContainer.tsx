@@ -17,7 +17,7 @@ const LoginContainer = ({ mobile, setMobile, handleLogin, loading }: any) => {
             style={styles.container}>
             <CustomText
                 color="#fff"
-                text="Log in or sign up"
+                text="Log in"
                 weight="700"
                 size={22}
                 customStyle={{ textAlign: 'center' }}

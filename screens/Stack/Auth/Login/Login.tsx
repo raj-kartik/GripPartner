@@ -25,7 +25,7 @@ const Login = () => {
 
   const [videoUrl, setVideoUrl] = useState<string>('');
 
-  console.log("--- video url ----", videoUrl);
+  // console.log("--- video url ----", videoUrl);
 
 
 

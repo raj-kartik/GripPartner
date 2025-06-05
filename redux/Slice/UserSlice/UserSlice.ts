@@ -8,7 +8,7 @@ import {
   TRAINER_REGISTRATION,
 } from '../../../utils/api';
 import axios from 'axios';
-import {CustomToast} from '../../../components/Customs/CustomToast';
+import CustomToast from '@components/Customs/CustomToast';
 
 const initialState = {
   user: null,
@@ -59,10 +59,7 @@ export const verifyOtp = createAsyncThunk(
         otp_code: otp,
       });
 
-      console.log(
-        '=== response in the verify otp ===',
-        response?.data?.response,
-      );
+      console.log('=== response in the verify otp ===', response);
 
       const {status, response: data} = response?.data;
       if (status) {
@@ -71,6 +68,11 @@ export const verifyOtp = createAsyncThunk(
         await AsyncStorage.setItem('token', token);
         return {user: {token, user_id}};
       } else {
+        CustomToast({
+          type: 'error',
+          text1: 'OTP Verification Failed',
+          text2: response?.data?.message || 'Please try again.',
+        });
         return rejectWithValue('OTP verification failed');
       }
     } catch (error) {
@@ -83,26 +85,25 @@ export const verifyOtp = createAsyncThunk(
 export const signUp = createAsyncThunk(
   'user/signUp',
   async (values: any, {rejectWithValue}) => {
+    console.log('---- vales in the sign up ----', values);
+
     try {
       const response: any = await makeApiRequest({
         baseUrl: BASE_URL,
         url: TRAINER_REGISTRATION,
         data: {
-          name: values.name,
-          email: values.email,
-          phone_no: values.phone,
-          aadhar_no: values.aadharCardNumber,
+          name: values?.name,
+          email: values?.email,
+          phone_no: values?.phone,
+          hash: values?.hash,
+          // aadhar_no: values.aadharCardNumber,
         },
         method: 'POST',
       });
 
+      console.log('---- response in the sign up ----', response);
+
       if (response?.success == true) {
-        await AsyncStorage.setItem(
-          'userId',
-          response?.response?.user_id.toString(),
-        );
-        await AsyncStorage.setItem('userId', response?.response?.user_id.toString());
-        await AsyncStorage.setItem('token', response?.response?.token);
         return response?.response;
       } else {
         CustomToast({
@@ -110,11 +111,13 @@ export const signUp = createAsyncThunk(
           text1: 'Sign Up Failed',
           text2: response?.message,
         });
-        return rejectWithValue('Sign up failed. Please try again.');
+        return rejectWithValue(
+          response?.message || 'Sign up failed. Please try again.',
+        );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error in sign up:', error);
-      return rejectWithValue('Something went wrong. Please try again.');
+      return rejectWithValue(error?.message);
     }
   },
 );
@@ -173,7 +176,7 @@ const userSlice = createSlice({
       .addCase(signUp.fulfilled, (state, action: any) => {
         // console.log('=== sign up fullfilled === ');
         state.user = action.payload; // Store user data in the state
-        state.auth = true; // Set auth to true after successful verification
+        state.auth = false; // Set auth to true after successful verification
         state.loading = false;
       })
       .addCase(signUp.rejected, (state: any, action: any) => {

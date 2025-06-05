@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { FC, useCallback, useState } from 'react'
 import Container from '../../../../components/Container'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
@@ -16,7 +16,9 @@ import Colors from '../../../../utils/Colors';
 import CustomButton from '../../../../components/Customs/CustomButton';
 import CustomModal from '../../../../components/Customs/CustomModal';
 import CustomInput from '../../../../components/Customs/CustomInput';
-import CustomToast  from '../../../../components/Customs/CustomToast';
+import CustomToast from '../../../../components/Customs/CustomToast';
+import { sub } from 'date-fns';
+import moment from 'moment';
 
 
 interface Props {
@@ -39,6 +41,7 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
   const [message, setMessage] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
 
   // due
   const [dueAmount, setDueAmount] = useState('0');
@@ -47,6 +50,7 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
   // paid
   const [paidAmount, setPaidAmount] = useState('0');
   const [paidDate, setPaidDate] = useState<string>('');
+  // const [loading, setLoading] = useState(false);
 
 
   // console.log("=== suscription in the course subs details ====", suscription);
@@ -91,7 +95,7 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
         }
       });
 
-      console.log('=== history ====', response);
+      // console.log('=== history ====', response);
       if (response.status === 'success') {
         setHistory(response?.history);
         setMessage(response?.message);
@@ -163,22 +167,24 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  console.log("------ subccription ----", suscription);
+  // console.log("------ subccription ----", suscription);
 
 
   const handleUnSubscribe = async () => {
+    setDataLoading(true);
     try {
       const response: any = await makeApiRequest({
         baseUrl: BASE_URL,
         url: POST_UNSUBSCRIBE_COURSE,
         data: {
           // subscription_id: lead_id,
-          subscription_id: "",
+          subscription_id: suscription?.id,
           end_date: today,
         },
         method: 'POST',
       });
 
+      console.log("---- response in the unsubscribe the trainer ---", response);
 
       if (response?.success) {
         CustomToast({
@@ -196,11 +202,26 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
     } catch (err: any) {
       console.error('Error in the unsubscribe the course', err);
     }
+    finally {
+      setDataLoading(false);
+    }
   };
 
 
-  console.log("---- paidAmount ----", paidAmount);
-  console.log("---- paidDate ----", paidDate);
+  // console.log("---- paidAmount ----", paidAmount);
+  // console.log("---- paidDate ----", paidDate);
+
+  if (dataLoading) {
+    return (
+      <Container>
+        <ActivityIndicator
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+          size="large"
+          color={"#000"}
+        />
+      </Container>
+    )
+  }
 
 
   const handlePaid = async () => {
@@ -230,7 +251,7 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
       });
 
 
-      console.log("==== response in update ===", response);
+      // console.log("==== response in update ===", response);
 
 
       if (response?.success === true) {
@@ -469,7 +490,7 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
                     });
                   }}>
                   <CustomText
-                    text={dueDate ? dueDate : "Select Due Date"}
+                    text={dueDate ? moment(dueDate).format("MMMM, Do YYYY") : "Select Due Date"}
                     // color={values.endDate ? '#000' : '#909090'}
                     weight="400"
                     size={15}
@@ -550,7 +571,7 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
                     });
                   }}>
                   <CustomText
-                    text={paidDate ? paidDate : "Select Payment Date"}
+                    text={paidDate ? moment(paidDate).format("MMMM, Do YYYY") : "Select Payment Date"}
                     // color={values.endDate ? '#000' : '#909090'}
                     weight="400"
                     size={15}
@@ -607,7 +628,24 @@ const MenuPop = ({ navigation, item, id, message, subscriptionDetails, handleUnS
 
       <MenuOptions
         customStyles={{
-          optionsContainer: styles.optionsContainer,
+          optionWrapper: {
+            paddingHorizontal: moderateScale(15), // Adjust horizontal padding
+            paddingVertical: moderateScale(7),
+            marginVertical: -moderateScale(4),
+            height: moderateScale(50),
+            justifyContent: "center"
+          },
+          optionsContainer: {
+            marginVertical: moderateScale(25),
+            paddingVertical: moderateScale(10),
+            backgroundColor: '#fff', // Set background color
+            borderRadius: moderateScale(15), // Rounded corners
+            elevation: 5, // Add shadow for Android
+            shadowColor: '#000', // Shadow color for iOS
+            shadowOpacity: 0.2, // Shadow opacity for iOS
+            shadowRadius: 4, // Shadow radius for iOS
+            shadowOffset: { width: 0, height: 2 }, // Shadow offset for iOS
+          },
         }}
       >
 

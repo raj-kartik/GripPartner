@@ -6,11 +6,16 @@ import CustomIcon from "../Customs/CustomIcon";
 import CustomText from "../Customs/CustomText";
 import Colors from "../../utils/Colors";
 
-interface Props { }
+interface Props {
+    item: any;
+    Coursedata: any;
+    courseid: string;
+}
 const TrainingDetail: FC<Props> = ({
     item,
     Coursedata,
-}: any): JSX.Element => {
+    courseid
+}: Props): JSX.Element => {
 
 
     console.log("==== item in the training details ====",item);

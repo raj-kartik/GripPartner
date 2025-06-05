@@ -14,6 +14,7 @@ import ImageCard from '../../../components/ImageCard';
 import { MenuProvider } from 'react-native-popup-menu';
 import RetreatDetailMenu from '../../../components/Menu/RetreatDetailMenu';
 import axios from 'axios';
+import CustomToast from '@components/Customs/CustomToast';
 
 interface Props {
   navigation: any,
@@ -46,11 +47,15 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
       const response: any = await axios.get(`https://fitwithgrip.com/api/${TRAINER_RETREAT_DETAILS(retreatid)}`);
 
 
-      console.log("----- response in the retreat details -----", response?.data);
+      // console.log("----- response in the retreat details -----", response?.data);
 
       if (response?.status === 200) {
         setData(response?.data?.data);
-        setStatus1(response?.data?.data.apply_status);
+
+        if (response?.data?.data?.status === "Active")
+          setStatus1(true);
+        else
+          setStatus1(false);
       }
 
       setLoading(false);
@@ -61,52 +66,75 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
     }
   };
 
+
+  // console.log("==== data in the retreat details ===", data);
+  // console.log("==== data in the retreat details ===", status1);
+
+
   const distableFun = async (res: number) => {
-    const status = res === 2 ? 'Disable' : 'Enable';
-    Alert.alert(
-      'Confirmation',
-      `Are you sure you want to ${status} ?`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
+
+    console.log("==== res in the retreat details ===", res);
+    // return;
+    try {
+      const response: any = await makeApiRequest({
+        baseUrl: BASE_URL,
+        data: {
+          status: res
         },
-        {
-          text: 'Yes',
-          onPress: async () => {
-            setLoading(true);
-            try {
-              const row = {
-                status: res,
-              };
-              setStatus1(res);
+        method: "POST",
+        url: `user-retreat-status?id=${retreatid}`
+      });
 
-              // const response: any = await postMethod(
-              //   `user-retreat-status?id=${retreatid}`,
-              //   row,
-              // );
+      console.log("----- response in the retreat details -----", response);
 
-              const response: any = await makeApiRequest({
-                baseUrl: BASE_URL,
-                data: row,
-                method: "POST",
-                url: `user-retreat-status?id=${retreatid}`
-              })
+      if (response?.success == true) {
+        CustomToast({
+          type: 'success',
+          text1: `Retreat ${response?.status}d Successfully`,
+        });
+        RetreatList();
+      }
+    }
+    catch (error) {
+      console.error('Failed to update course status:', error);
+    }
+    finally {
+      setLoading(false);
+    }
+    // const status = res === 2 ? 'Disable' : 'Enable';
+    // Alert.alert(
+    //   'Confirmation',
+    //   `Are you sure you want to ${status} ?`,
+    //   [
+    //     {
+    //       text: 'Cancel',
+    //       style: 'cancel',
+    //     },
+    //     {
+    //       text: 'Yes',
+    //       onPress: async () => {
+    //         setLoading(true);
+    //         try {
+    //           const row = {
+    //             status: res,
+    //           };
+    //           setStatus1(res);
 
-              console.warn(response.data, 'ds1');
-            } catch (error) {
-              console.error('Failed to update course status:', error);
-            } finally {
-              setLoading(false);
-            }
-          },
-        },
-      ],
-      { cancelable: false },
-    );
+
+    //           // console.warn(response.data, 'ds1');
+    //         } catch (error) {
+    //           console.error('Failed to update course status:', error);
+    //         } finally {
+    //           setLoading(false);
+    //         }
+    //       },
+    //     },
+    //   ],
+    //   { cancelable: false },
+    // );
   };
 
-  console.log('=== data in the treinaer retreat detsails ===', data);
+  // console.log('=== data in the treinaer retreat detsails ===', data);
 
   const RenderItem = () => (
     <View style={styles.card}>
@@ -132,6 +160,7 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
         impression={data?.impresssion}
         subs={data?.Suscription}
         click={data?.click}
+        isRetreat={true}
       />
 
       <View
@@ -405,7 +434,7 @@ const RetreatDetails: FC<Props> = ({ navigation, route }) => {
     <Container>
       <MenuProvider>
         <View style={{ flex: .07 }} >
-          <RetreatDetailMenu retreatMenu={data} isEnable={data?.status} handleEnable={(isEnable: any) => distableFun(isEnable)} />
+          <RetreatDetailMenu retreatMenu={data} isEnable={status1} handleEnable={(isEnable: any) => distableFun(isEnable)} />
         </View>
         <ScrollView
           style={{ flex: .9 }}

@@ -12,6 +12,7 @@ import NotificationReducer from './Slice/NotificationSlice';
 import BankReducer from './Slice/BankSlice';
 import cartReducer from './Slice/AddToCartSlice';
 import studioReducer from './Slice/StudioSlice';
+import TrainerReducer from './Slice/TrainerSlice';
 const store = configureStore({
   reducer: {
     location: LocationReducer,
@@ -27,6 +28,7 @@ const store = configureStore({
     bank: BankReducer,
     cart: cartReducer,
     studio: studioReducer,
+    trainer: TrainerReducer,
   },
 });
 

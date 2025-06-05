@@ -7,14 +7,14 @@ import {
     Text,
     View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import Container from '@components/Container';
 import CustomHeader2 from '@components/Customs/Header/CustomHeader2';
 import CustomText from '@components/Customs/CustomText';
 import { moderateScale } from '@components/Matrix/Matrix';
 import CustomButton from '@components/Customs/CustomButton';
 import Colors from '@utils/Colors';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomInput from '@components/Customs/CustomInput';
 import * as yup from 'yup';
 import { Formik } from 'formik';
@@ -28,6 +28,7 @@ import {
 } from '@utils/api';
 import CustomToast from '@components/Customs/CustomToast';
 import { useNavigation } from '@react-navigation/native';
+import { userDetail } from '@redux/Slice/UserSlice/UserSlice';
 
 const panSchema = yup.object().shape({
     panNumber: yup
@@ -46,6 +47,7 @@ const PanVerification = () => {
     const [panText, setPanText] = useState<string>('');
     const [panGST, setPanGST] = useState<any>([]);
     const [selectPan, setSelectPan] = useState<any>({});
+    const dispatch: any = useDispatch();
 
     const handlePan = async ({ pan, type }: any) => {
         sePanLoading(true);
@@ -63,17 +65,27 @@ const PanVerification = () => {
             });
 
             if (response?.status === 'success') {
-                if (type === 'own') {
-                    setPanData(response?.data?.data);
-                } else {
-                    setPanGST(response?.data?.data);
-                    setSelectPan(response?.data?.data[0]);
+
+                if (response?.data?.code === 200) {
+                    if (type === 'own') {
+                        setPanData(response?.data?.data);
+                    } else {
+                        setPanGST(response?.data?.data);
+                        setSelectPan(response?.data?.data[0]);
+                    }
+                    CustomToast({
+                        type: 'success',
+                        text1: 'PAN information fetches successfully',
+                        text2: '',
+                    });
                 }
-                CustomToast({
-                    type: 'success',
-                    text1: 'PAN information fetches successfully',
-                    text2: '',
-                });
+                else {
+                    CustomToast({
+                        type: 'error',
+                        text1: response?.data?.message || 'Failed to fetch PAN information',
+                        text2: '',
+                    });
+                }
             }
 
             console.log('---- respons ein the pan verificaitio -----', response);
@@ -107,10 +119,27 @@ const PanVerification = () => {
                 baseUrl: BASE_URL,
                 data: {
                     user_id: user?.id,
-                    pan: selectPan?.pan,
-                    gst: selectPan?.gstin,
+                    pan: selectPan?.pan || values?.panNumber || "",
+                    gst: selectPan?.gstin || "",
                 },
             });
+
+
+            if (response?.status === 'success') {
+                CustomToast({
+                    type: 'success',
+                    text1: 'PAN information updated successfully',
+                    text2: '',
+                });
+                navigation.navigate('IsAddStudio');
+            }
+            else {
+                CustomToast({
+                    type: 'error',
+                    text1: response?.message || 'Failed to update PAN information',
+                    text2: '',
+                });
+            }
 
 
             console.log("---- response in the handle save pan card -----", response);
@@ -118,18 +147,18 @@ const PanVerification = () => {
         } catch (err: any) {
             console.error('Error in the saving PAN card', err);
         }
-        navigation.navigate('IsAddStudio');
     };
 
     return (
         <Container>
             <CustomHeader2 title="PAN Verification" />
 
-            <Pressable onPress={() => {
+            {/* <Pressable onPress={async() => {
+                await dispatch(userDetail());
                 navigation.navigate('BottomTabs')
             }} style={{ position: "absolute", top: moderateScale(10), right: moderateScale(30), zIndex: 10 }} >
                 <CustomText text='Skip' color={Colors.gray_font} />
-            </Pressable>
+            </Pressable> */}
 
             <View style={{ flex: 1, marginTop: moderateScale(10) }}>
                 <CustomText text="Add Your PAN" weight="600" size={22} />
@@ -429,7 +458,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: moderateScale(10),
         backgroundColor: '#fff',
-        height: moderateScale(100),
+        height: moderateScale(110),
         padding: moderateScale(10),
     },
 });

@@ -42,11 +42,11 @@ interface StudioFormValues {
   email: string;
   capacity: string;
   // aadharCard: DocumentPickerResponse | null;
-  aadharCard: any;
-  aadharCardNumber: string;
+  // aadharCard: any;
+  // aadharCardNumber: string;
   // panCard: DocumentPickerResponse | null;
-  panCard: any;
-  panCardNumber: string;
+  // panCard: any;
+  // panCardNumber: string;
   openingTime: string;
   closingTime: string;
 }
@@ -59,10 +59,10 @@ interface StudioFormValues {
   contactNumber: string;
   email: string;
   capacity: string;
-  aadharCard: any;
-  aadharCardNumber: string;
-  panCard: any;
-  panCardNumber: string;
+  // aadharCard: any;
+  // aadharCardNumber: string;
+  // panCard: any;
+  // panCardNumber: string;
   openingTime: string;
   closingTime: string;
 }
@@ -77,10 +77,10 @@ const maxLengths: Record<keyof StudioFormValues, number> = {
   contactNumber: 15,
   email: 100,
   capacity: 5,
-  aadharCard: 0, // no maxLength (file)
-  aadharCardNumber: 12,
-  panCard: 0, // no maxLength (file)
-  panCardNumber: 10,
+  // aadharCard: 0, // no maxLength (file)
+  // aadharCardNumber: 12,
+  // panCard: 0, // no maxLength (file)
+  // panCardNumber: 10,
   openingTime: 10,
   closingTime: 10,
 };
@@ -135,16 +135,16 @@ const studioItemSchema = yup.object().shape({
 });
 
 const overallSchema = yup.object().shape({
-  aadharCard: yup.mixed().notRequired(),
-  aadharCardNumber: yup
-    .string()
-    .matches(/^[0-9]{12}$/, '*must be a valid 12-digit Aadhaar number'),
-  // .required('*required'),
-  panCard: yup.mixed().notRequired(),
-  panCardNumber: yup
-    .string()
-    .transform(value => value?.toUpperCase())
-    .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, '*must be a valid PAN number'),
+  // aadharCard: yup.mixed().notRequired(),
+  // aadharCardNumber: yup
+  //   .string()
+  //   .matches(/^[0-9]{12}$/, '*must be a valid 12-digit Aadhaar number'),
+  // // .required('*required'),
+  // panCard: yup.mixed().notRequired(),
+  // panCardNumber: yup
+  //   .string()
+  //   .transform(value => value?.toUpperCase())
+  //   .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, '*must be a valid PAN number'),
   // .required('*required'),
   studio: yup
     .array()
@@ -157,8 +157,8 @@ const buildFormData = (initialValues: any, user_id: string) => {
 
   // Flat fields
   formData.append('user_id', user_id);
-  formData.append('aadhar_number', initialValues.aadharCardNumber);
-  formData.append('pan_number', initialValues.panCardNumber);
+  // formData.append('aadhar_number', initialValues.aadharCardNumber);
+  // formData.append('pan_number', initialValues.panCardNumber);
 
   // Aadhar & PAN files
   // if (initialValues.aadharCard) {
@@ -218,10 +218,10 @@ const UpdateStudioProfile: React.FC = () => {
   const scrollRef = useRef<ScrollView>(null);
 
   const initialValues: any = {
-    aadharCard: null,
-    aadharCardNumber: user?.aadhar_number || '',
-    panCard: null,
-    panCardNumber: user?.pan || '',
+    // aadharCard: null,
+    // aadharCardNumber: user?.aadhar_number || '',
+    // panCard: null,
+    // panCardNumber: user?.pan || '',
     studio: [
       {
         name: '',
@@ -807,7 +807,7 @@ const UpdateStudioProfile: React.FC = () => {
                 </FieldArray>
 
                 {/* Aadhaar and PAN Fields */}
-                {[
+                {/* {[ 
                   {
                     name: 'aadharCardNumber',
                     label: 'Aadhaar Card Number',
@@ -840,7 +840,7 @@ const UpdateStudioProfile: React.FC = () => {
                       />
                     )}
                   </View>
-                ))}
+                ))} */}
 
                 {/* Submit */}
                 <CustomButton

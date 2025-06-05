@@ -23,9 +23,7 @@ export const useBackHandler = (
       if (handleNav) {
         handleNav(); // Use custom nav handler if provided
       } else {
-        navigation.navigate('DrawerNav', {
-          screen: 'HomeBlank',
-        });
+        navigation.navigate('BottomTabs')
       }
     }, 7000);
 

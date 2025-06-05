@@ -21,20 +21,22 @@ const Settings = () => {
     const navigation = useNavigation();
     const [isLogout, setIsLogout] = useState(false);
 
+    console.log("Settings User: ", user);
+    
+
     const settingArray = [
         {
             id: 1,
             label: 'Edit Profile',
             route: "UpdateProfile"
         },
-        // {
-        //     id: 4,
-        //     label: 'Studio Profile',
-        //     route: "UpdateStudioProfile"
-        //     // route: "KycVerification"
-        // },
+        // ...(user?.is_registred ? [{
+        //     id: 2,
+        //     label: 'Add Trainer',
+        //     route: "AddTrainer"
+        // }] : []),
         {
-            id: 2,
+            id: 4,
             label: 'Privacy Policy',
             route: "Policy"
         },
@@ -43,7 +45,8 @@ const Settings = () => {
             label: 'Terms and Conditions',
             route: "Terms"
         },
-    ]
+    ];
+
     return (
         <Container>
             <CustomHeader2 title="Settings" />

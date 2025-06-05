@@ -36,10 +36,11 @@ import SubscriptionCard from '../../../../components/Cards/SubscriptionCard';
 import CustomModal from '../../../../components/Customs/CustomModal';
 import { Formik } from 'formik';
 import CustomInput from '../../../../components/Customs/CustomInput';
-import CustomToast  from '../../../../components/Customs/CustomToast';
-import * as Yup from 'yup';
+import CustomToast from '../../../../components/Customs/CustomToast';
 import { leadChangeStatus } from '../../../../utils/UtilityFuncations';
+import moment from 'moment';
 
+import * as Yup from 'yup';
 const followSchema = Yup.object().shape({
     comment: Yup.string().min(3, '*too Short').max(500, '*too large'),
     follow_up_date: Yup.date().required('*required'),
@@ -136,11 +137,11 @@ const CourseLeadDetails = () => {
             });
 
 
-            if(response?.success){
+            if (response?.success) {
                 CustomToast({
-                    type:"success",
-                    text1:"You have succesfully unsubscribe the student",
-                    text2:"This user is no longer your student"
+                    type: "success",
+                    text1: "You have succesfully unsubscribe the student",
+                    text2: "This user is no longer your student"
                 });
                 leadLisfun();
                 CourseListDetail();
@@ -218,7 +219,9 @@ const CourseLeadDetails = () => {
 
     // open close course details
     const confirmAction = async (num: number) => {
-        const update = await leadChangeStatus('Course', lead_id, num);
+        const update: any = await leadChangeStatus('Course', lead_id, num);
+
+        console.log("---- update in the course lead details ---", update);
 
         if (update) {
             leadLisfun();
@@ -488,7 +491,7 @@ const CourseLeadDetails = () => {
                                                 }}>
                                                 <CustomText
                                                     text={
-                                                        values.follow_up_date ? values.follow_up_date : 'To'
+                                                        values.follow_up_date ? moment(values.follow_up_date).format("MMMM, Do YYYY") : 'To'
                                                     }
                                                     color={values.follow_up_date ? '#000' : '#909090'}
                                                     weight="400"

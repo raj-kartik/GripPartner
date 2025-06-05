@@ -1,20 +1,16 @@
-import { Pressable, StyleSheet, Text, TextInput, View, Image, StatusBar } from 'react-native'
+import { Pressable, StyleSheet, View, Image, StatusBar } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { globalStyle } from '../../../../utils/GlobalStyle'
 import Images from '../../../../utils/Images'
 import { userDetail, verifyOtp } from '../../../../redux/Slice/UserSlice/UserSlice'
 import { BASE_URL, POST_LOGIN_OTP_REQUEST } from '../../../../utils/api'
-import makeApiRequest from '../../../../utils/ApiService'
 import CustomToast  from '../../../../components/Customs/CustomToast'
-import CustomInput from '../../../../components/Customs/CustomInput'
 import { moderateScale, screenHeight, screenWidth } from '../../../../components/Matrix/Matrix'
-import Container from '../../../../components/Container'
 import CustomText from '../../../../components/Customs/CustomText'
 import CustomButton from '../../../../components/Customs/CustomButton'
-import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
 import Colors from '../../../../utils/Colors'
 import CustomIcon from '../../../../components/Customs/CustomIcon'
 import {
@@ -30,7 +26,7 @@ const OtpVerification = (props: any) => {
     // const params = useRoute();
     const { loading, auth, error } = useSelector((state: any) => state.user);
     const navigation = useNavigation();
-    const dispatch = useDispatch();
+    const dispatch:any = useDispatch();
     const [otp, setOtp] = useState('');
     const [isResendDisabled, setIsResendDisabled] = useState(false);
     const [countdown, setCountdown] = useState(60); // Countdown timer set to 60 seconds

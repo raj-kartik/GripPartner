@@ -14,6 +14,7 @@ import CustomButton from '../../../../components/Customs/CustomButton'
 import AccountCourseCard from '../../../../components/Cards/AccountCourseCard'
 import Colors from '../../../../utils/Colors'
 import { leadChangeStatus } from '../../../../utils/UtilityFuncations'
+import FollowUpModal from '@components/Modal/FollowUpModal'
 
 const RetreatFollowUpsDetail = () => {
   const navigation = useNavigation();
@@ -23,6 +24,7 @@ const RetreatFollowUpsDetail = () => {
   const [update, setUpdate] = useState<any>([]);
   const [data, setData] = useState<any>([]);
   const [nextUpdate, setNextUpdate] = useState<any>([]);
+  const [followModal, setFollowModal] = useState(false);
 
 
   useFocusEffect(useCallback(() => {
@@ -33,7 +35,7 @@ const RetreatFollowUpsDetail = () => {
   }, []));
 
 
-  // console.log("---- date in the retreat follow ups details ----",data);
+  // console.log("---- date in the retreat follow ups details ----",route?.params);
 
 
   const followHistory = async () => {
@@ -44,7 +46,7 @@ const RetreatFollowUpsDetail = () => {
         method: "GET"
       });
 
-      console.log("---- response in the follow up details ----", response);
+      // console.log("---- response in the follow up details ----", response);
 
 
       if (response?.success === true) {
@@ -78,19 +80,19 @@ const RetreatFollowUpsDetail = () => {
       <MenuProvider>
         <View style={[globalStyle.betweenCenter, { marginRight: moderateScale(15), marginBottom: moderateScale(15), marginTop: moderateScale(10) }]} >
           <View style={[globalStyle.row]} >
-            <Pressable>
+            <Pressable onPress={() => {
+              navigation.goBack();
+            }} >
               <CustomIcon type='AntDesign' name='arrowleft' size={30} />
             </Pressable>
             <CustomText customStyle={{ marginLeft: moderateScale(10) }} text='Follow Up Details' size={22} weight='600' />
           </View>
-          <View style={[globalStyle.betweenCenter, { flex: .2 }]} >
+          <View style={[globalStyle.betweenCenter, { flex: .4, marginRight: moderateScale(5) }]} >
             {data.status !== "Subscribed" && data.booking !== 'yes' && (
-              <Pressable onPress={() => {
-                navigation.navigate('AddBookingScreen', {
-                  lead_id: data?.lead_id
-                })
+              <Pressable style={{ marginRight: moderateScale(5) }} onPress={() => {
+                setFollowModal(true)
               }} >
-                <CustomIcon type='AntDesign' name='plus' />
+                <CustomIcon type='AntDesign' name='plus' size={30} />
               </Pressable>
             )}
             {data.status !== "Subscribed" && (
@@ -223,6 +225,14 @@ const RetreatFollowUpsDetail = () => {
             <CustomText text='No Data Found' weight='600' />
           </View>
         )}
+
+        {
+          followModal && (
+            <FollowUpModal followModal={followModal} isRetreat={true} handleLoading={() => {
+              followHistory()
+            }} onScreen={true} setFollowModal={setFollowModal} lead_id={followid} />
+          )
+        }
       </MenuProvider>
     </Container>
   )

@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import CustomText from './Customs/CustomText';
 import CustomIcon from './Customs/CustomIcon';
@@ -58,14 +58,15 @@ const TrainerDashboard = ({
   impression,
   subs,
   click,
+  isRetreat = false
 }: any) => {
   const data = [
-    {key: 'lead', label: 'Leads', value: lead},
-    {key: 'interest', label: 'Interest', value: interest},
-    {key: 'application', label: 'Application', value: application},
-    {key: 'impression', label: 'Views', value: impression},
-    {key: 'subs', label: 'Subscribed', value: subs},
-    {key: 'click', label: 'Click', value: click},
+    { key: 'lead', label: 'Leads', value: lead },
+    { key: 'interest', label: 'Interest', value: interest },
+    { key: 'application', label: 'Application', value: application },
+    { key: 'impression', label: 'Views', value: impression },
+    { key: 'subs', label: !isRetreat ? 'Subscribed' : 'Booking', value: subs },
+    { key: 'click', label: 'Click', value: click },
   ].filter(item => item.value !== undefined && item.value !== null);
 
   return (
@@ -85,8 +86,8 @@ const TrainerDashboard = ({
           marginVertical: moderateScale(10),
           //   flex:1
         }}>
-        {data.map(({key, label, value}) => (
-          <View key={key} style={{alignItems: 'center', flex: 1}}>
+        {data.map(({ key, label, value }) => (
+          <View key={key} style={{ alignItems: 'center', flex: 1 }}>
             <View
               style={{
                 width: moderateScale(50),
@@ -105,7 +106,7 @@ const TrainerDashboard = ({
               />
             </View>
             <CustomText
-              customStyle={{marginTop: moderateScale(3)}}
+              customStyle={{ marginTop: moderateScale(3) }}
               text={`${value} ${label}`}
               weight="500"
               size={13}

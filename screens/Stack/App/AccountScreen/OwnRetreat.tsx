@@ -197,6 +197,7 @@ const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
                       <View style={globalStyle.row}>
                         <CustomIcon type="MaterialIcons" name="group" />
                         <CustomText
+                          customStyle={{ marginLeft: moderateScale(5) }}
                           text={`${item?.Lead < 1 ? 'No' : item?.Lead} ${item?.Lead <= 1 ? 'Lead' : 'Leads'
                             }`}
                           weight="500"
@@ -207,6 +208,7 @@ const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
                       <View style={globalStyle.row}>
                         <CustomIcon type="MaterialIcons" name="person-add" />
                         <CustomText
+                          customStyle={{ marginLeft: moderateScale(5) }}
                           text={`${item?.Suscription < 1 ? 'No' : item?.Suscription} ${item?.Suscription <= 1 ? 'Suscription' : 'Suscriptions'
                             }`}
                           weight="500"
@@ -220,7 +222,9 @@ const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
 
                       <View style={globalStyle.row}>
                         {/* <Icon name="eye" type="font-awesome" size={25} color="#000" /> */}
+                        <CustomIcon type='Entypo' name='line-graph' />
                         <CustomText
+                          customStyle={{ marginLeft: moderateScale(5) }}
                           text={`${item?.impresssion < 1 ? 'No' : item?.impresssion} ${item?.impresssion <= 1 ? 'Impression' : 'Impressions'
                             }`}
                           weight="500"
@@ -231,6 +235,7 @@ const OwnRetreat: FC<Props> = ({ navigation, route }: any): JSX.Element => {
                       <View style={globalStyle.row}>
                         <CustomIcon type="MaterialIcons" name="touch-app" />
                         <CustomText
+                          customStyle={{ marginLeft: moderateScale(5) }}
                           text={`${item?.click < 1 ? 'No' : item?.click} ${item?.click <= 1 ? 'Click' : 'Clicks'
                             }`}
                           weight="500"

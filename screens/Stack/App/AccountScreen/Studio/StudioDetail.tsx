@@ -1,4 +1,5 @@
 import {
+    FlatList,
     Image,
     Linking,
     Pressable,
@@ -21,11 +22,11 @@ import SubHeader from '@components/Customs/Header/SubHeader1';
 import makeApiRequest from '@utils/ApiService';
 import { BASE_URL, GET_STUDIO_DETAILS } from '@utils/api';
 import CustomToast from '@components/Customs/CustomToast';
-import { useFocusEffect } from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const StudioDetail = (props: any) => {
     const { item: studio } = props?.route?.params;
-
+    const navigation = useNavigation();
     const [data, setData] = useState<any>(null)
 
     useFocusEffect(useCallback(() => {
@@ -62,6 +63,23 @@ const StudioDetail = (props: any) => {
         fetchStudioDetails();
     }, []));
 
+
+    console.log("--- studio details trainer ---", data?.trainers);
+
+    const sendId = (item: any, id: string) => {
+        navigation.dispatch(
+            CommonActions.navigate({
+                // name: 'CourseDetails',
+                name: 'CourseDetails',
+                params: {
+                    courseid: id,
+                    course: item,
+                },
+            }),
+        );
+    };
+
+
     return (
         <View style={{ flex: 1, backgroundColor: "#fff", }} >
             <StatusBar
@@ -84,7 +102,7 @@ const StudioDetail = (props: any) => {
                             }}
                         />
                     ) : (
-                        <Images.Coin
+                        <Images.Logo
                             width={moderateScale(120)}
                             height={moderateScale(120)}
                             style={{
@@ -240,7 +258,7 @@ const StudioDetail = (props: any) => {
                             size={30}
                         />
                         <View style={{ marginLeft: moderateScale(5) }}>
-                            <CustomText text="Opens at" weight="500" color={Colors.gray} />
+                            <CustomText text="Closes at" weight="500" color={Colors.gray} />
                             <CustomText text={studio.closing_time.slice(0, 5)} weight="600" />
                         </View>
                     </View>
@@ -248,8 +266,165 @@ const StudioDetail = (props: any) => {
 
                 {/* courses */}
                 <View style={{ marginTop: moderateScale(10), paddingHorizontal: moderateScale(10) }}>
-                    <SubHeader title="Courses" isMore={true} />
+                    <SubHeader title="Courses" isMore={false} />
+                    {
+                        data?.courses?.length > 0 ? (
+                            <FlatList
+                                data={data?.courses || []}
+                                keyExtractor={(item) => item.id.toString()}
+                                horizontal
+                                contentContainerStyle={{ columnGap: moderateScale(10) }}
+                                showsHorizontalScrollIndicator={false}
+                                renderItem={({ item }) => (
+                                    <Pressable style={styles.courseCard}
+                                        onPress={() => sendId(item, item?.id)}
+                                    >
+                                        <View style={{ flex: 2 }} >
+                                            <Image
+                                                source={{ uri: item?.image }}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    borderRadius: moderateScale(10),
+                                                }}
+                                            />
+                                        </View>
+
+                                        <View style={{ flex: 1, marginTop: moderateScale(5) }} >
+                                            <CustomText
+                                                text={item?.title}
+                                                weight='600'
+                                                size={16}
+                                            />
+
+                                            <View style={[globalStyle.row, { marginTop: moderateScale(5) }]}>
+                                                {item?.slottiming?.first_start_time && (
+                                                    <View style={[globalStyle.row, { marginTop: moderateScale(0), marginBottom: moderateScale(5) }]}>
+                                                        <CustomIcon color="#8c8c8c" type="Ionicons" name="time-outline" />
+                                                        <CustomText
+                                                            weight="500"
+                                                            color="#8c8c8c"
+                                                            customStyle={{ marginLeft: moderateScale(5) }}
+                                                            text={item?.slottiming?.first_start_time}
+                                                        />
+                                                    </View>
+                                                )}
+
+                                                {item?.slottiming?.last_end_time && (
+                                                    <View style={[globalStyle.row, { marginTop: moderateScale(0), marginBottom: moderateScale(5), marginLeft: moderateScale(10) }]}>
+                                                        <CustomIcon color="#8c8c8c" type="Ionicons" name="time-outline" />
+                                                        <CustomText
+                                                            weight="500"
+                                                            color="#8c8c8c"
+                                                            customStyle={{ marginLeft: moderateScale(5) }}
+                                                            text={item?.slottiming?.last_end_time}
+                                                        />
+                                                    </View>
+                                                )}
+
+                                            </View>
+                                        </View>
+                                    </Pressable>
+                                )}
+                            />
+                        ) : (
+                            <View>
+                                <CustomText text="No Course Available" size={16} weight='500' color={Colors.gray_font} />
+                            </View>
+                        )
+                    }
+
                 </View>
+
+                {/* trainer */}
+                <View style={{ marginTop: moderateScale(10), paddingHorizontal: moderateScale(10) }}>
+                    <SubHeader title="Trainers" isMore={false} />
+                    {
+                        data?.trainers?.length > 0 ? (
+                            <FlatList
+                                data={data?.trainers || []}
+                                keyExtractor={(item) => item.id.toString()}
+                                horizontal
+                                contentContainerStyle={{ columnGap: moderateScale(10) }}
+                                showsHorizontalScrollIndicator={false}
+                                renderItem={({ item }) => {
+                                    // console.log("---- item in the trainer ----",item);
+
+                                    return (
+                                        <Pressable style={styles.courseCard}
+                                        // onPress={() => sendId(item, item?.id)}
+                                        >
+                                            <View style={{ flex: 2 }} >
+                                                {
+                                                    item["user image"] ? <Image
+                                                        source={{ uri: item["user image"] }}
+                                                        style={{
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            borderRadius: moderateScale(10),
+                                                            // flex:1
+                                                        }}
+                                                    /> :
+                                                        <View style={[globalStyle.center, { backgroundColor: "#f7f7f7" }]} >
+                                                            <Images.Logo
+                                                                width={moderateScale(120)}
+                                                                height={moderateScale(120)}
+                                                                style={{
+                                                                    height: moderateScale(150),
+                                                                }}
+                                                            />
+                                                        </View>
+                                                }
+
+                                            </View>
+
+                                            <View style={{ flex: 1, marginTop: moderateScale(5) }} >
+                                                <CustomText
+                                                    text={item?.name}
+                                                    weight='600'
+                                                    size={16}
+                                                />
+
+                                                <View style={[globalStyle.row, { marginTop: moderateScale(5) }]}>
+                                                    {item?.slottiming?.first_start_time && (
+                                                        <View style={[globalStyle.row, { marginTop: moderateScale(0), marginBottom: moderateScale(5) }]}>
+                                                            <CustomIcon color="#8c8c8c" type="Ionicons" name="time-outline" />
+                                                            <CustomText
+                                                                weight="500"
+                                                                color="#8c8c8c"
+                                                                customStyle={{ marginLeft: moderateScale(5) }}
+                                                                text={item?.slottiming?.first_start_time}
+                                                            />
+                                                        </View>
+                                                    )}
+
+                                                    {item?.slottiming?.last_end_time && (
+                                                        <View style={[globalStyle.row, { marginTop: moderateScale(0), marginBottom: moderateScale(5), marginLeft: moderateScale(10) }]}>
+                                                            <CustomIcon color="#8c8c8c" type="Ionicons" name="time-outline" />
+                                                            <CustomText
+                                                                weight="500"
+                                                                color="#8c8c8c"
+                                                                customStyle={{ marginLeft: moderateScale(5) }}
+                                                                text={item?.slottiming?.last_end_time}
+                                                            />
+                                                        </View>
+                                                    )}
+
+                                                </View>
+                                            </View>
+                                        </Pressable>
+                                    )
+                                }}
+                            />
+                        ) : (
+                            <View>
+                                <CustomText text="No Trainers Shown" weight='500' size={16} color={Colors.gray_font} />
+                            </View>
+                        )
+                    }
+
+                </View>
+
             </ScrollView>
         </View>
     );
@@ -288,5 +463,15 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: -280,
         borderRadius: moderateScale(300)
+    },
+    courseCard: {
+        width: screenWidth * 0.6,
+        borderWidth: 1,
+        borderRadius: moderateScale(10),
+        height: screenWidth * 0.5,
+        padding: moderateScale(5),
+        backgroundColor: "#fff",
+        elevation: 5,
+        marginBottom: moderateScale(2),
     }
 });

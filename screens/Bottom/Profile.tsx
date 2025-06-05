@@ -16,15 +16,16 @@ import Container from '../../components/Container'
 import Images from '../../utils/Images'
 import makeApiRequest from '../../utils/ApiService'
 import { BASE_URL } from '../../utils/api'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Colors from '../../utils/Colors'
 import CustomButton from '../../components/Customs/CustomButton'
 import { LineChart } from 'react-native-chart-kit'
 import CustomModal from '../../components/Customs/CustomModal'
+import IsKycCard from '@components/Cards/IsKycCard'
 
 
 const Profile = () => {
-
+  const dispatch: any = useDispatch();
   const { user } = useSelector((state: any) => state?.user);
   const userOptionScreen: any = [
     {
@@ -108,20 +109,23 @@ const Profile = () => {
       route: "Studios",
       direct: true,
     },
+    {
+      id: 11,
+      label: 'Trainer',
+      route: "TrainerList",
+      direct: true,
+      svg: Images.Trainer
+    },
 
   ];
 
   const [barContent, setbarContent] = useState('Course');
   const [barTypeContent, setbarTypeContent] = useState('Clicks');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedRoute, setSelectedRoute] = useState(null);
-  const [optionLabel, setOptionLabel] = useState('');
   const [dates, setDates] = useState<[]>([]);
   const [graphData, setGraphData] = useState<[]>([]);
   const [showModalBarContent, setShowModalBarContent] = useState(false);
   const [showModalBarType, setShowModalBarType] = useState(false);
   const [rawContent, setRawContent] = useState<any>(null);
-  const [totalClicks, setTotalClicks] = useState<number>(0)
 
   useFocusEffect(
     useCallback(() => {
@@ -173,252 +177,256 @@ const Profile = () => {
   const navigation = useNavigation();
   return (
     <Container>
-      <CustomHeader2 title="Profile" isMore={true} iconType="Feather" iconName="settings" handleMore={
+      <CustomHeader2 isBack={false} title="Profile" isMore={true} iconType="Feather" iconName="settings" handleMore={
         () => {
           navigation.navigate('Settings')
         }
       } />
 
-      <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false} >
-        <View style={{ marginTop: moderateScale(15) }} >
-          <View style={[globalStyle.betweenCenter]}>
-            <View style={[globalStyle.betweenCenter, { flex: 1, width: "100%" }]}>
-              <CustomButton
-                title={barTypeContent}
-                customStyle={{ width: '48%' }}
-                onPress={() => {
-                  setShowModalBarType(true);
-                }}
-                radius={10}
-              />
-              <CustomButton
-                bg={Colors.orange}
-                radius={10}
-                title={barContent}
-                customStyle={{ width: '48%', marginLeft: moderateScale(3) }}
-                onPress={() => {
-                  setShowModalBarContent(true);
-                }}
-              />
+      {
+        user?.is_registred ? <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} >
+          <View style={{ marginTop: moderateScale(15) }} >
+            <View style={[globalStyle.betweenCenter]}>
+              <View style={[globalStyle.betweenCenter, { flex: 1, width: "100%" }]}>
+                <CustomButton
+                  title={barTypeContent}
+                  customStyle={{ width: '48%' }}
+                  onPress={() => {
+                    setShowModalBarType(true);
+                  }}
+                  radius={10}
+                />
+                <CustomButton
+                  bg={Colors.orange}
+                  radius={10}
+                  title={barContent}
+                  customStyle={{ width: '48%', marginLeft: moderateScale(3) }}
+                  onPress={() => {
+                    setShowModalBarContent(true);
+                  }}
+                />
+              </View>
             </View>
+
+            <LineChart
+              data={{
+                labels: dates && dates.length > 0 ? dates : [getCurrentYearMonth()], // Default label if dates is empty
+                datasets: [
+                  {
+                    data: graphData && graphData.length > 0 ? graphData : [0], // Default data if graphData is empty
+                  },
+                ],
+              }}
+              width={screenWidth * 0.95}
+              height={screenHeight * .32}
+              yAxisInterval={1}
+              chartConfig={{
+                backgroundColor: '#e26a00',
+                backgroundGradientTo: '#ffa726',
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                style: {
+                  borderRadius: 16,
+                },
+                propsForDots: {
+                  r: '6',
+                  strokeWidth: '2',
+                  stroke: '#ffa726',
+                },
+              }}
+              style={{
+                marginVertical: 8,
+                borderRadius: 16,
+              }}
+            />
+
+
+            <View style={[globalStyle.betweenCenter, { marginTop: moderateScale(10) }]}>
+              <View style={[globalStyle.row]}>
+                <View
+                  style={{
+                    width: moderateScale(10),
+                    height: moderateScale(10),
+                    backgroundColor: '#ff0000',
+                    borderRadius: moderateScale(10),
+                  }}
+                />
+                <CustomText
+                  size={13}
+                  customStyle={{ marginLeft: moderateScale(5) }}
+                  text="30 Subscribes"
+                  weight="500"
+                />
+              </View>
+
+              <View style={[globalStyle.row]}>
+                <View
+                  style={{
+                    width: moderateScale(10),
+                    height: moderateScale(10),
+                    backgroundColor: Colors?.activeRadio,
+                    borderRadius: moderateScale(10),
+                  }}
+                />
+                <CustomText
+                  size={13}
+                  customStyle={{ marginLeft: moderateScale(5) }}
+                  text={`${Object.values(rawContent?.monthlyClickCounter || {}).reduce((acc, item) => acc + item, 0)
+                    } Clicks`}
+                  weight="500"
+                />
+
+              </View>
+
+              <View style={[globalStyle.row]}>
+                <View
+                  style={{
+                    width: moderateScale(10),
+                    height: moderateScale(10),
+                    backgroundColor: Colors?.orange,
+                    borderRadius: moderateScale(10),
+                  }}
+                />
+                <CustomText
+                  size={13}
+                  customStyle={{ marginLeft: moderateScale(5) }}
+                  text={`${Object.values(rawContent?.monthlyImpressionCounter || {}).reduce((acc: any, item: any) => acc + item, 0)
+                    } Impressions`}
+                  weight="500"
+                />
+              </View>
+            </View>
+
+            {
+              <CustomModal
+                iscenter={true}
+                visible={showModalBarType}
+                containerStyle={{ paddingVertical: moderateScale(10) }}
+                onDismiss={() => {
+                  setShowModalBarType(false);
+                }}>
+                <CustomText
+                  text="Select Module"
+                  weight="600"
+                  size={16}
+                  customStyle={{
+                    textAlign: 'center',
+                    marginBottom: moderateScale(10),
+                  }}
+                />
+
+                <CustomButton
+                  title="Clicks"
+                  bg={barTypeContent === 'Clicks' ? Colors.orange : '#000'}
+                  onPress={() => {
+                    setbarTypeContent('Clicks');
+                    setShowModalBarType(false);
+                  }}
+                  customStyle={{ marginBottom: moderateScale(10) }}
+                />
+                <CustomButton
+                  bg={
+                    barTypeContent === 'Impressions' ? Colors.orange : '#000'
+                  }
+                  customStyle={{ marginBottom: moderateScale(10) }}
+                  title="Impressions"
+                  onPress={() => {
+                    setbarTypeContent('Impressions');
+                    setShowModalBarType(false);
+                  }}
+                />
+              </CustomModal>
+            }
+            {
+              <CustomModal
+                iscenter={true}
+                visible={showModalBarContent}
+                containerStyle={{ paddingVertical: moderateScale(10) }}
+                onDismiss={() => {
+                  setShowModalBarContent(false);
+                }}>
+                <CustomText
+                  text="Select Module"
+                  weight="600"
+                  size={16}
+                  customStyle={{
+                    textAlign: 'center',
+                    marginBottom: moderateScale(10),
+                  }}
+                />
+                <CustomButton
+                  title="Course"
+                  bg={barContent === 'Course' ? Colors.orange : '#000'}
+                  onPress={() => {
+                    setbarContent('Course');
+                    setShowModalBarContent(false);
+                  }}
+                  customStyle={{ marginBottom: moderateScale(10) }}
+                />
+
+                {/* <CustomButton
+                  bg={barContent === 'Franchise' ? Colors.orange : '#000'}
+                  customStyle={{ marginBottom: moderateScale(10) }}
+                  title="Franchise"
+                  onPress={() => {
+                    setbarContent('Franchise');
+                    setShowModalBarContent(false);
+                  }}
+                /> */}
+
+                {/* <CustomButton
+                  bg={barContent === 'Carrier' ? Colors.orange : '#000'}
+                  customStyle={{ marginBottom: moderateScale(10) }}
+                  title="Carrier"
+                  onPress={() => {
+                    setbarContent('Carrier');
+                    setShowModalBarContent(false);
+                  }}
+                /> */}
+
+                <CustomButton
+                  bg={barContent === 'Retreat' ? Colors.orange : '#000'}
+                  customStyle={{ marginBottom: moderateScale(10) }}
+                  title="Retreat"
+                  onPress={() => {
+                    setbarContent('Retreat');
+                    setShowModalBarContent(false);
+                  }}
+                />
+              </CustomModal>
+            }
+
           </View>
 
-          <LineChart
-            data={{
-              labels: dates && dates.length > 0 ? dates : [getCurrentYearMonth()], // Default label if dates is empty
-              datasets: [
-                {
-                  data: graphData && graphData.length > 0 ? graphData : [0], // Default data if graphData is empty
-                },
-              ],
-            }}
-            width={screenWidth * 0.95}
-            height={screenHeight * .32}
-            yAxisInterval={1}
-            chartConfig={{
-              backgroundColor: '#e26a00',
-              backgroundGradientTo: '#ffa726',
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
-              propsForDots: {
-                r: '6',
-                strokeWidth: '2',
-                stroke: '#ffa726',
-              },
-            }}
-            style={{
-              marginVertical: 8,
-              borderRadius: 16,
+          <FlatList
+            data={userOptionScreen}
+            numColumns={3}
+            // style={{justifyContent:"flex-end"}}
+            keyExtractor={(item: any) => item?.id.toString()}
+            contentContainerStyle={{ alignSelf: "center", marginTop: moderateScale(10), justifyContent: "flex-end", flex: 1, marginBottom: moderateScale(100) }} // Add padding to the container
+            columnWrapperStyle={{ gap: 10 }} // Creates gaps between columns without space-between
+            // ListHeaderComponent={}
+            renderItem={({ item }: any) => {
+              const Svg = item.svg;
+              return (
+                <Pressable
+                  style={styles.row_container}
+                  onPress={() => navigation.navigate(item?.route)}
+                >
+                  <View style={styles.icon}>
+                    {Svg && <Svg width={moderateScale(35)} height={moderateScale(35)} />}
+                    {item?.iconType && <CustomIcon type={item?.iconType} size={30} name={item?.iconName} />}
+                  </View>
+                  <CustomText text={item?.label} />
+                </Pressable>
+              );
             }}
           />
-
-
-          <View style={[globalStyle.betweenCenter, { marginTop: moderateScale(10) }]}>
-            <View style={[globalStyle.row]}>
-              <View
-                style={{
-                  width: moderateScale(10),
-                  height: moderateScale(10),
-                  backgroundColor: '#ff0000',
-                  borderRadius: moderateScale(10),
-                }}
-              />
-              <CustomText
-                size={13}
-                customStyle={{ marginLeft: moderateScale(5) }}
-                text="30 Subscribes"
-                weight="500"
-              />
-            </View>
-
-            <View style={[globalStyle.row]}>
-              <View
-                style={{
-                  width: moderateScale(10),
-                  height: moderateScale(10),
-                  backgroundColor: Colors?.activeRadio,
-                  borderRadius: moderateScale(10),
-                }}
-              />
-              <CustomText
-                size={13}
-                customStyle={{ marginLeft: moderateScale(5) }}
-                text={`${Object.values(rawContent?.monthlyClickCounter || {}).reduce((acc, item) => acc + item, 0)
-                  } Clicks`}
-                weight="500"
-              />
-
-            </View>
-
-            <View style={[globalStyle.row]}>
-              <View
-                style={{
-                  width: moderateScale(10),
-                  height: moderateScale(10),
-                  backgroundColor: Colors?.orange,
-                  borderRadius: moderateScale(10),
-                }}
-              />
-              <CustomText
-                size={13}
-                customStyle={{ marginLeft: moderateScale(5) }}
-                text={`${Object.values(rawContent?.monthlyImpressionCounter || {}).reduce((acc: any, item: any) => acc + item, 0)
-                  } Impressions`}
-                weight="500"
-              />
-            </View>
-          </View>
-
-          {
-            <CustomModal
-              iscenter={true}
-              visible={showModalBarType}
-              containerStyle={{ paddingVertical: moderateScale(10) }}
-              onDismiss={() => {
-                setShowModalBarType(false);
-              }}>
-              <CustomText
-                text="Select Module"
-                weight="600"
-                size={16}
-                customStyle={{
-                  textAlign: 'center',
-                  marginBottom: moderateScale(10),
-                }}
-              />
-
-              <CustomButton
-                title="Clicks"
-                bg={barTypeContent === 'Clicks' ? Colors.orange : '#000'}
-                onPress={() => {
-                  setbarTypeContent('Clicks');
-                  setShowModalBarType(false);
-                }}
-                customStyle={{ marginBottom: moderateScale(10) }}
-              />
-              <CustomButton
-                bg={
-                  barTypeContent === 'Impressions' ? Colors.orange : '#000'
-                }
-                customStyle={{ marginBottom: moderateScale(10) }}
-                title="Impressions"
-                onPress={() => {
-                  setbarTypeContent('Impressions');
-                  setShowModalBarType(false);
-                }}
-              />
-            </CustomModal>
-          }
-          {
-            <CustomModal
-              iscenter={true}
-              visible={showModalBarContent}
-              containerStyle={{ paddingVertical: moderateScale(10) }}
-              onDismiss={() => {
-                setShowModalBarContent(false);
-              }}>
-              <CustomText
-                text="Select Module"
-                weight="600"
-                size={16}
-                customStyle={{
-                  textAlign: 'center',
-                  marginBottom: moderateScale(10),
-                }}
-              />
-              <CustomButton
-                title="Course"
-                bg={barContent === 'Course' ? Colors.orange : '#000'}
-                onPress={() => {
-                  setbarContent('Course');
-                  setShowModalBarContent(false);
-                }}
-                customStyle={{ marginBottom: moderateScale(10) }}
-              />
-
-              <CustomButton
-                bg={barContent === 'Franchise' ? Colors.orange : '#000'}
-                customStyle={{ marginBottom: moderateScale(10) }}
-                title="Franchise"
-                onPress={() => {
-                  setbarContent('Franchise');
-                  setShowModalBarContent(false);
-                }}
-              />
-
-              <CustomButton
-                bg={barContent === 'Carrier' ? Colors.orange : '#000'}
-                customStyle={{ marginBottom: moderateScale(10) }}
-                title="Carrier"
-                onPress={() => {
-                  setbarContent('Carrier');
-                  setShowModalBarContent(false);
-                }}
-              />
-
-              <CustomButton
-                bg={barContent === 'ReTreat' ? Colors.orange : '#000'}
-                customStyle={{ marginBottom: moderateScale(10) }}
-                title="ReTreat"
-                onPress={() => {
-                  setbarContent('ReTreat');
-                  setShowModalBarContent(false);
-                }}
-              />
-            </CustomModal>
-          }
-
-        </View>
-
-        <FlatList
-          data={userOptionScreen}
-          numColumns={3}
-          // style={{justifyContent:"flex-end"}}
-          keyExtractor={(item: any) => item?.id.toString()}
-          contentContainerStyle={{ alignSelf: "center", marginTop: moderateScale(10), justifyContent: "flex-end", flex: 1, marginBottom: moderateScale(100) }} // Add padding to the container
-          columnWrapperStyle={{ gap: 10 }} // Creates gaps between columns without space-between
-          // ListHeaderComponent={}
-          renderItem={({ item }: any) => {
-            const Svg = item.svg;
-            return (
-              <Pressable
-                style={styles.row_container}
-                onPress={() => navigation.navigate(item?.route)}
-              >
-                <View style={styles.icon}>
-                  {Svg && <Svg width={moderateScale(35)} height={moderateScale(35)} />}
-                  {item?.iconType && <CustomIcon type={item?.iconType} size={30} name={item?.iconName} />}
-                </View>
-                <CustomText text={item?.label} />
-              </Pressable>
-            );
-          }}
-        />
-      </ScrollView>
+        </ScrollView> : (
+          <IsKycCard />
+        )
+      }
 
     </Container>
   )

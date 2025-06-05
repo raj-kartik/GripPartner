@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -16,6 +16,7 @@ const CourseFollowUps = () => {
   const [loading, setLoading] = useState(false);
   const [follow, setFollow] = useState([]);
   const { user } = useSelector((state: any) => state.user);
+  const [refreshing, setRefreshing] = useState(false);
 
   const navigation = useNavigation();
   const sentFun = (item: any) => {
@@ -62,11 +63,21 @@ const CourseFollowUps = () => {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchCourses();
+    setRefreshing(false);
+  };
+
   return (
     <Container>
       <ScrollView
         style={{ flexGrow: 1, paddingBottom: 20 }}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {loading ? (
           <FlatList
             data={[1, 2, 3, 4]}
@@ -133,7 +144,7 @@ const styles = StyleSheet.create({
   row: {
     backgroundColor: '#fff',
     elevation: 5,
-    borderRadius: moderateScale(20),
+    borderRadius: moderateScale(10),
     width: '99%',
     height: screenHeight * .1,
     padding: 10,

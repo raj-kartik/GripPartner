@@ -7,7 +7,7 @@ import {
     useCameraDevice,
     useCodeScanner,
 } from 'react-native-vision-camera';
-import CustomToast  from "../../components/Customs/CustomToast";
+import CustomToast from "../../components/Customs/CustomToast";
 import makeApiRequest from "../../utils/ApiService";
 import { DEFAULT_URL, STORE_API } from "../../utils/api";
 import Container from "../../components/Container";
@@ -17,9 +17,11 @@ import CustomIcon from "../../components/Customs/CustomIcon";
 import Colors from "../../utils/Colors";
 import CustomText from "../../components/Customs/CustomText";
 import { moderateScale, screenHeight, screenWidth } from "../../components/Matrix/Matrix";
+import IsKycCard from "@components/Cards/IsKycCard";
 
 const Scanner = () => {
     const [hasPermission, setHasPermission] = useState(false);
+    // const {user} = useSelector((state: any) => state.user);
     const [scannedItems, setScannedItems] = useState([]); // Store scanned items and responses
     const [loading, setLoading] = useState(false);
     const [scanDisabled, setScanDisabled] = useState(false); // Disable scanning for cooldown
@@ -140,6 +142,15 @@ const Scanner = () => {
         setHasPermission(requestStatus === 'granted');
     };
 
+    if (!user?.is_registred) {
+        return (
+            <Container>
+                {/* <CustomHeader1 title="Scanner" /> */}
+                <IsKycCard />
+            </Container>
+        );
+    }
+
     if (!hasPermission) {
         return (
             <Container>
@@ -164,6 +175,8 @@ const Scanner = () => {
             </Container>
         );
     }
+
+
 
     return (
         <Container>
@@ -292,6 +305,6 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(15),
         borderRadius: moderateScale(8),
         color: '#000',
-        height:moderateScale(50)
+        height: moderateScale(50)
     },
 });

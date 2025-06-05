@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -23,6 +23,7 @@ const CourseLead = ({ route }: any) => {
   const [filterModal, setFilterModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState('')
   const [filteredData, setFilteredData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const navigation = useNavigation();
 
@@ -55,6 +56,12 @@ const CourseLead = ({ route }: any) => {
       setLoading(false);
       console.log('error it');
     }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await CoursesLead();
+    setRefreshing(false);
   };
 
   const ListDetailFun = (item: any) => {
@@ -141,7 +148,11 @@ const CourseLead = ({ route }: any) => {
           <>
             <ScrollView
               style={{ flexGrow: 1, paddingBottom: 20 }}
-              showsVerticalScrollIndicator={false}>
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            >
               {filteredData.length > 0 ? (
                 filteredData.map(item => (
                   <SubscriptionCard

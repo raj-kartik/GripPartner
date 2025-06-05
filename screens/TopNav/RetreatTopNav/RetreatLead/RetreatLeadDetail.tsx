@@ -391,7 +391,7 @@ const RetreatLeadDetail = () => {
                 validationSchema={followSchema}
 
                 onSubmit={async (values) => {
-                  console.log("--- values in the course lead details ---", values)
+                  // console.log("--- values in the course lead details ---", values)
                   try {
                     // lead_id
                     const row = {

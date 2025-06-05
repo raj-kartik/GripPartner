@@ -55,13 +55,21 @@ const AddSubscription = () => {
                 validationSchema={addSubsSchema}
                 onSubmit={async (values) => {
 
+                    console.log(
+                        "=== values in the add subscription ===", values
+                    );
+
                     const row = {
                         id: lead_id,
                         fee: values?.fees,
                         feeType: values?.isPaid,
                         fee_date: values?.paymentDate || "",
+                        subscription_date: values?.subscriptionDate || "",
                         status: 2,
                     };
+
+
+
                     try {
                         const response: any = await makeApiRequest({
                             baseUrl: BASE_URL,

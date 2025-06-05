@@ -62,8 +62,8 @@ export const GOOGLE_LOCATION_KEY = 'AIzaSyAAMvO2UwddhG8a3Z-miopVUI1Q6VDWqZA';
 
 // PAYMENT
 export const PAYMENT_ID = 'GRIP0042095811400073';
-export const stagingUrl =
-  'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=123_1';
+// export const stagingUrl =
+//   'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=123_1';
 
 // USER
 export const GET_USER_DETAILS = 'user-detail';
@@ -145,11 +145,15 @@ export const NOTIFICATION_READ_LIST = (id: number) => {
   return `notifications-read?id=${id}`;
 };
 
+// RETREAT
+
 export const RETREAT_BOOKING_DETAILS = (id: number) =>
   `user-retreat-booking-detail?id=${id}`;
 export const RETREAT_BOOKING_HISTORY = (id: number) =>
   `retreat-booking-history?booking_id=${id}`;
 export const RETREAT_BOOING_END = 'retreat-booking-end';
+
+
 
 export const TRAINER_REGISTRATION = 'trainer-registration';
 
@@ -161,3 +165,6 @@ export const POST_VERIFY_AADHAAR_OTP = 'adhar-verify-otp';
 export const POST_PERSONAL_PAN_VERIFICATION = 'check-personal-pan';
 export const POST_STUDIO_PAN_VERIFICATION = 'company-pan-to-gst';
 export const POST_PAN_UPDATE = 'update-store-pan-gst';
+export const POST_ADD_TRAINER = "add-studio-trainer"
+export const POST_TRAINER_LIST = "studio-trainer-list"
+export const POST_DELETE_TRAINER = "delete-trainer-studio"

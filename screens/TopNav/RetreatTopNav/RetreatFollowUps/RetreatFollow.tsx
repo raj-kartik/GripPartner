@@ -52,7 +52,8 @@ const RetreatFollow: FC<Props> = ({ navigation, route }: any): JSX.Element => {
   };
 
   const ListDetailFun = (item: any) => {
-    console.log(item);
+    // console.log("-- -- retreat follow details ----",item);
+    // return;
     navigation.dispatch(
       CommonActions.navigate({
         name: 'RetreatFollowUpsDetail',

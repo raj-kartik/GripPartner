@@ -13,36 +13,80 @@ import CustomIcon from '../Customs/CustomIcon';
 import { moderateScale, screenWidth, verticalScale } from '../Matrix/Matrix';
 import { globalStyle } from '../../utils/GlobalStyle';
 
-const CourseDetailMenu = ({ isEnable = true, courseid, courseItem }: any) => {
-  const navigation = useNavigation();
+const CourseDetailMenu = ({ isEnable = true, courseid, courseItem, handleEnable }: any) => {
+  const navigation: any = useNavigation();
 
   // console.log("==== course item ====",courseItem);
-  
+
   const courseMenuOptions = [
     {
       id: 1,
       label: 'Edit',
-      route: 'Home',
+      // route: 'Home',
+      onPress: () => {
+        navigation.navigate('TrainerNewCourse', {
+          course: courseItem
+        })
+      }
     },
     {
       id: 2,
       label: 'Subscribed',
-      route: 'CourseSubs',
+      // route: 'CourseSubs',
+      onPress: () => {
+        navigation.dispatch(
+          CommonActions.navigate({
+            name: 'CourseTopNav',
+            params: {
+              courseid: courseid,
+              screen: 'CourseSubs',
+            },
+          }),
+        );
+      }
     },
     {
       id: 3,
       label: 'Lead',
-      route: 'CourseLead',
+      // route: 'CourseLead',
+      onPress: () => {
+        navigation.dispatch(
+          CommonActions.navigate({
+            name: 'CourseTopNav',
+            params: {
+              courseid: courseid,
+              screen: 'CourseLead',
+            },
+          }),
+        );
+      }
     },
     {
       id: 4,
       label: 'Follow Ups',
-      route: 'CourseFollowUps',
+      onPress: () => {
+        navigation.dispatch(
+          CommonActions.navigate({
+            name: 'CourseTopNav',
+            params: {
+              courseid: courseid,
+              screen: 'CourseFollowUps',
+            },
+          }),
+        );
+      }
     },
     {
       id: 5,
       label: isEnable ? 'Disable' : 'Enable',
-      route: 'Home',
+      // route: 'Home',
+      onPress: () => {
+        if (isEnable) {
+          handleEnable(0)
+        } else {
+          handleEnable(1)
+        }
+      }
     },
   ];
 
@@ -71,25 +115,7 @@ const CourseDetailMenu = ({ isEnable = true, courseid, courseItem }: any) => {
           {courseMenuOptions.map((item: any) => (
             <MenuOption
               key={item.id}
-              onSelect={() => {
-
-                if (item?.label === "Edit") {
-                  navigation.navigate('TrainerNewCourse', {
-                    course: courseItem
-                  })
-                }
-                else {
-                  navigation.dispatch(
-                    CommonActions.navigate({
-                      name: 'CourseTopNav',
-                      params: {
-                        courseid: courseid,
-                        screen: item?.route,
-                      },
-                    }),
-                  );
-                }
-              }}
+              onSelect={item.onPress}
               customStyles={{
                 optionWrapper: styles.optionWrapper,
                 optionText: styles.optionText,

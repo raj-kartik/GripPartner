@@ -93,9 +93,9 @@ const CourseLeadMenu = ({ courseId, CloseFun, OpenFun, item }: any) => {
                         {courseMenuOptions.map((item: any) => (
                             <MenuOption
                                 key={item.id}
-                                onSelect={() => {
-                                    item?.handleFunction();
-                                }}
+                                // onSelect={() => {
+                                //     item?.handleFunction();
+                                // }}
                                 customStyles={{
                                     optionWrapper: styles.optionWrapper,
                                     optionText: styles.optionText,

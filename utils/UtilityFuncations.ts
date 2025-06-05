@@ -6,8 +6,8 @@ import {
   POST_COURSE_LEAD_CHANGE,
   POST_RETREAT_LEAD_CHANGE,
 } from './api';
-import {CustomToast} from '../components/Customs/CustomToast';
 import axios from 'axios';
+import CustomToast from '@components/Customs/CustomToast';
 const locationApi = 'AIzaSyB5D8cCcugZPm2WiQh106c-K1-2dmSEiv0';
 
 export const titleImpressionFunction = async (row: any) => {
@@ -71,6 +71,8 @@ export const leadChangeStatus = async (
   id: number,
   status: number,
 ) => {
+  // console.log('---- kind, id, status ----', kind, id, status);
+
   const endpoint =
     kind === 'Course'
       ? POST_COURSE_LEAD_CHANGE
@@ -89,9 +91,9 @@ export const leadChangeStatus = async (
       },
     });
 
-    console.log('---- response ----', response);
+    // console.log('---- response ----', response);
 
-    if (response?.success === true) {
+    if (response?.success) {
       CustomToast({
         type: 'success',
         text1: `${kind} lead has changed successful`,
@@ -101,8 +103,8 @@ export const leadChangeStatus = async (
     } else {
       CustomToast({
         type: 'error',
-        text1: `${typeOf} lead has changed successful`,
-        text2: response?.message || 'lead has been updated',
+        text1: `${kind} lead has changed unsuccessful`,
+        text2: response?.message || 'Lead has not been updated',
       });
       return false;
     }
@@ -113,14 +115,14 @@ export const leadChangeStatus = async (
 
 export const fetchLocationUtility = async (place: string) => {
   // console.log("---- place in the location tracker ----", place);
-  
+
   try {
     const response = await axios.get(
       `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${place}&key=${locationApi}`,
     );
 
     // console.log('---- response in the location tracker ----', response?.data?.predictions);
-    
+
     if (response?.status === 200) {
       return response?.data?.predictions;
     }

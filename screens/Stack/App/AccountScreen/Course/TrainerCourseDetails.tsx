@@ -15,6 +15,7 @@ import TrainingDetails from '../../../../../components/DetailsComponent/Training
 import TrainerDashboard from '../../../../../components/TrainingDashboard'
 import CourseDetailMenu from '../../../../../components/Menu/CourseDetailMenu'
 import { MenuProvider } from 'react-native-popup-menu'
+import CustomToast from '@components/Customs/CustomToast'
 
 const TrainerCourseDetails = (props: any) => {
 
@@ -26,7 +27,7 @@ const TrainerCourseDetails = (props: any) => {
     const { course_id } = props.route?.params;
 
 
-    console.log("---- data in the course details ----", data);
+    // console.log("---- data in the course details ----", data);
 
 
     useFocusEffect(
@@ -291,6 +292,46 @@ const TrainerCourseDetails = (props: any) => {
         },
     ];
 
+    const distableFun = async (res: number) => {
+        console.log("==== res in the distableFun ====", res);
+        const data = res === 1 ? 'Enable' : 'Disable';
+
+        setLoading(true);
+        try{
+            const response:any = await makeApiRequest({
+                baseUrl: BASE_URL,
+                method: "POST",
+                url: `course-status`,
+                data: {
+                    id: course_id,
+                    status: res
+                }
+            })
+
+            // console.log("==== response in the distableFun ====", response);
+
+            if(response?.success == true) {
+                CustomToast({
+                    type: 'success',
+                    text1: `Course ${data}d successfully!`,
+                })
+                CourseListDetail();
+            }
+            
+        }
+        catch (error) {
+            // setLoading(false);
+            console.log('error',error);
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
+    console.log("==== data in the trainer course details ====", data);
+    
+
+
     return (
         <Container>
             {/* <CustomHeader2 title="Course Details" /> */}
@@ -298,7 +339,7 @@ const TrainerCourseDetails = (props: any) => {
                 <ScrollView
                     showsVerticalScrollIndicator={false} // Hide vertical scrollbar
                     showsHorizontalScrollIndicator={false}>
-                    <CourseDetailMenu isEnable={true} courseid={course_id} courseItem={data} />
+                    <CourseDetailMenu handleEnable={(isEnable: number) => distableFun(isEnable)} isEnable={data?.status} courseid={course_id} courseItem={data} />
                     <RenderItem />
                     <TrainingDetails
                         item={data}

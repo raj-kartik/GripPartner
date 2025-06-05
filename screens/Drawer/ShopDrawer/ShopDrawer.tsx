@@ -1,13 +1,17 @@
-import { StyleSheet} from 'react-native'
+import { StyleSheet,View} from 'react-native'
 import React, { useEffect } from 'react'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Products from '../../Bottom/Products';
 import { moderateScale } from '../../../components/Matrix/Matrix';
 import DynamicShopProduct from './DynamicShopProduct';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import IsKycCard from '@components/Cards/IsKycCard'
+import Container from '@components/Container';
 
 const ShopDrawer = () => {
   const { Navigator, Screen } = createDrawerNavigator();
+  const {user} = useSelector((state: any) => state?.user);
   // https://gripkart.com/rest/V1/categories
   useEffect(() => {
     const fetchShopCategory = async () => {
@@ -41,6 +45,7 @@ const ShopDrawer = () => {
     },
   ]
   return (
+    user?.is_registred ? 
     <Navigator 
       initialRouteName='ECom' 
       drawerContent={props => <DynamicShopProduct {...props} />}
@@ -70,7 +75,11 @@ const ShopDrawer = () => {
           />
         );
       })}
-    </Navigator>
+    </Navigator>:(
+      <Container>
+        <IsKycCard />
+      </Container>
+    )
   )
 }
 

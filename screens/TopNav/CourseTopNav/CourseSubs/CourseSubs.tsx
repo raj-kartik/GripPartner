@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -14,12 +14,19 @@ const CourseSubs = () => {
   const [subs, setSubs] = useState([]);
   const { user } = useSelector((state: any) => state.user);
   const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       fetchCourses();
     }, []),
   );
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchCourses();
+    setRefreshing(false);
+  };
 
   const fetchCourses = async () => {
     const row = {
@@ -36,7 +43,7 @@ const CourseSubs = () => {
         data: row
       })
 
-      console.log("==== response in the course subs ====", response);
+      // console.log("==== response in the course subs ====", response);
 
       if (response.success === true) {
         setSubs(response.followUp);
@@ -62,11 +69,15 @@ const CourseSubs = () => {
   return (
     <Container>
       <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         style={{ flexGrow: 1, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}>
         {loading ? (
           <FlatList
             data={[1, 2, 3, 4]}
+
             style={{ paddingHorizontal: moderateScale(5), paddingTop: moderateScale(5) }}
             contentContainerStyle={{ rowGap: moderateScale(10) }}
             keyExtractor={(item: any) => item}
