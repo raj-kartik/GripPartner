@@ -1,4 +1,4 @@
-import { ActivityIndicator, KeyboardAvoidingView, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, KeyboardAvoidingView, Modal, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import Container from '../../../../components/Container'
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu'
@@ -179,7 +179,8 @@ const RetreatLeadDetail = () => {
   ]
 
 
-  // console.log("==== log in the data retreat ====", data);
+  console.log("==== log in the data retreat ====", data);
+  console.log("==== log in the data lead ====", lead);
 
 
   const handleConfirm1 = (date: any) => {
@@ -240,6 +241,13 @@ const RetreatLeadDetail = () => {
 
   }
 
+  const onRefresh = () => {
+    setLoading(true);
+    leadLisfun(); // re-fetch the data
+    RetreatList();
+    setLoading(false);
+  }
+
   return (
     <Container>
       <MenuProvider>
@@ -274,7 +282,14 @@ const RetreatLeadDetail = () => {
               </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: moderateScale(10), flex: 1 }} >
+            <ScrollView 
+              refreshControl={
+                <RefreshControl
+                  refreshing={loading}
+                  onRefresh={onRefresh}
+                />
+              }
+            showsVerticalScrollIndicator={false} style={{ marginBottom: moderateScale(10), flex: 1 }} >
               <View style={{ marginBottom: moderateScale(10) }}>
                 <AccountCourseCard
                   isDisable={false}

@@ -328,7 +328,7 @@ const TrainerCourseDetails = (props: any) => {
         }
     };
 
-    console.log("==== data in the trainer course details ====", data);
+    // console.log("==== data in the trainer course details ====", data);
     
 
 

@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { FC, useCallback, useState } from 'react'
 import Container from '../../../../components/Container'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
@@ -53,7 +53,7 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
   // const [loading, setLoading] = useState(false);
 
 
-  // console.log("=== suscription in the course subs details ====", suscription);
+  console.log("=== suscription in the course subs details ====", suscription);
 
 
   useFocusEffect(
@@ -295,6 +295,13 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
     }
   }
 
+  const oRefresh = () => {
+    setLoading(true);
+    suscriptionLisfun();
+    suscriptionHistory();
+    setLoading(false);
+  }
+
 
 
   return (
@@ -322,6 +329,12 @@ const CourseSubsDetails: FC<Props> = ({ navigation, route }) => {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={oRefresh}
+            />
+          }
         >
           <SubscriptionCard item={suscription} />
 

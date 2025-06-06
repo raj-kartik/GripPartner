@@ -1,4 +1,4 @@
-import { ActivityIndicator, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Image, KeyboardAvoidingView, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import Container from '../../../../components/Container'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
@@ -13,7 +13,7 @@ import { globalStyle } from '../../../../utils/GlobalStyle'
 import { moderateScale, screenHeight, screenWidth } from '../../../../components/Matrix/Matrix'
 import Images from '../../../../utils/Images'
 import { FranchiseTrainerCard } from '../../../../components/Cards/FranchiseTrainerCard'
-import CustomToast  from '../../../../components/Customs/CustomToast'
+import CustomToast from '../../../../components/Customs/CustomToast'
 import CustomButton from '../../../../components/Customs/CustomButton'
 import CustomModal from '../../../../components/Customs/CustomModal'
 import * as Yup from 'yup'
@@ -41,8 +41,8 @@ const RetreatBookingDetail = () => {
   const { Booking_id }: any = route.params;
 
 
-  console.log("----- booking id ----",Booking_id);
-  
+  console.log("----- booking id ----", Booking_id);
+
 
   useFocusEffect(useCallback(() => {
     const fetchData = async () => {
@@ -65,7 +65,7 @@ const RetreatBookingDetail = () => {
       // const repo:any = await axios.post(`${BASE_URL}${RETREAT_BOOKING_DETAILS(Booking_id)}`);
 
       // console.log("---- repo in the retreat booking details ----",repo);
-      
+
       if (response.success === true) {
         setBooking(response?.data[0]);
         setBookingRetreat(response?.retreat_details[0]);
@@ -73,12 +73,13 @@ const RetreatBookingDetail = () => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.error("Error in the booking retreat details ",error);
+      console.error("Error in the booking retreat details ", error);
     }
   };
 
 
   console.log("----- booking in retreat details ----", booking);
+  console.log("----- booking retreat details ----", bookingRetreat);
 
 
   const BookingHistory = async () => {
@@ -192,18 +193,20 @@ const RetreatBookingDetail = () => {
       if (response?.success === true) {
         CustomToast({
           type: "success",
-          text1: "Fees marked due",
-          text2: response?.message
-        })
-      }
-      else {
-        CustomToast({
-          type: "error",
-          text1: "Something want wrong",
+          text1: "Amount Added Successfully",
           text2: response?.message
         })
         BookingHistory();
         BookingLisfun();
+        setConfirmVisible(false);
+      }
+      else {
+        CustomToast({
+          type: "error",
+          text1: "Something went wrong",
+          text2: response?.message
+        })
+        setConfirmVisible(false);
       }
     }
     catch (err) {
@@ -212,6 +215,12 @@ const RetreatBookingDetail = () => {
 
   }
 
+  const onRefresh = () => {
+    setLoading(true);
+    BookingLisfun();
+    BookingHistory();
+    setLoading(false);
+  }
   return (
     <Container>
       <MenuProvider>
@@ -229,11 +238,49 @@ const RetreatBookingDetail = () => {
             bookingDetail={booking} />
         </View>
 
-        <ScrollView style={{ flex: .8 }} showsVerticalScrollIndicator={false} >
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={onRefresh}
+            />
+          }
+          contentContainerStyle={{ paddingHorizontal: moderateScale(10) }}
+          style={{ flex: .8 }} showsVerticalScrollIndicator={false} >
+
+          {/* retreat details */}
           {booking ? (
             <View>
               <FranchiseTrainerCard booking={booking} />
 
+              <View style={[globalStyle.flex, { marginBottom: moderateScale(10), borderWidth: 1, borderRadius: moderateScale(10), padding: moderateScale(5) }]}>
+                <Image
+                  source={{ uri: bookingRetreat?.image }}
+                  style={{ width: moderateScale(100), height: moderateScale(100), borderRadius: moderateScale(10) }}
+                />
+                <View style={{ marginLeft: moderateScale(10) }} >
+                  <CustomText text={bookingRetreat?.retreat_location} weight='600' customStyle={{ width: "90%" }} size={18} />
+
+                  <View style={[globalStyle.betweenCenter, { marginTop: moderateScale(10), width: "50%" }]} >
+
+                    <View style={[globalStyle.row]} >
+                      <CustomIcon
+                        type='Feather'
+                        name='sun'
+                      />
+                      <CustomText customStyle={{ marginLeft: moderateScale(3) }} weight='600' text={bookingRetreat?.no_of_days} />
+                    </View>
+
+                    <View style={[globalStyle.row]} >
+                      <CustomIcon
+                        type='Feather'
+                        name='moon'
+                      />
+                      <CustomText customStyle={{ marginLeft: moderateScale(3) }} weight='600' text={bookingRetreat?.no_of_nights || 0} />
+                    </View>
+                  </View>
+                </View>
+              </View>
               {bookingInfo.map((item: any) => (
                 <View
                   style={[

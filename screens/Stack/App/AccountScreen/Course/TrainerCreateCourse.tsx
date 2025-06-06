@@ -7,6 +7,7 @@ import {
   View,
   Pressable,
   Image,
+  ToastAndroid,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
@@ -171,7 +172,7 @@ const TrainerCreateCourse = (props: any) => {
   const [studioObject, setStudioObject] = useState<any>(null)
   const [loading, setLoading] = useState(false);
   // const [isUpdateCourse,setIsUpdateCourse] = useState(false);
-  // console.log('==== existCourse in trainer new course ===', existCourse);
+  console.log('==== existCourse in trainer new course ===', existCourse);
 
   const { user } = useSelector((state: any) => state.user);
   const id = user?.id;
@@ -408,40 +409,50 @@ const TrainerCreateCourse = (props: any) => {
           training_level: Array.isArray(existCourse?.training_level)
             ? existCourse.training_level
             : existCourse?.training_level
-              ? existCourse.training_level.split(',')
+              ? existCourse.training_level.split(',').map((item: any) => item.trim())
               : [],
 
           class_type: Array.isArray(existCourse?.class_type)
             ? existCourse.class_type
             : existCourse?.class_type
-              ? existCourse.class_type.split(',')
+              ? existCourse.class_type.split(',').map((item: any) => item.trim())
               : [],
 
           body_focus: Array.isArray(existCourse?.body_focus)
-            ? existCourse.body_focus
+            ? existCourse.body_focus // already an array
             : existCourse?.body_focus
-              ? existCourse.body_focus.split(',')
+              ? existCourse.body_focus.split(',').map((item: any) => item.trim()) // convert string to trimmed array
               : [],
 
           yoga_style: Array.isArray(existCourse?.yoga_style)
             ? existCourse.yoga_style
             : existCourse?.yoga_style
-              ? existCourse.yoga_style.split(',')
+              ? existCourse.yoga_style.split(',').map((item: any) => item.trim())
               : [],
 
           meta_title: existCourse ? existCourse?.meta_title : '',
           meta_keywords: existCourse ? existCourse?.meta_keywords : '',
           meta_description: existCourse ? existCourse?.meta_description : '',
           file: existCourse ? existCourse?.select_image : null,
-          batch: [
-            {
-              startTime: '',
-              endTime: '',
-              batch_strength: '',
-              current_availability: '',
-              days: [],
-            },
-          ],
+          batch: existCourse?.slottime?.slots?.length
+            ? existCourse.slottime.slots.map((slot: any) => ({
+              startTime: slot?.start_time || '',
+              endTime: slot?.end_time || '',
+              batch_strength: slot?.batch_strength?.toString() || '',
+              current_availability: slot?.availability?.toString() || '',
+              days: slot?.slot_days
+                ? slot.slot_days.split(',').map((day: string) => day.trim())
+                : [],
+            }))
+            : [
+              {
+                startTime: '',
+                endTime: '',
+                batch_strength: '',
+                current_availability: '',
+                days: [],
+              },
+            ],
         }}
         onSubmit={(values: any) => {
           // console.log("---- on clicking ----");
@@ -472,7 +483,7 @@ const TrainerCreateCourse = (props: any) => {
             setTimeModal(true); // Open the modal only for the selected batch
           };
 
-          // console.log("--- values of file ----", values?.file);
+          // console.log("--- values of file ----", values);
 
           useEffect(() => {
           }, [errors])
@@ -544,6 +555,8 @@ const TrainerCreateCourse = (props: any) => {
                                 lastBatch.current_availability || '', // Copy current_availability
                               days: lastBatch.days || [], // Copy days (array)
                             });
+
+                            ToastAndroid.show('Batch added', ToastAndroid.SHORT);
                           }}>
                           <CustomText
                             text="Add more"
@@ -554,9 +567,6 @@ const TrainerCreateCourse = (props: any) => {
                         </TouchableOpacity>
                       </View>
                       {values.batch.map((item: any, index: number) => {
-                        // console.log("index", index);
-                        // console.log("error in the start tme",);
-
                         return (
                           <View
                             key={index}

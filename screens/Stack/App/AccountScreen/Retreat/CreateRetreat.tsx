@@ -65,7 +65,7 @@ const CreateRetreat = (props: any) => {
     const { user } = useSelector((state: any) => state?.user);
     const [loading, setLoading] = useState(false)
     const navigation = useNavigation();
-    const [placeText, setPlaceText] = useState('');
+    const [placeText, setPlaceText] = useState(exist?.hotel || '');
     const [place, setPlace] = useState<any>([]);
     const [locationPlaceText, setLocationPlaceText] = useState<any>([]);
     const [locationPlace, setLocationPlace] = useState<any>([]);
@@ -73,14 +73,14 @@ const CreateRetreat = (props: any) => {
         start: false,
         end: false
     });
-    // console.log("==== exist ===", exist);
+    console.log("==== exist ===", exist);
 
     const [documents, setDocuments] = useState<any>([]);
     // console.log("=== document ===",documents);
 
 
     const handleDocumentsPicked = (docs: any) => {
-        console.log('-----Picked documents:', docs);
+        // console.log('-----Picked documents:', docs);
         setDocuments(docs);
     };
 
@@ -121,7 +121,7 @@ const CreateRetreat = (props: any) => {
                 <Formik
                     initialValues={{
                         title: exist?.title || '',
-                        hotel: exist["Accommodation Hotel"] ? exist["Accommodation Hotel"] : '',
+                        hotel: exist?.hotel ? exist?.hotel : '',
                         location: exist?.location || '',
                         overview: exist?.overview || '',
                         details: exist["Program Detail"] || '',
@@ -129,10 +129,10 @@ const CreateRetreat = (props: any) => {
                         numOfDays: exist?.no_of_days || '',
                         numOfNights: exist?.no_of_nights || '',
                         price: exist?.price || '',
-                        img: documents,
+                        img: exist ? exist?.image : documents,
                         startDate: exist["start Date"] || '',
                         endDate: exist["end Date"] || '',
-                        rooms: ''
+                        rooms: exist?.room ? exist?.room.split(',') : [],
                     }}
                     validationSchema={retreatSchema}
                     onSubmit={async (values) => {
@@ -224,7 +224,7 @@ const CreateRetreat = (props: any) => {
                             }
                         }, [!user?.is_registred, values])
 
-                        // console.log("---- documents -----", documents);
+                        console.log("---- documents -----", values);
 
 
 
@@ -630,6 +630,14 @@ const CreateRetreat = (props: any) => {
                                             )
                                         }
                                         {
+                                            exist?.image && !documents.length && (
+                                                <Image
+                                                    source={{ uri: exist.image }}
+                                                    style={{ width: moderateScale(100), height: moderateScale(100), borderRadius: moderateScale(5) }}
+                                                />
+                                            )
+                                        }
+                                        {
                                             errors?.img && touched?.img && (
                                                 <CustomText text={errors?.img} weight='500' size={12} color='#ff0000' />
                                             )
@@ -684,16 +692,18 @@ const styles = StyleSheet.create({
         borderRadius: moderateScale(8),
         marginTop: moderateScale(5),
         paddingVertical: moderateScale(8),
-        backgroundColor: '#fff',
     },
     placeholderStyle: {
         color: Colors.gray_font,
+        // backgroundColor: Colors.selected,
     },
 
     selectedTextStyle: {
         color: '#000',
         fontWeight: '500',
         fontSize: 14,
+        // backgroundColor:Colors.selected
+
     },
     inputSearchStyle: {
         color: '#000',
@@ -704,6 +714,7 @@ const styles = StyleSheet.create({
         borderColor: '#000',
         alignItems: 'center',
         flexDirection: 'row',
+        // backgroundColor:Colors.selected
     },
     error: {
         marginTop: moderateScale(5),

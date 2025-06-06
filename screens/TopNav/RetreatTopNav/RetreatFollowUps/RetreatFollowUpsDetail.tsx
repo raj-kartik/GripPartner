@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import Container from '../../../../components/Container'
 import CustomHeader2 from '../../../../components/Customs/Header/CustomHeader2'
@@ -57,6 +57,17 @@ const RetreatFollowUpsDetail = () => {
       setLoading(false);
     } catch (error) {
       console.error('Failed to update lead status:', error);
+    }
+  };
+
+  const onRefresh = async () => {
+    setLoading(true);
+    try {
+      await followHistory();
+    } catch (error) {
+      console.error('Failed to refresh data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -122,12 +133,12 @@ const RetreatFollowUpsDetail = () => {
               />
               <ScrollView
                 showsVerticalScrollIndicator={false}
-              // refreshControl={
-              //   <RefreshControl
-              //     refreshing={refreshing}
-              //     onRefresh={onRefresh}
-              //   />
-              // }
+                refreshControl={
+                  <RefreshControl
+                    refreshing={loading}
+                    onRefresh={onRefresh}
+                  />
+                }
               >
                 {nextUpdate.comments ? (
                   <View style={styles.box}>

@@ -3,6 +3,7 @@ import {
     Alert,
     KeyboardAvoidingView,
     Pressable,
+    RefreshControl,
     ScrollView,
     StyleSheet,
     Text,
@@ -194,16 +195,13 @@ const CourseLeadDetails = () => {
         },
     ];
 
-    const SentFun = (item: any) => {
-        navigation.dispatch(
-            CommonActions.navigate({
-                name: 'LeadFollowUp',
-                params: {
-                    lead_id: item,
-                },
-            }),
-        );
-    };
+
+    const onRefresh = async () => {
+        setLoading(true);
+        leadLisfun();
+        CourseListDetail();
+        setLoading(false);
+    }
 
     const SentFun1 = (item: any) => {
         // confirmAction(1);
@@ -242,7 +240,16 @@ const CourseLeadDetails = () => {
                 {loading ? (
                     <ActivityIndicator size={20} color={'black'} />
                 ) : (
-                    <View>
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={loading}
+                                onRefresh={onRefresh}
+                            />
+                        }
+                        style={{ flexGrow: 1 }}
+                        showsVerticalScrollIndicator={false}
+                    >
                         <SubscriptionCard item={lead} handlePress={() => { }} />
 
                         <View style={{ marginBottom: moderateScale(10) }}>
@@ -361,7 +368,7 @@ const CourseLeadDetails = () => {
                                 />
                             </View>
                         </CustomModal>
-                    </View>
+                    </ScrollView>
                 )}
             </MenuProvider>
 

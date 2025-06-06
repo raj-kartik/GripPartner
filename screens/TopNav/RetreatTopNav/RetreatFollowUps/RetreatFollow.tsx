@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { FC, JSX, useCallback, useState } from 'react'
 import commonStyle from '../../../../utils/CommonStyleComponent';
 import AccountCourseCard from '../../../../components/Cards/AccountCourseCard';
@@ -66,14 +66,20 @@ const RetreatFollow: FC<Props> = ({ navigation, route }: any): JSX.Element => {
 
   // console.log('==== RetreatFollow =====', RetreatFollow);
 
+  // const onRefresh = ()=>{
+  //   setRefreshing(true);
+  //   RetreatFollowLisfun(); // re-fetch the data
+  //   setRefreshing(false);
+  // }
+
   return (
     <Container>
       <ScrollView
         style={{ flexGrow: 1, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
-      // refreshControl={
-      //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      // }
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       >
         {loading ? (
           <ActivityIndicator size={20} color="black" />

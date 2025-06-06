@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import Container from '../../../../components/Container'
 import CourseCard2 from '../../../../components/Cards/CourseCard2'
@@ -38,6 +38,13 @@ const CourseFollowDetails: FC<Props> = ({ route }) => {
     handleNextFollowUpHistory();
     handleFollowHistory();
   }, []));
+
+  const onRefresh = async () => {
+    setLoading(true);
+    await handleNextFollowUpHistory();
+    await handleFollowHistory();
+    setLoading(false);
+  }
 
   const handleNextFollowUpHistory = async () => {
     try {
@@ -131,7 +138,15 @@ const CourseFollowDetails: FC<Props> = ({ route }) => {
           ) : (
             <View style={{flex:1}} >
               <FollowUpCard follow={follow} />
-              <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false}>
+              <ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={loading}
+                    onRefresh={onRefresh}
+                    // colors={[Colors.primary, Colors.secondary]}
+                  />
+                }
+              style={{flex:1}} showsVerticalScrollIndicator={false}>
                 <View style={styles.box}>
                   <View style={styles.textBg}>
                     <CustomText

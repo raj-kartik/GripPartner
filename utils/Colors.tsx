@@ -41,6 +41,7 @@ class Colors {
     static info = '#2497fd';
     static success = '#5cb85c';
     static orange_blur = 'rgba(255,165,0,0.1)'
+    static selected = '#ffe6ca'
   }
   export default Colors;
   

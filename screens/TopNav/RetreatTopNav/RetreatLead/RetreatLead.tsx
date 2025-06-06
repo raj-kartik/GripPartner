@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -28,11 +28,6 @@ const RetreatLead = () => {
 
   const navigation = useNavigation();
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    RetreatLeadLisfun(); // re-fetch the data
-    setRefreshing(false);
-  };
   useFocusEffect(
     useCallback(() => {
       RetreatLeadLisfun();
@@ -77,7 +72,12 @@ const RetreatLead = () => {
       }),
     );
   };
-
+  
+  const onRefresh = () => {
+    setRefreshing(true);
+    RetreatLeadLisfun(); // re-fetch the data
+    setRefreshing(false);
+  };
   useEffect(() => {
     if (!searchText && !filterStatus) {
       // Show all data when no filters are applied
@@ -135,9 +135,9 @@ const RetreatLead = () => {
       <ScrollView
         style={{ flexGrow: 1, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
-      // refreshControl={
-      //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      // }
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       >
         {loading ? (
           <ActivityIndicator size={20} color="black" />

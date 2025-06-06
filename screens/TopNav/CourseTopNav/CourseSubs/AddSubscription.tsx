@@ -15,7 +15,7 @@ import Colors from '../../../../utils/Colors'
 import CustomText from '../../../../components/Customs/CustomText'
 import makeApiRequest from '../../../../utils/ApiService'
 import { BASE_URL } from '../../../../utils/api'
-import CustomToast  from '../../../../components/Customs/CustomToast'
+import CustomToast from '../../../../components/Customs/CustomToast'
 
 const addSubsSchema = Yup.object().shape({
     isPaid: Yup.string().required('*required'),
@@ -38,8 +38,8 @@ const AddSubscription = () => {
     const navigation = useNavigation();
 
     const data = [
-        { label: 'Paid', values: 'paid' },
-        { label: 'Unpaid', values: 'unpaid' },
+        { label: 'Paid', values: 'Paid' },
+        { label: 'Unpaid', values: 'Unpaid' },
     ];
 
     return (
@@ -55,9 +55,6 @@ const AddSubscription = () => {
                 validationSchema={addSubsSchema}
                 onSubmit={async (values) => {
 
-                    console.log(
-                        "=== values in the add subscription ===", values
-                    );
 
                     const row = {
                         id: lead_id,
@@ -68,6 +65,9 @@ const AddSubscription = () => {
                         status: 2,
                     };
 
+                    console.log(
+                        "=== row in the add subscription ===", row
+                    );
 
 
                     try {
@@ -144,7 +144,7 @@ const AddSubscription = () => {
                                 </View>
 
                                 {
-                                    values?.isPaid === 'paid' && <View style={{ marginTop: moderateScale(10) }} >
+                                    values?.isPaid === 'Paid' && <View style={{ marginTop: moderateScale(10) }} >
                                         <CustomText text='Payment Date' weight='500' size={15} />
                                         <Pressable
                                             style={[

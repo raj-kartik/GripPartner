@@ -91,7 +91,7 @@ export const leadChangeStatus = async (
       },
     });
 
-    // console.log('---- response ----', response);
+    console.log('---- response ----', response);
 
     if (response?.success) {
       CustomToast({
